@@ -44,7 +44,6 @@
                             label="Route / Href" 
                             placeholder="/dashboard or route name" 
                             value="{{ old('href', $menu_data->href ?? '') }}"
-                            required
                         />
                     </div>
 
