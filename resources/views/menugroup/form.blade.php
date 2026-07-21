@@ -1,8 +1,8 @@
 @php
-    $sub_title = ($breadcrumb = Breadcrumbs::current()) ? $breadcrumb->title : 'Dashboard';
+    $sub_title = ($breadcrumb = Breadcrumbs::current()) ? $breadcrumb->title : 'Menu Group';
 
-    if (isset($permission_data)) {
-        $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName(), $permission_data);
+    if (isset($menugroup_data)) {
+        $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName(), $menugroup_data);
     } else {
         $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName());
     }
@@ -11,7 +11,7 @@
 
 @extends('layouts.backend.main')
 
-@section('title', 'Permission Form')
+@section('title', 'Menu Group Form')
 @section('sub_title', $sub_title)
 
 @section('breadcrumb')
@@ -22,40 +22,43 @@
     <div class="space-y-6">
         <x-ui.card>
             <form method="POST" action="{{ $action }}" class="space-y-6">
-                @isset($permission_data) @method('PUT') @endisset
+                @isset($menugroup_data) @method('PUT') @endisset
                 @csrf
 
                 <div>
                     <h5 class="text-lg font-satoshi-bold text-slate-900 mb-4">{{ $sub_title }}</h5>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Name -->
+                        <!-- Group Name -->
                         <x-ui.input 
                             name="name" 
-                            label="Name" 
-                            placeholder="Permission Name" 
-                            value="{{ old('name', $permission_data->name ?? '') }}"
+                            label="Group Name" 
+                            placeholder="e.g., UTAMA, KONTEN, PENGATURAN" 
+                            value="{{ old('name', $menugroup_data->name ?? '') }}"
                             required
                         />
 
-                        <!-- Guard Name -->
+                        <!-- Sort Order -->
                         <x-ui.input 
-                            name="guard_name" 
-                            label="Guard" 
-                            placeholder="Guard Name" 
-                            value="{{ old('guard_name', $permission_data->guard_name ?? 'web') }}"
+                            type="number"
+                            name="sort" 
+                            label="Sort Order" 
+                            placeholder="1" 
+                            value="{{ old('sort', $menugroup_data->sort ?? '1') }}"
+                            min="0"
                             required
                         />
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <!-- Permission Group -->
-                        <x-ui.select2 
-                            name="permission_group_id" 
-                            label="Permission Group" 
-                            placeholder="-- Select Permission Group --" 
-                            :options="['' => '-- No Group (Kosong) --'] + $permissiongroups->pluck('name', 'id')->toArray()"
-                            :value="old('permission_group_id', $permission_data->permission_group_id ?? '')"
+                    <!-- Status Switch / Checkbox -->
+                    <div class="mt-6">
+                        <label class="mb-2 block text-base font-satoshi-medium text-slate-700">Status</label>
+                        <input type="hidden" name="status" value="0">
+                        <x-ui.checkbox 
+                            name="status" 
+                            label="Active" 
+                            value="1"
+                            :checked="old('status', $menugroup_data->status ?? true) ? true : false"
                         />
                     </div>
                 </div>

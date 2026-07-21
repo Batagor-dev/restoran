@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/permission', App\Http\Controllers\PermissionController::class)->except('show');
 
+    Route::resource('/menugroup', App\Http\Controllers\MenuGroupController::class)->except('show');
     Route::resource('/menu', App\Http\Controllers\MenuController::class)->except('show');
     Route::resource('/setting', App\Http\Controllers\SettingController::class)->only(['index', 'store']);
 

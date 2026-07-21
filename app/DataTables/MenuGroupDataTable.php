@@ -2,11 +2,11 @@
 
 namespace App\DataTables;
 
-use App\Models\Menu;
+use App\Models\MenuGroup;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class MenuDataTable extends DataTable
+class MenuGroupDataTable extends DataTable
 {
     /**
      * Build DataTable class.
@@ -16,21 +16,17 @@ class MenuDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('menu_group', fn($menu) => $menu->menuGroup?->name ?? '-')
-            ->addColumn('parent', fn($menu) => $menu->parent?->nama_menu ?? '-')
-            ->addColumn('permission_group', fn($menu) => $menu->permissionGroup?->name ?? '-')
-            ->addColumn('icon', fn($menu) => $menu->icon ? '<i class="'.$menu->icon.' text-lg"></i>' : '-')
-            ->addColumn('status', fn($menu) => $menu->status 
+            ->addColumn('status', fn($row) => $row->status 
                 ? '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-emerald-100 text-emerald-700">Active</span>' 
                 : '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-slate-100 text-slate-600">Off</span>')
             ->addColumn('action', function ($row) {
-                $edit = '<a href="'.route('menu.edit', $row->uuid).'" 
+                $edit = '<a href="'.route('menugroup.edit', $row->uuid).'" 
                         class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors font-satoshi-medium"
                         data-bs-toggle="tooltip" title="Edit">
                         <i class="ri ri-edit-line text-lg"></i></a>';
 
                 $delete = '
-                            <form action="'.route('menu.destroy', $row->uuid).'" method="POST" style="display:inline-block;" class="delete-form m-0">
+                            <form action="'.route('menugroup.destroy', $row->uuid).'" method="POST" style="display:inline-block;" class="delete-form m-0">
                                 '.csrf_field().method_field('DELETE').'
                                 <button type="button" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors delete-btn font-satoshi-medium"
                                     data-id="'.$row->uuid.'"
@@ -41,15 +37,15 @@ class MenuDataTable extends DataTable
 
                 return '<div class="flex items-center space-x-2 justify-center">' . $edit.' '.$delete . '</div>';
             })
-            ->rawColumns(['icon', 'status', 'action']);
+            ->rawColumns(['status', 'action']);
     }
 
     /**
      * Get query source of dataTable.
      */
-    public function query(Menu $model)
+    public function query(MenuGroup $model)
     {
-        return $model->with(['parent', 'permissionGroup', 'menuGroup']); // eager load
+        return $model->newQuery();
     }
 
     /**
@@ -58,10 +54,10 @@ class MenuDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-            ->setTableId('menu-table')
+            ->setTableId('menugroup-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(5) // sort by 'sort' column
+            ->orderBy(2)
             ->responsive(true)
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
@@ -70,7 +66,7 @@ class MenuDataTable extends DataTable
                          '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     'search' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Search:</span>',
-                    'searchPlaceholder' => 'Search menu...',
+                    'searchPlaceholder' => 'Search group...',
                     'lengthMenu' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Show</span> _MENU_ <span class="text-slate-600 ml-2 font-satoshi-medium">Entries</span>',
                     'info' => 'Showing _START_ to _END_ of _TOTAL_ entries',
                     'paginate' => [
@@ -90,13 +86,8 @@ class MenuDataTable extends DataTable
     {
         return [
             Column::make('DT_RowIndex')->title('No')->searchable(false)->orderable(false)->width(40)->addClass('text-center px-4 py-3 bg-slate-50 font-satoshi-medium text-slate-500 border-b border-slate-200'),
-            Column::make('nama_menu')->title('Menu Name')->addClass('px-4 py-3 border-b border-slate-200 text-slate-900 font-semibold'),
-            Column::make('menu_group')->title('Menu Group')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-600 font-medium'),
-            Column::make('parent')->title('Parent')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-500'),
-            Column::make('icon')->title('Icon')->orderable(false)->addClass('text-center px-4 py-3 border-b border-slate-200 text-slate-500'),
-            Column::make('href')->title('Link')->addClass('px-4 py-3 border-b border-slate-200 text-slate-500'),
+            Column::make('name')->title('Group Name')->addClass('px-4 py-3 border-b border-slate-200 text-slate-900 font-semibold'),
             Column::make('sort')->title('Order')->addClass('text-center px-4 py-3 border-b border-slate-200 text-slate-500'),
-            Column::make('permission_group')->title('Permission Group')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-500'),
             Column::make('status')->title('Status')->orderable(false)->addClass('text-center px-4 py-3 border-b border-slate-200'),
             Column::computed('action')
                 ->title('Action')
@@ -112,6 +103,6 @@ class MenuDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Menus_' . date('YmdHis');
+        return 'MenuGroups_' . date('YmdHis');
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateMenuRequest extends FormRequest
+class StoreMenuGroupRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,8 @@ class UpdateMenuRequest extends FormRequest
     public function rules()
     {
         return [
-            'nama_menu' => 'required|max:70',
-            'menu_group_id' => 'nullable|exists:menu_groups,id',
-            'sort' => 'required',
+            'name' => 'required|string|max:70',
+            'sort' => 'required|integer',
             'status' => 'required|in:0,1',
         ];
     }

@@ -4,13 +4,18 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Menu;
+use App\Models\MenuGroup;
 
 class MenuSeeder extends Seeder
 {
     public function run()
     {
-        // === Menu 1: Artikel ===
+        $kontenGroup = MenuGroup::where('name', 'KONTEN')->first();
+        $pengaturanGroup = MenuGroup::where('name', 'PENGATURAN')->first();
+
+        // === Menu 1: Artikel (Group: KONTEN) ===
         $artikel = Menu::create([
+            'menu_group_id'      => $kontenGroup?->id,
             'nama_menu'          => 'Artikel',
             'permission_group_id'=> 7, 
             'icon'               => 'ri-article-line',
@@ -36,8 +41,9 @@ class MenuSeeder extends Seeder
             'sort'               => '2',
         ]);
 
-        // === Menu 2: Setting ===
+        // === Menu 2: Setting (Group: PENGATURAN) ===
         $setting = Menu::create([
+            'menu_group_id'      => $pengaturanGroup?->id,
             'nama_menu'          => 'Setting',
             'permission_group_id'=> 8,
             'icon'               => 'ri-settings-3-line',
@@ -108,6 +114,15 @@ class MenuSeeder extends Seeder
             'href'               => '/menu',
             'status'             => '1',
             'sort'               => '3',
+        ]);
+
+        Menu::create([
+            'menu_id'            => $setting->id,
+            'nama_menu'          => 'Menu Group',
+            'permission_group_id'=> 8,
+            'href'               => '/menugroup',
+            'status'             => '1',
+            'sort'               => '4',
         ]);
         
     }

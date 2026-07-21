@@ -25,6 +25,7 @@ class StoreMenuRequest extends FormRequest
     {
         return [
             'nama_menu' => 'required|max:70',
+            'menu_group_id' => 'nullable|exists:menu_groups,id',
             'sort' => 'required',
             'status' => 'required|in:0,1',
         ];

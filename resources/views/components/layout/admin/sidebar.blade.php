@@ -31,15 +31,38 @@
             <span class="transition-all duration-300 group-[.sidebar-collapsed]:w-0 group-[.sidebar-collapsed]:opacity-0 overflow-hidden whitespace-nowrap">Dashboard</span>
           </a>
         </li>
-        @foreach($menus as $menu)
-          @php
-              $permissionName = optional($menu->permissionGroup)->name . ' Access';
-          @endphp
+        @if(isset($groupedMenus) && count($groupedMenus) > 0)
+          @foreach($groupedMenus as $groupId => $groupItems)
+            @php
+              $groupName = $groupItems->first()?->menuGroup?->name;
+            @endphp
+            @if($groupName)
+              <li class="pt-4 pb-1 px-3 text-xs font-satoshi-bold uppercase tracking-wider text-slate-400 group-[.sidebar-collapsed]:hidden truncate select-none">
+                {{ $groupName }}
+              </li>
+              <li class="hidden group-[.sidebar-collapsed]:block my-2 border-t border-slate-100"></li>
+            @endif
+            @foreach($groupItems->sortBy('sort') as $menu)
+              @php
+                  $permissionName = optional($menu->permissionGroup)->name . ' Access';
+              @endphp
 
-          @can($permissionName)
-              @include('components.layout.admin.children', ['menu' => $menu])
-          @endcan
-        @endforeach
+              @can($permissionName)
+                  @include('components.layout.admin.children', ['menu' => $menu])
+              @endcan
+            @endforeach
+          @endforeach
+        @else
+          @foreach($menus as $menu)
+            @php
+                $permissionName = optional($menu->permissionGroup)->name . ' Access';
+            @endphp
+
+            @can($permissionName)
+                @include('components.layout.admin.children', ['menu' => $menu])
+            @endcan
+          @endforeach
+        @endif
       </ul>
     </div>
   </div>

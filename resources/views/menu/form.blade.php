@@ -74,13 +74,22 @@
                         />
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                        <!-- Menu Group -->
+                        <x-ui.select2 
+                            name="menu_group_id" 
+                            label="Menu Group" 
+                            placeholder="-- Select Group --" 
+                            :options="['' => '-- No Group (Kosong) --'] + (isset($menugroups) ? $menugroups->pluck('name', 'id')->toArray() : [])"
+                            :value="old('menu_group_id', $menu_data->menu_group_id ?? '')"
+                        />
+
                         <!-- Parent Menu -->
                         <x-ui.select2 
                             name="menu_id" 
                             label="Parent Menu" 
                             placeholder="-- No Parent (Root Menu) --" 
-                            :options="$menus->reject(fn($m) => isset($menu_data) && $m->id === $menu_data->id)->pluck('nama_menu', 'id')->toArray()"
+                            :options="['' => '-- No Parent (Root Menu) --'] + $menus->reject(fn($m) => isset($menu_data) && $m->id === $menu_data->id)->pluck('nama_menu', 'id')->toArray()"
                             :value="old('menu_id', $menu_data->menu_id ?? '')"
                         />
 
@@ -89,7 +98,7 @@
                             name="permission_group_id" 
                             label="Permission Group" 
                             placeholder="-- No Permission --" 
-                            :options="$permissiongroups->pluck('name', 'id')->toArray()"
+                            :options="['' => '-- No Permission (Kosong) --'] + $permissiongroups->pluck('name', 'id')->toArray()"
                             :value="old('permission_group_id', $menu_data->permission_group_id ?? '')"
                         />
                     </div>

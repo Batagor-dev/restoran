@@ -16,6 +16,7 @@ class CreateMenusTable extends Migration
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
+            $table->foreignId('menu_group_id')->nullable()->constrained('menu_groups')->onDelete('set null');
             $table->foreignId('menu_id')->nullable()->unsigned();
             $table->string('nama_menu', 70);
             $table->string('icon', 30)->nullable();

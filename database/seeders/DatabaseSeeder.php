@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
 
         $user->assignRole('User');
 
-      
+        $this->call(MenuGroupSeeder::class);
         $this->call(MenuSeeder::class);
     }
 }

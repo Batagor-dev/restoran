@@ -57,8 +57,14 @@
                 </template>
 
                 <!-- Mode Single (Basic) -->
-                <template x-if="!multiple && selected.length > 0">
-                    <span class="text-slate-900" x-text="getLabel(selected[0])"></span>
+                <template x-if="!multiple && selected.length > 0 && selected[0] !== ''">
+                    <div class="flex items-center justify-between w-full min-w-0">
+                        <span class="text-slate-900 truncate" x-text="getLabel(selected[0])"></span>
+                        <button type="button" @click.stop="clearSelection()" class="text-slate-400 hover:text-slate-600 font-satoshi-medium ml-2 text-sm leading-none p-1 rounded-md hover:bg-slate-200/50 flex-shrink-0" title="Clear">&times;</button>
+                    </div>
+                </template>
+                <template x-if="!multiple && selected.length > 0 && selected[0] === ''">
+                    <span class="text-slate-400 font-satoshi truncate" x-text="getLabel('') || placeholder"></span>
                 </template>
 
                 <!-- Mode Multiple -->
@@ -158,22 +164,34 @@
                     this.closeDropdown();
                 }
             },
+            clearSelection() {
+                this.selected = [];
+                this.closeDropdown();
+            },
             removeValue(val) {
                 this.selected = this.selected.filter(i => i !== String(val));
             },
             get formattedOptions() {
+                let items = [];
                 if (Array.isArray(this.options)) {
-                    return this.options.map(item => {
+                    items = this.options.map(item => {
                         if (typeof item === 'object' && item !== null) {
                             return { value: String(item.value), label: String(item.label) };
                         }
                         return { value: String(item), label: String(item) };
                     });
+                } else {
+                    items = Object.keys(this.options).map(key => ({
+                        value: String(key),
+                        label: String(this.options[key])
+                    }));
                 }
-                return Object.keys(this.options).map(key => ({
-                    value: String(key),
-                    label: String(this.options[key])
-                }));
+
+                return items.sort((a, b) => {
+                    if (a.value === '' || a.value === 'null') return -1;
+                    if (b.value === '' || b.value === 'null') return 1;
+                    return 0;
+                });
             },
             getLabel(val) {
                 const opt = this.formattedOptions.find(o => o.value === String(val));

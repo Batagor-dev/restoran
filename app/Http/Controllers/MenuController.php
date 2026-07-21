@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\MenuGroup;
 use App\Models\PermissionGroup;
 use App\Http\Requests\StoreMenuRequest;
 use App\Http\Requests\UpdateMenuRequest;
@@ -29,6 +30,7 @@ class MenuController extends Controller
     public function create()
     {
         $this->data['menus'] = Menu::all();
+        $this->data['menugroups'] = MenuGroup::where('status', 1)->orderBy('sort')->get();
         $this->data['permissiongroups'] = PermissionGroup::all();
         $this->data['action'] = "/menu";
         return view('menu.form', $this->data);
@@ -56,6 +58,7 @@ class MenuController extends Controller
     public function edit(Menu $menu)
     {
         $this->data['menus'] = Menu::all();
+        $this->data['menugroups'] = MenuGroup::where('status', 1)->orderBy('sort')->get();
         $this->data['permissiongroups'] = PermissionGroup::all();
         $this->data['menu_data'] = $menu;
         $this->data['action'] = "/menu/".$menu->uuid;

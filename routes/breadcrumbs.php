@@ -119,6 +119,29 @@ Breadcrumbs::for('permissiongroup.create', function (BreadcrumbTrail $trail) {
 // **************************** END PERMISSION GROUP ***************************
 
 
+// **************************** MENU GROUP ***************************
+
+// Home > Menu Group
+Breadcrumbs::for('menugroup.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Menu Group', route('menugroup.index'));
+});
+
+// Home > Menu Group > [Update]
+Breadcrumbs::for('menugroup.edit', function (BreadcrumbTrail $trail, $menugroup) {
+    $trail->parent('menugroup.index');
+    $trail->push('Update [' . $menugroup->name . ']', route('menugroup.edit', $menugroup));
+});
+
+// Home > Menu Group > Create
+Breadcrumbs::for('menugroup.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('menugroup.index');
+    $trail->push('Create', route('menugroup.create'));
+});
+
+// **************************** END MENU GROUP ***************************
+
+
 // **************************** MENU ***************************
 
 // Home > Menu
