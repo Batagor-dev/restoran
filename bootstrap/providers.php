@@ -1,9 +1,15 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\FortifyServiceProvider;
+use App\Providers\HelperServiceProvider;
+use App\Providers\SidebarServiceProvider;
+use Yajra\DataTables\DataTablesServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\FortifyServiceProvider::class,
-    App\Providers\HelperServiceProvider::class,
-    App\Providers\SidebarServiceProvider::class,
-    Yajra\DataTables\DataTablesServiceProvider::class,
+    AppServiceProvider::class,
+    FortifyServiceProvider::class,
+    HelperServiceProvider::class,
+    SidebarServiceProvider::class,
+    DataTablesServiceProvider::class,
 ];

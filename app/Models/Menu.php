@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\PermissionGroup;
-use App\Models\MenuGroup;
-use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Menu extends Model
 {
-    use hasFactory, HasUuid, SoftDeletes;
+    use HasFactory, HasUuid, SoftDeletes;
+
     protected $fillable = [
-        'menu_group_id', 'menu_id', 'nama_menu', 'icon', 'permission_group_id', 'href', 'status', 'sort'
+        'menu_group_id', 'menu_id', 'nama_menu', 'icon', 'permission_group_id', 'href', 'status', 'sort',
     ];
 
     public function children()
@@ -40,5 +39,4 @@ class Menu extends Model
     {
         return 'uuid';
     }
-    
 }

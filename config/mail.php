@@ -47,8 +47,8 @@ return [
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
 
-            'verify_peer'       => (bool) env('MAIL_VERIFY_PEER', true),
-            'verify_peer_name'  => (bool) env('MAIL_VERIFY_PEER', true),
+            'verify_peer' => (bool) env('MAIL_VERIFY_PEER', true),
+            'verify_peer_name' => (bool) env('MAIL_VERIFY_PEER', true),
         ],
 
         'ses' => [

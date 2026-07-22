@@ -24,8 +24,8 @@ class UpdateAcountRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'nullable|unique:users,name,' . $this->user()->id,
-            'email' => 'nullable|email|unique:users,email,' . $this->user()->id,
+            'name' => 'nullable|unique:users,name,'.$this->user()->id,
+            'email' => 'nullable|email|unique:users,email,'.$this->user()->id,
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'gender' => 'nullable|in:L,P',
             'phone' => 'nullable|numeric',

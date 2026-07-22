@@ -35,7 +35,7 @@ class RoleDataTable extends DataTable
                                 </button>
                             </form>';
 
-                return '<div class="flex items-center space-x-2 justify-center">' . $detail.' '.$edit.' '.$delete . '</div>';
+                return '<div class="flex items-center space-x-2 justify-center">'.$detail.' '.$edit.' '.$delete.'</div>';
             })
             ->rawColumns(['action']);
     }
@@ -57,8 +57,8 @@ class RoleDataTable extends DataTable
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
                 // Mengatur layout DOM menggunakan Flexbox & Grid Tailwind CSS
-                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>' .
-                         '<"overflow-x-auto w-full"tr>' .
+                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'.
+                         '<"overflow-x-auto w-full"tr>'.
                          '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     // Memberikan kelas pembungkus kustom Tailwind pada input bawaan DataTables
@@ -70,7 +70,7 @@ class RoleDataTable extends DataTable
                         'first' => '<i class="ri-arrow-left-double-line text-lg"></i>',
                         'previous' => '<i class="ri-arrow-left-s-line text-lg"></i>',
                         'next' => '<i class="ri-arrow-right-s-line text-lg"></i>',
-                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>'
+                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>',
                     ],
                 ],
             ]);
@@ -89,6 +89,6 @@ class RoleDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Roles_' . date('YmdHis');
+        return 'Roles_'.date('YmdHis');
     }
 }

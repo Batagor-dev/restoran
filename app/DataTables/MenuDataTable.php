@@ -16,12 +16,12 @@ class MenuDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('menu_group', fn($menu) => $menu->menuGroup?->name ?? '-')
-            ->addColumn('parent', fn($menu) => $menu->parent?->nama_menu ?? '-')
-            ->addColumn('permission_group', fn($menu) => $menu->permissionGroup?->name ?? '-')
-            ->addColumn('icon', fn($menu) => $menu->icon ? '<i class="'.$menu->icon.' text-lg"></i>' : '-')
-            ->addColumn('status', fn($menu) => $menu->status 
-                ? '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-emerald-100 text-emerald-700">Active</span>' 
+            ->addColumn('menu_group', fn ($menu) => $menu->menuGroup?->name ?? '-')
+            ->addColumn('parent', fn ($menu) => $menu->parent?->nama_menu ?? '-')
+            ->addColumn('permission_group', fn ($menu) => $menu->permissionGroup?->name ?? '-')
+            ->addColumn('icon', fn ($menu) => $menu->icon ? '<i class="'.$menu->icon.' text-lg"></i>' : '-')
+            ->addColumn('status', fn ($menu) => $menu->status
+                ? '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-emerald-100 text-emerald-700">Active</span>'
                 : '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-slate-100 text-slate-600">Off</span>')
             ->addColumn('action', function ($row) {
                 $edit = '<a href="'.route('menu.edit', $row->uuid).'" 
@@ -39,7 +39,7 @@ class MenuDataTable extends DataTable
                                 </button>
                             </form>';
 
-                return '<div class="flex items-center space-x-2 justify-center">' . $edit.' '.$delete . '</div>';
+                return '<div class="flex items-center space-x-2 justify-center">'.$edit.' '.$delete.'</div>';
             })
             ->rawColumns(['icon', 'status', 'action']);
     }
@@ -65,8 +65,8 @@ class MenuDataTable extends DataTable
             ->responsive(true)
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
-                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>' .
-                         '<"overflow-x-auto w-full"tr>' .
+                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'.
+                         '<"overflow-x-auto w-full"tr>'.
                          '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     'search' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Search:</span>',
@@ -77,7 +77,7 @@ class MenuDataTable extends DataTable
                         'first' => '<i class="ri-arrow-left-double-line text-lg"></i>',
                         'previous' => '<i class="ri-arrow-left-s-line text-lg"></i>',
                         'next' => '<i class="ri-arrow-right-s-line text-lg"></i>',
-                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>'
+                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>',
                     ],
                 ],
             ]);
@@ -112,6 +112,6 @@ class MenuDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Menus_' . date('YmdHis');
+        return 'Menus_'.date('YmdHis');
     }
 }

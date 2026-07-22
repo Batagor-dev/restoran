@@ -7,11 +7,15 @@ use Illuminate\Support\Facades\Storage;
 
 class Setting extends Model
 {
-    protected $table      = 'settings';
+    protected $table = 'settings';
+
     protected $primaryKey = 'key';
-    public $incrementing  = false;
-    protected $keyType    = 'string';
-    public $timestamps    = true;
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = true;
 
     protected $fillable = ['key', 'value', 'serialize'];
 
@@ -24,9 +28,9 @@ class Setting extends Model
         foreach ($rows as $k => $v) {
             $needSer = is_array($v);
             $payload[] = [
-                'key'        => $k,
-                'value'      => $needSer ? json_encode($v) : $v,
-                'serialize'  => $needSer,
+                'key' => $k,
+                'value' => $needSer ? json_encode($v) : $v,
+                'serialize' => $needSer,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
@@ -39,7 +43,9 @@ class Setting extends Model
     public static function getValue(string $key, mixed $default = null): mixed
     {
         $row = static::find($key);
-        if (! $row) return $default;
+        if (! $row) {
+            return $default;
+        }
 
         return $row->serialize ? json_decode($row->value, true) : $row->value;
     }

@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Article;
+use Carbon\Carbon;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
@@ -21,10 +22,11 @@ class ArticleDataTable extends DataTable
                     ? '<img src="'.asset('storage/'.$article->image_path).'" class="w-16 h-10 object-cover rounded-lg shadow-sm border border-slate-100 mx-auto">'
                     : '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-slate-100 text-slate-600">No Image</span>';
             })
-            ->addColumn('category', fn($article) => $article->category?->name ?? '-')
-            ->addColumn('author', fn($article) => $article->author?->name ?? '-')
-            ->addColumn('published_at', fn($article) => $article->published_at
-                ? \Carbon\Carbon::parse($article->published_at)->isoFormat('dddd, D MMMM Y')
+            ->addColumn('category', fn ($article) => $article->category?->name ?? '-')
+            ->addColumn('author', fn ($article) => $article->author?->name ?? '-')
+            ->addColumn('outlet', fn ($article) => $article->outlet?->name ?? 'Global')
+            ->addColumn('published_at', fn ($article) => $article->published_at
+                ? Carbon::parse($article->published_at)->isoFormat('dddd, D MMMM Y')
                 : '-'
             )
             ->addColumn('action', function ($row) {
@@ -52,7 +54,7 @@ class ArticleDataTable extends DataTable
                         </form>';
                 }
 
-                return '<div class="flex items-center space-x-2 justify-center">' . $edit.' '.$delete . '</div>';
+                return '<div class="flex items-center space-x-2 justify-center">'.$edit.' '.$delete.'</div>';
             })
             ->rawColumns(['image', 'action']);
     }
@@ -62,7 +64,7 @@ class ArticleDataTable extends DataTable
      */
     public function query(Article $model)
     {
-        return $model->newQuery()->with(['category', 'author']);
+        return $model->newQuery()->with(['category', 'author', 'outlet']);
     }
 
     /**
@@ -78,8 +80,8 @@ class ArticleDataTable extends DataTable
             ->responsive(true)
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
-                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>' .
-                         '<"overflow-x-auto w-full"tr>' .
+                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'.
+                         '<"overflow-x-auto w-full"tr>'.
                          '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     'search' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Search:</span>',
@@ -90,7 +92,7 @@ class ArticleDataTable extends DataTable
                         'first' => '<i class="ri-arrow-left-double-line text-lg"></i>',
                         'previous' => '<i class="ri-arrow-left-s-line text-lg"></i>',
                         'next' => '<i class="ri-arrow-right-s-line text-lg"></i>',
-                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>'
+                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>',
                     ],
                 ],
             ]);
@@ -107,6 +109,7 @@ class ArticleDataTable extends DataTable
             Column::make('title')->title('Article')->addClass('px-4 py-3 border-b border-slate-200 text-slate-900 font-semibold'),
             Column::make('category')->title('Category')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-500'),
             Column::make('author')->title('Author')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-500'),
+            Column::make('outlet')->title('Outlet')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-500'),
             Column::make('published_at')->title('Published At')->addClass('px-4 py-3 border-b border-slate-200 text-slate-500'),
             Column::computed('action')
                 ->title('Action')
@@ -122,6 +125,6 @@ class ArticleDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Articles_' . date('YmdHis');
+        return 'Articles_'.date('YmdHis');
     }
 }

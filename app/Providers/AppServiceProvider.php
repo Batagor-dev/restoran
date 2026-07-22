@@ -2,14 +2,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Blade;
 use Carbon\Carbon;
-
-// Email Notifications
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
+// Email Notifications
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     {
         /**
          * Blade Directive
+         *
          * @active('route.name')
          */
         Blade::directive('active', function ($expression) {
@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
                 ->line('Silakan klik tombol di bawah ini untuk melanjutkan proses reset password.')
                 ->action(
                     'Reset Password',
-                    url('/reset-password/' . $token)
+                    url('/reset-password/'.$token)
                 )
                 ->line('Tautan ini hanya berlaku dalam waktu terbatas demi keamanan akun Anda.')
                 ->line('Apabila Anda tidak merasa melakukan permintaan ini, silakan abaikan email ini.');

@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\DataTables\RoleDataTable;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
-use App\Models\PermissionGroup;
 use App\Models\Permission;
+use App\Models\PermissionGroup;
 use App\Models\Role;
-use App\DataTables\RoleDataTable;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(RoleDataTable $dataTable)
     {
@@ -25,19 +26,19 @@ class RoleController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
-        $this->data['action'] = "/role";
+        $this->data['action'] = '/role';
+
         return view('role.form', $this->data);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreRoleRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(StoreRoleRequest $request)
     {
@@ -49,15 +50,14 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show(Role $role)
     {
-        $this->data['action']          = "/role/showaction/".$role->uuid;
+        $this->data['action'] = '/role/showaction/'.$role->uuid;
         $this->data['permission_groups'] = PermissionGroup::with('permissions')->get(); // eager-load
-        $this->data['permissions']      = Permission::whereNull('permission_group_id')->get();
-        $this->data['role']             = $role->load('permissions'); // hak akses yg sudah dimiliki
+        $this->data['permissions'] = Permission::whereNull('permission_group_id')->get();
+        $this->data['role'] = $role->load('permissions'); // hak akses yg sudah dimiliki
 
         return view('role.permission', $this->data);
     }
@@ -69,7 +69,7 @@ class RoleController extends Controller
 
         /* 2. hapus permission yg tidak ada di daftar baru */
         foreach ($role->permissions as $perm) {
-            if (!in_array($perm->id, $permission_array)) {
+            if (! in_array($perm->id, $permission_array)) {
                 $role->revokePermissionTo($perm);   // $perm sudah model, tak perlu find lagi
             }
         }
@@ -88,22 +88,20 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit(Role $role)
     {
         $this->data['role_data'] = $role;
-        $this->data['action'] = "/role/" . $role->uuid;
+        $this->data['action'] = '/role/'.$role->uuid;
+
         return view('role.form', $this->data);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateRoleRequest  $request
-     * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
@@ -115,12 +113,12 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Role $role)
     {
         $role->delete();
+
         return redirect('/role')->with('success', 'Role has been deleted!');
     }
 }

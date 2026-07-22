@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use App\Models\Article;
-use App\Models\ArticleCategory;
+use App\DataTables\ArticleDataTable;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use App\Models\Article;
+use App\Models\ArticleCategory;
 use App\Services\ImageService;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(\App\DataTables\ArticleDataTable $dataTable)
+    public function index(ArticleDataTable $dataTable)
     {
         return $dataTable->render('article.index');
     }
@@ -26,7 +27,8 @@ class ArticleController extends Controller
     public function create()
     {
         $this->data['categories'] = ArticleCategory::all();
-        $this->data['action'] = "/article";
+        $this->data['action'] = '/article';
+
         return view('article.form', $this->data);
     }
 
@@ -41,13 +43,14 @@ class ArticleController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $compressed = $imageService->compress($file);
-            $filename = 'article-images/' . uniqid() . '.jpg';
+            $filename = 'article-images/'.uniqid().'.jpg';
             Storage::disk('public')->put($filename, $compressed);
             $data['image_path'] = $filename;
         }
 
         $data['published_at'] = date('Y-m-d', strtotime($request->published_at));
         $data['user_id'] = auth()->id();
+        $data['outlet_id'] = auth()->user()->current_outlet_id;
         $data['excerpt'] = Str::limit(strip_tags($request->content), 200);
 
         Article::create($data);
@@ -62,8 +65,9 @@ class ArticleController extends Controller
     {
         $this->data['categories'] = ArticleCategory::all();
         $this->data['article_data'] = $article;
-        $this->data['action'] = "/article/" . $article->slug;
+        $this->data['action'] = '/article/'.$article->slug;
         $this->data['model'] = $article;
+
         return view('article.form', $this->data);
     }
 
@@ -91,7 +95,7 @@ class ArticleController extends Controller
 
             $file = $request->file('image');
             $compressed = $imageService->compress($file);
-            $filename = 'article-images/' . uniqid() . '.jpg';
+            $filename = 'article-images/'.uniqid().'.jpg';
             Storage::disk('public')->put($filename, $compressed);
             $data['image_path'] = $filename;
         }
@@ -103,7 +107,6 @@ class ArticleController extends Controller
             ->route('article.index')
             ->with('success', 'Article has been updated!');
     }
-
 
     /**
      * Remove the specified resource from storage.

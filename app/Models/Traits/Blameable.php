@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 trait Blameable
@@ -27,7 +28,7 @@ trait Blameable
      */
     public function creator()
     {
-        return $this->belongsTo(\App\Models\User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**
@@ -35,6 +36,6 @@ trait Blameable
      */
     public function updater()
     {
-        return $this->belongsTo(\App\Models\User::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

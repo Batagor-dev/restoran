@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreSettingRequest;
 use App\Models\Setting;
 use App\Services\ImageService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
@@ -15,12 +15,12 @@ class SettingController extends Controller
         abort_if(Gate::denies('Setting Access'), 403);
 
         return view('setting.form', [
-            'action'      => route('setting.store'),
-            'title'       => Setting::getValue('title'),
-            'keyword'     => implode(',', Setting::getValue('keyword', [])),
+            'action' => route('setting.store'),
+            'title' => Setting::getValue('title'),
+            'keyword' => implode(',', Setting::getValue('keyword', [])),
             'description' => Setting::getValue('description'),
-            'author'      => Setting::getValue('author'),
-            'favicon'     => Setting::getValue('favicon'),
+            'author' => Setting::getValue('author'),
+            'favicon' => Setting::getValue('favicon'),
         ]);
     }
 
@@ -35,7 +35,7 @@ class SettingController extends Controller
             Setting::deleteOldFile('favicon');          // hapus lama
             $file = $request->file('favicon');
             $compressed = $imageService->compress($file);
-            $filename = 'settings/' . uniqid() . '.jpg';
+            $filename = 'settings/'.uniqid().'.jpg';
             Storage::disk('public')->put($filename, $compressed);
             $payload['favicon'] = $filename;
         }
@@ -48,6 +48,6 @@ class SettingController extends Controller
         Setting::setValue($payload);
 
         return redirect()->route('setting.index')
-                         ->with('success', __('messages.settings_saved'));
+            ->with('success', __('messages.settings_saved'));
     }
 }

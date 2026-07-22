@@ -7,7 +7,7 @@ class MenuHelper
     public static function isActive($menu): bool
     {
         // Cek href
-        if (!empty($menu->href) && url($menu->href) === url()->current()) {
+        if (! empty($menu->href) && url($menu->href) === url()->current()) {
             return true;
         }
 

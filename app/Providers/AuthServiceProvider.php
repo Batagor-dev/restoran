@@ -10,7 +10,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         Gate::define('User Banned', function ($user) {
-        return $user->hasPermissionTo('User Banned');
+            return $user->hasPermissionTo('User Banned');
         });
     }
 }

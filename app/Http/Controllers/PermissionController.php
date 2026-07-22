@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permission;
-use App\Models\PermissionGroup;
+use App\DataTables\PermissionDataTable;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
-use App\DataTables\PermissionDataTable;
+use App\Models\Permission;
+use App\Models\PermissionGroup;
+use Illuminate\Http\Response;
 
 class PermissionController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(PermissionDataTable $dataTable)
     {
@@ -23,21 +24,21 @@ class PermissionController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
         $this->data['permissiongroups'] = PermissionGroup::all();
 
-        $this->data['action'] = "/permission";
+        $this->data['action'] = '/permission';
+
         return view('permission.form', $this->data);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StorePermissionRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(StorePermissionRequest $request)
     {
@@ -49,24 +50,22 @@ class PermissionController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Permission  $permission
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit(Permission $permission)
     {
         $this->data['permissiongroups'] = PermissionGroup::all();
 
         $this->data['permission_data'] = $permission;
-        $this->data['action'] = "/permission/".$permission->uuid;
+        $this->data['action'] = '/permission/'.$permission->uuid;
+
         return view('permission.form', $this->data);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdatePermissionRequest  $request
-     * @param  \App\Models\Permission  $permission
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
@@ -78,12 +77,12 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Permission  $permission
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Permission $permission)
     {
         $permission->delete();
+
         return redirect('/permission')->with('success', 'Permission has been deleted!');
     }
 }

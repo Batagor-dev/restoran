@@ -13,6 +13,42 @@
   </div>
 
   <div class="flex items-center gap-4">
+    <!-- Outlet Selector -->
+    @auth
+        @php
+            $user = Auth::user();
+            $userOutlets = [];
+            
+            if ($user->hasRole(['Super Admin', 'Owner'])) {
+                $userOutlets = \App\Models\Outlet::where('status', true)->get();
+            } else {
+                $userOutlets = $user->outlets;
+            }
+
+            $selectedValue = $user->current_outlet_id ?? 'all';
+        @endphp
+        
+        @if(count($userOutlets) > 0 || $user->hasRole(['Super Admin', 'Owner']))
+            <form action="{{ route('outlet.switch') }}" method="POST" id="outlet-switch-form" class="m-0 flex items-center">
+                @csrf
+                <div class="relative min-w-[200px]" x-data @change="document.getElementById('outlet-switch-form').submit()">
+                    <x-ui.select2
+                        name="outlet_id"
+                        placeholder="Select Outlet"
+                        :value="$selectedValue"
+                    >
+                        @if($user->hasRole(['Super Admin', 'Owner']))
+                            <option value="all">All Outlets</option>
+                        @endif
+                        @foreach($userOutlets as $outlet)
+                            <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
+                        @endforeach
+                    </x-ui.select2>
+                </div>
+            </form>
+        @endif
+    @endauth
+
     <!-- Fullscreen Button -->
     <button type="button" id="btn-fullscreen" class="hidden sm:flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer">
       <i class="ri-fullscreen-line text-2xl"></i>

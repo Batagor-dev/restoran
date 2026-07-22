@@ -17,6 +17,6 @@ trait HasUuid
 
     public function hasUuid(): bool
     {
-        return !empty($this->uuid);
+        return ! empty($this->uuid);
     }
 }

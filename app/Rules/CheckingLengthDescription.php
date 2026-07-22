@@ -35,6 +35,6 @@ class CheckingLengthDescription implements Rule
      */
     public function message()
     {
-        return "Panjang teks tidak boleh lebih dari 160 karakter";
+        return 'Panjang teks tidak boleh lebih dari 160 karakter';
     }
 }

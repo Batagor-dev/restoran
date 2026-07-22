@@ -1,5 +1,18 @@
 <?php
 
+use App\Http\Controllers\AcountController;
+use App\Http\Controllers\ArticleCategoryController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\MenuGroupController;
+use App\Http\Controllers\OutletController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PermissionGroupController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,39 +31,41 @@ Route::get('/', function () {
 })->name('home');
 
 // Route untuk memicu login Google
-Route::get('/auth/google', [App\Http\Controllers\SocialiteController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('google.login');
 
 // Route callback tempat Google mengirim data kembali
-Route::get('/auth/google/callback', [App\Http\Controllers\SocialiteController::class, 'handleGoogleCallback']);
+Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
-    
-    Route::get('/user/role/{user}', [App\Http\Controllers\UserController::class, 'role'])->name('user.role');
-    Route::post('/user/roleaction/{user}', [App\Http\Controllers\UserController::class, 'roleaction']);
-    Route::resource('/user', App\Http\Controllers\UserController::class);
+Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('/acount', App\Http\Controllers\AcountController::class)->only(['index', 'store']);
-    Route::get('/acount/security', [App\Http\Controllers\AcountController::class, 'security'])->name('acount.security');
-    Route::post('acount/password', [App\Http\Controllers\AcountController::class, 'updatePassword'])->name('acount.password');
+    Route::post('/switch-outlet', [OutletController::class, 'switchOutlet'])->name('outlet.switch');
+    Route::resource('/outlet', OutletController::class)->except('show');
 
-    Route::post('/role/showaction/{role}', [App\Http\Controllers\RoleController::class, 'showaction']);
-    Route::resource('/role', App\Http\Controllers\RoleController::class);
+    Route::get('/user/role/{user}', [UserController::class, 'role'])->name('user.role');
+    Route::post('/user/roleaction/{user}', [UserController::class, 'roleaction']);
+    Route::resource('/user', UserController::class);
 
+    Route::resource('/acount', AcountController::class)->only(['index', 'store']);
+    Route::get('/acount/security', [AcountController::class, 'security'])->name('acount.security');
+    Route::post('acount/password', [AcountController::class, 'updatePassword'])->name('acount.password');
 
-    Route::resource('/permissiongroup', App\Http\Controllers\PermissionGroupController::class)->except('show');
+    Route::post('/role/showaction/{role}', [RoleController::class, 'showaction']);
+    Route::resource('/role', RoleController::class);
 
-    Route::resource('/permission', App\Http\Controllers\PermissionController::class)->except('show');
+    Route::resource('/permissiongroup', PermissionGroupController::class)->except('show');
 
-    Route::resource('/menugroup', App\Http\Controllers\MenuGroupController::class)->except('show');
-    Route::resource('/menu', App\Http\Controllers\MenuController::class)->except('show');
-    Route::resource('/setting', App\Http\Controllers\SettingController::class)->only(['index', 'store']);
+    Route::resource('/permission', PermissionController::class)->except('show');
 
-    Route::resource('/article_categories', App\Http\Controllers\ArticleCategoryController::class, ['parameters' => [
-        'article_categories' => 'articleCategory:slug'
+    Route::resource('/menugroup', MenuGroupController::class)->except('show');
+    Route::resource('/menu', MenuController::class)->except('show');
+    Route::resource('/setting', SettingController::class)->only(['index', 'store']);
+
+    Route::resource('/article_categories', ArticleCategoryController::class, ['parameters' => [
+        'article_categories' => 'articleCategory:slug',
     ]])->except('show');
 
-    Route::resource('/article', App\Http\Controllers\ArticleController::class)->parameters([
+    Route::resource('/article', ArticleController::class)->parameters([
         'article' => 'article:slug',
     ]);
 
@@ -63,4 +78,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //     Route::delete('/delete/{setting}',[App\Http\Controllers\SettingController::class, 'delete'])->name('setting.delete');
     // });
 });
-    

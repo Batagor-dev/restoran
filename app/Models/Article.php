@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToOutlet;
+use App\Models\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasSlug;
-use App\Models\ArticleCategory;
-use App\Models\User;
 
 class Article extends Model
 {
-    use HasFactory, HasSlug;
+    use BelongsToOutlet, HasFactory, HasSlug;
 
     protected $guarded = ['id'];
 

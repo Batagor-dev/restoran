@@ -1,4 +1,5 @@
 <?php
+
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
@@ -6,7 +7,6 @@ use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('dashboard'));
 });
-
 
 // **************************** USER ***************************
 
@@ -20,7 +20,7 @@ Breadcrumbs::for('user.index', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('user.edit', function (BreadcrumbTrail $trail, $user) {
     // dd($user);
     $trail->parent('user.index');
-    $trail->push('Update [' . $user->name . ']', route('user.edit', $user));
+    $trail->push('Update ['.$user->name.']', route('user.edit', $user));
 });
 
 // Home > User > Create
@@ -38,11 +38,10 @@ Breadcrumbs::for('user.show', function (BreadcrumbTrail $trail, $user) {
 // Home > User > Permission
 Breadcrumbs::for('user.role', function (BreadcrumbTrail $trail, $user) {
     $trail->parent('user.index');
-    $trail->push('User Roles [' . $user->name . ']', route('user.role', $user));
+    $trail->push('User Roles ['.$user->name.']', route('user.role', $user));
 });
 
 // **************************** END USER ***************************
-
 
 // **************************** ROLE ***************************
 
@@ -55,7 +54,7 @@ Breadcrumbs::for('role.index', function (BreadcrumbTrail $trail) {
 // Home > Role > [Update]
 Breadcrumbs::for('role.edit', function (BreadcrumbTrail $trail, $role) {
     $trail->parent('role.index');
-    $trail->push('Update [' . $role->name . ']', route('role.edit', $role));
+    $trail->push('Update ['.$role->name.']', route('role.edit', $role));
 });
 
 // Home > Role > Create
@@ -72,7 +71,6 @@ Breadcrumbs::for('role.show', function (BreadcrumbTrail $trail, $role) {
 
 // **************************** END ROLE ***************************
 
-
 // **************************** PERMISSION ***************************
 
 // Home > Permission
@@ -84,7 +82,7 @@ Breadcrumbs::for('permission.index', function (BreadcrumbTrail $trail) {
 // Home > Permission > [Update]
 Breadcrumbs::for('permission.edit', function (BreadcrumbTrail $trail, $permission) {
     $trail->parent('permission.index');
-    $trail->push('Update [' . $permission->name . ']', route('permission.edit', $permission));
+    $trail->push('Update ['.$permission->name.']', route('permission.edit', $permission));
 });
 
 // Home > Permission > Create
@@ -94,7 +92,6 @@ Breadcrumbs::for('permission.create', function (BreadcrumbTrail $trail) {
 });
 
 // **************************** END PERMISSION ***************************
-
 
 // **************************** PERMISSION GROUP ***************************
 
@@ -107,7 +104,7 @@ Breadcrumbs::for('permissiongroup.index', function (BreadcrumbTrail $trail) {
 // Home > Permission Group > [Update]
 Breadcrumbs::for('permissiongroup.edit', function (BreadcrumbTrail $trail, $permissiongroup) {
     $trail->parent('permissiongroup.index');
-    $trail->push('Update [' . $permissiongroup->name . ']', route('permissiongroup.edit', $permissiongroup));
+    $trail->push('Update ['.$permissiongroup->name.']', route('permissiongroup.edit', $permissiongroup));
 });
 
 // Home > Permission Group > Create
@@ -117,7 +114,6 @@ Breadcrumbs::for('permissiongroup.create', function (BreadcrumbTrail $trail) {
 });
 
 // **************************** END PERMISSION GROUP ***************************
-
 
 // **************************** MENU GROUP ***************************
 
@@ -130,7 +126,7 @@ Breadcrumbs::for('menugroup.index', function (BreadcrumbTrail $trail) {
 // Home > Menu Group > [Update]
 Breadcrumbs::for('menugroup.edit', function (BreadcrumbTrail $trail, $menugroup) {
     $trail->parent('menugroup.index');
-    $trail->push('Update [' . $menugroup->name . ']', route('menugroup.edit', $menugroup));
+    $trail->push('Update ['.$menugroup->name.']', route('menugroup.edit', $menugroup));
 });
 
 // Home > Menu Group > Create
@@ -140,7 +136,6 @@ Breadcrumbs::for('menugroup.create', function (BreadcrumbTrail $trail) {
 });
 
 // **************************** END MENU GROUP ***************************
-
 
 // **************************** MENU ***************************
 
@@ -153,7 +148,7 @@ Breadcrumbs::for('menu.index', function (BreadcrumbTrail $trail) {
 // Home > Menu > [Update]
 Breadcrumbs::for('menu.edit', function (BreadcrumbTrail $trail, $menu) {
     $trail->parent('menu.index');
-    $trail->push('Update [' . $menu->nama_menu . ']', route('menu.edit', $menu));
+    $trail->push('Update ['.$menu->nama_menu.']', route('menu.edit', $menu));
 });
 
 // Home > Menu > Create
@@ -163,7 +158,6 @@ Breadcrumbs::for('menu.create', function (BreadcrumbTrail $trail) {
 });
 
 // **************************** END MENU ***************************
-
 
 // **************************** ARTICLE CATEGORY ***************************
 
@@ -176,7 +170,7 @@ Breadcrumbs::for('article_categories.index', function (BreadcrumbTrail $trail) {
 // Home > Article Categories > [Update]
 Breadcrumbs::for('article_categories.edit', function (BreadcrumbTrail $trail, $article_categories) {
     $trail->parent('article_categories.index');
-    $trail->push('Update [' . $article_categories->name . ']', route('article_categories.edit', $article_categories));
+    $trail->push('Update ['.$article_categories->name.']', route('article_categories.edit', $article_categories));
 });
 
 // Home > Article Categories > Create
@@ -186,7 +180,6 @@ Breadcrumbs::for('article_categories.create', function (BreadcrumbTrail $trail) 
 });
 
 // **************************** END ARTICLE CATEGORY ***************************
-
 
 // **************************** SETTING ***************************
 
@@ -225,7 +218,7 @@ Breadcrumbs::for('article.index', function (BreadcrumbTrail $trail) {
 // Home > Article Categories > [Update]
 Breadcrumbs::for('article.edit', function (BreadcrumbTrail $trail, $article) {
     $trail->parent('article.index');
-    $trail->push('Update [' . $article->title . ']', route('article.edit', $article));
+    $trail->push('Update ['.$article->title.']', route('article.edit', $article));
 });
 
 // Home > Article Categories > Create
@@ -237,7 +230,29 @@ Breadcrumbs::for('article.create', function (BreadcrumbTrail $trail) {
 // Home > Article Categories > Create
 Breadcrumbs::for('article.show', function (BreadcrumbTrail $trail, $article) {
     $trail->parent('article.index');
-    $trail->push('Article ' . $article->title, route('article.show', $article));
+    $trail->push('Article '.$article->title, route('article.show', $article));
 });
 
 // **************************** END ARTICLE ***************************
+
+// **************************** OUTLET ***************************
+
+// Home > Outlet
+Breadcrumbs::for('outlet.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Outlet', route('outlet.index'));
+});
+
+// Home > Outlet > Create
+Breadcrumbs::for('outlet.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('outlet.index');
+    $trail->push('Create', route('outlet.create'));
+});
+
+// Home > Outlet > [Update]
+Breadcrumbs::for('outlet.edit', function (BreadcrumbTrail $trail, $outlet) {
+    $trail->parent('outlet.index');
+    $trail->push('Update ['.$outlet->name.']', route('outlet.edit', $outlet));
+});
+
+// **************************** END OUTLET ***************************

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\User;
@@ -14,7 +13,7 @@ class DashboardController extends Controller
         $data['total_articles'] = Article::count();
         $data['total_categories'] = ArticleCategory::count();
         $data['total_users'] = User::count();
-        
+
         // Ambil artikel terbaru dari database
         $data['recent_articles'] = Article::with(['category', 'author'])
             ->latest()

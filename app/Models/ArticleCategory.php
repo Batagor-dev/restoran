@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Article;
-use App\Models\Traits\HasSlug;
 
 class ArticleCategory extends Model
 {
@@ -24,5 +23,4 @@ class ArticleCategory extends Model
     {
         return 'slug';
     }
-
 }

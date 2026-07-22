@@ -17,6 +17,9 @@
         $breadcrumb_parent = $breadcrumbsData->where('title', '!=', $breadcrumb->title)->last();
         $previewUrl = null;
     }
+
+    $outletOptions = isset($outlets) ? $outlets->map(fn($o) => ['value' => $o->id, 'label' => $o->name])->toArray() : [];
+    $selectedOutlets = old('outlets', isset($user_data) ? $user_data->outlets->pluck('id')->toArray() : []);
 @endphp
 
 @extends('layouts.backend.main')
@@ -68,6 +71,17 @@
                         name="foto"
                         label="Foto"
                         :previewUrl="$previewUrl"
+                    />
+                </div>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <x-ui.select2
+                        name="outlets"
+                        label="Assign Outlets"
+                        placeholder="Select Outlets..."
+                        :multiple="true"
+                        :options="$outletOptions"
+                        :value="$selectedOutlets"
                     />
                 </div>
 

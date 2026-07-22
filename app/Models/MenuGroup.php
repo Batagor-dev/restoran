@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MenuGroup extends Model
@@ -12,7 +12,7 @@ class MenuGroup extends Model
     use HasFactory, HasUuid, SoftDeletes;
 
     protected $fillable = [
-        'name', 'sort', 'status'
+        'name', 'sort', 'status',
     ];
 
     public function menus()

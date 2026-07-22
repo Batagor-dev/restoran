@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\MenuGroup;
+use Illuminate\Database\Seeder;
 
 class MenuGroupSeeder extends Seeder
 {
@@ -12,7 +12,7 @@ class MenuGroupSeeder extends Seeder
         MenuGroup::firstOrCreate(
             ['name' => 'KONTEN'],
             [
-                'sort'   => 1,
+                'sort' => 1,
                 'status' => 1,
             ]
         );
@@ -20,7 +20,7 @@ class MenuGroupSeeder extends Seeder
         MenuGroup::firstOrCreate(
             ['name' => 'PENGATURAN'],
             [
-                'sort'   => 2,
+                'sort' => 2,
                 'status' => 1,
             ]
         );

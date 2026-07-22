@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PermissionGroup;
+use App\DataTables\PermissionGroupDataTable;
 use App\Http\Requests\StorePermissionGroupRequest;
 use App\Http\Requests\UpdatePermissionGroupRequest;
-use App\DataTables\PermissionGroupDataTable;
+use App\Models\PermissionGroup;
+use Illuminate\Http\Response;
 
 class PermissionGroupController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(PermissionGroupDataTable $dataTable)
     {
@@ -22,21 +23,21 @@ class PermissionGroupController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
         $this->data['permissiongroups'] = PermissionGroup::all();
 
-        $this->data['action'] = "/permissiongroup";
+        $this->data['action'] = '/permissiongroup';
+
         return view('permissiongroup.form', $this->data);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StorePermissionGroupRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(StorePermissionGroupRequest $request)
     {
@@ -48,24 +49,22 @@ class PermissionGroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PermissionGroup  $permissiongroup
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit(PermissionGroup $permissiongroup)
     {
         $this->data['permissiongroups'] = PermissionGroup::all();
 
         $this->data['permissiongroup_data'] = $permissiongroup;
-        $this->data['action'] = "/permissiongroup/".$permissiongroup->uuid;
+        $this->data['action'] = '/permissiongroup/'.$permissiongroup->uuid;
+
         return view('permissiongroup.form', $this->data);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdatePermissionGroupRequest  $request
-     * @param  \App\Models\PermissionGroup  $permissiongroup
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(UpdatePermissionGroupRequest $request, PermissionGroup $permissiongroup)
     {
@@ -77,12 +76,12 @@ class PermissionGroupController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\PermissionGroup  $permissiongroup
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(PermissionGroup $permissiongroup)
     {
         $permissiongroup->delete();
+
         return redirect('/permissiongroup')->with('success', 'Permission Group has been deleted!');
     }
 }

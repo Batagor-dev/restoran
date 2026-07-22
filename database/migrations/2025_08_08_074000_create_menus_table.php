@@ -23,8 +23,8 @@ class CreateMenusTable extends Migration
             $table->foreignId('permission_group_id')->nullable()->unsigned();
             $table->string('href', 100)->nullable();
             $table->boolean('status')->default(true);
-            $table->tinyInteger('sort')->default('1');  
-            $table->softDeletes();          
+            $table->tinyInteger('sort')->default('1');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

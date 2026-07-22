@@ -16,8 +16,8 @@ class MenuGroupDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('status', fn($row) => $row->status 
-                ? '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-emerald-100 text-emerald-700">Active</span>' 
+            ->addColumn('status', fn ($row) => $row->status
+                ? '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-emerald-100 text-emerald-700">Active</span>'
                 : '<span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-satoshi-semibold select-none bg-slate-100 text-slate-600">Off</span>')
             ->addColumn('action', function ($row) {
                 $edit = '<a href="'.route('menugroup.edit', $row->uuid).'" 
@@ -35,7 +35,7 @@ class MenuGroupDataTable extends DataTable
                                 </button>
                             </form>';
 
-                return '<div class="flex items-center space-x-2 justify-center">' . $edit.' '.$delete . '</div>';
+                return '<div class="flex items-center space-x-2 justify-center">'.$edit.' '.$delete.'</div>';
             })
             ->rawColumns(['status', 'action']);
     }
@@ -61,8 +61,8 @@ class MenuGroupDataTable extends DataTable
             ->responsive(true)
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
-                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>' .
-                         '<"overflow-x-auto w-full"tr>' .
+                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'.
+                         '<"overflow-x-auto w-full"tr>'.
                          '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     'search' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Search:</span>',
@@ -73,7 +73,7 @@ class MenuGroupDataTable extends DataTable
                         'first' => '<i class="ri-arrow-left-double-line text-lg"></i>',
                         'previous' => '<i class="ri-arrow-left-s-line text-lg"></i>',
                         'next' => '<i class="ri-arrow-right-s-line text-lg"></i>',
-                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>'
+                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>',
                     ],
                 ],
             ]);
@@ -103,6 +103,6 @@ class MenuGroupDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'MenuGroups_' . date('YmdHis');
+        return 'MenuGroups_'.date('YmdHis');
     }
 }

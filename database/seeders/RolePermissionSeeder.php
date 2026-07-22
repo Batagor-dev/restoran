@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Role;
 use App\Models\Permission;
 use App\Models\PermissionGroup;
+use App\Models\Role;
+use Illuminate\Database\Seeder;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -25,11 +25,14 @@ class RolePermissionSeeder extends Seeder
             'Article Category',
             'Article',
             'Setting',
+            'Outlet',
+            'Konten',
+            'Pengaturan',
         ];
 
         foreach ($permissiongroups as $permissiongroup) {
             PermissionGroup::create([
-                'name' => $permissiongroup
+                'name' => $permissiongroup,
             ]);
         }
 
@@ -71,26 +74,49 @@ class RolePermissionSeeder extends Seeder
             'Setting Create-8',
             'Setting Update-8',
             'Setting Delete-8',
+            'Outlet Access-9',
+            'Outlet Create-9',
+            'Outlet Update-9',
+            'Outlet Delete-9',
+            'Konten Access-10',
+            'Pengaturan Access-11',
+
         ];
 
         foreach ($permissions as $permission) {
-            $permission_array = explode("-", $permission);
+            $permission_array = explode('-', $permission);
             Permission::create([
                 'name' => $permission_array[0],
-                'permission_group_id' => $permission_array[1]
+                'permission_group_id' => $permission_array[1],
             ]);
         }
 
         $superAdmin = Role::create([
             'name' => 'Super Admin',
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
 
         $superAdmin->givePermissionTo(Permission::all());
 
+        $owner = Role::create([
+            'name' => 'Owner',
+            'guard_name' => 'web',
+        ]);
+        $owner->givePermissionTo(Permission::all());
+
+        $employee = Role::create([
+            'name' => 'Employee',
+            'guard_name' => 'web',
+        ]);
+        $employee->givePermissionTo([
+            'Article Access',
+            'Article Create',
+            'Article Update',
+        ]);
+
         $role = Role::create([
             'name' => 'User',
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
         $role->givePermissionTo('Article Access');
     }

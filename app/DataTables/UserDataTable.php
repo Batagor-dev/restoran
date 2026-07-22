@@ -15,8 +15,8 @@ class UserDataTable extends DataTable
             ->addIndexColumn()
             ->addColumn('foto', function ($row) {
                 $src = str_starts_with($row->foto, 'avatar-')
-                    ? asset('assets/img/avatar/' . $row->foto)
-                    : asset('storage/uploads/users/' . $row->foto);
+                    ? asset('assets/img/avatar/'.$row->foto)
+                    : asset('storage/uploads/users/'.$row->foto);
 
                 // Mengubah kelas Bootstrap rounded-circle ke Tailwind rounded-full
                 return '<img src="'.$src.'" class="w-10 h-10 rounded-full object-cover mx-auto">';
@@ -43,7 +43,7 @@ class UserDataTable extends DataTable
                                 </button>
                             </form>';
 
-                return '<div class="flex items-center space-x-2 justify-center">' . $detail.' '.$edit.' '.$delete . '</div>';
+                return '<div class="flex items-center space-x-2 justify-center">'.$detail.' '.$edit.' '.$delete.'</div>';
             })
             ->rawColumns(['foto', 'action']);
     }
@@ -65,8 +65,8 @@ class UserDataTable extends DataTable
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
                 // Mengatur layout DOM menggunakan Flexbox & Grid Tailwind CSS
-                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>' .
-                         '<"overflow-x-auto w-full"tr>' .
+                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'.
+                         '<"overflow-x-auto w-full"tr>'.
                          '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     // Memberikan kelas pembungkus kustom Tailwind pada input bawaan DataTables
@@ -78,7 +78,7 @@ class UserDataTable extends DataTable
                         'first' => '<i class="ri-arrow-left-double-line text-lg"></i>',
                         'previous' => '<i class="ri-arrow-left-s-line text-lg"></i>',
                         'next' => '<i class="ri-arrow-right-s-line text-lg"></i>',
-                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>'
+                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>',
                     ],
                 ],
             ]);
@@ -99,6 +99,6 @@ class UserDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Users_' . date('YmdHis');
+        return 'Users_'.date('YmdHis');
     }
 }

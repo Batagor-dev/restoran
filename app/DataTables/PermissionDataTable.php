@@ -13,7 +13,7 @@ class PermissionDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('permission_group', fn($p) => $p->permissiongroup->name ?? '-') // relasi group
+            ->addColumn('permission_group', fn ($p) => $p->permissiongroup->name ?? '-') // relasi group
             ->addColumn('action', function ($row) {
                 // Mengubah tombol Bootstrap ke gaya Tailwind CSS
                 $edit = '<a href="'.route('permission.edit', $row->uuid).'" 
@@ -31,7 +31,7 @@ class PermissionDataTable extends DataTable
                                 </button>
                             </form>';
 
-                return '<div class="flex items-center space-x-2 justify-center">' . $edit.' '.$delete . '</div>';
+                return '<div class="flex items-center space-x-2 justify-center">'.$edit.' '.$delete.'</div>';
             })
             ->rawColumns(['action']);
     }
@@ -53,8 +53,8 @@ class PermissionDataTable extends DataTable
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
                 // Mengatur layout DOM menggunakan Flexbox & Grid Tailwind CSS
-                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>' .
-                         '<"overflow-x-auto w-full"tr>' .
+                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'.
+                         '<"overflow-x-auto w-full"tr>'.
                          '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     // Memberikan kelas pembungkus kustom Tailwind pada input bawaan DataTables
@@ -66,7 +66,7 @@ class PermissionDataTable extends DataTable
                         'first' => '<i class="ri-arrow-left-double-line text-lg"></i>',
                         'previous' => '<i class="ri-arrow-left-s-line text-lg"></i>',
                         'next' => '<i class="ri-arrow-right-s-line text-lg"></i>',
-                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>'
+                        'last' => '<i class="ri-arrow-right-double-line text-lg"></i>',
                     ],
                 ],
             ]);
@@ -86,6 +86,6 @@ class PermissionDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Permissions_' . date('YmdHis');
+        return 'Permissions_'.date('YmdHis');
     }
 }

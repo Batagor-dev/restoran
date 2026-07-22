@@ -5,6 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com)
 and this project adheres to [Semantic Versioning](https://semver.org). This is always true of the master branch. Some earlier branches, including the branch from which you are reading this file, remain supported and security fixes are applied to them; if the security fix represents a breaking change, it may have to be applied as a minor or patch version.
 
+## 2026-07-12 - 2.4.7
+
+### Fixed
+
+- Security patches.
+
+## 2026-06-06 - 2.4.6
+
+### Security Note
+
+- File::prohibitWrappers and Drawing::setPath now reject phar paths with extra leading slashes (e.g. phar:///…) that escaped the prior parse_url-based filter. No security exploit was possible even with the extra slashes. Backport of [PR #4876](https://github.com/PHPOffice/PhpSpreadsheet/pull/4876)
+
+### Fixed
+
+- Third-party security patches.
+- Php 8.6 deprecation in Mpdf. Backport of [PR #4878](https://github.com/PHPOffice/PhpSpreadsheet/pull/4878)
+- Ability to reuse disconnected spreadsheet. Backport of [PR #4880](https://github.com/PHPOffice/PhpSpreadsheet/pull/4880)
+
+## 2026-04-19 - 2.4.5
+
+### Fixed
+
+- Security patches.
+
+## 2026-04-09 - 2.4.4
+
+### Fixed
+
+- Security patches.
+- Option to whitelist external images. Security-related backport of [PR #4793](https://github.com/PHPOffice/PhpSpreadsheet/pull/4793)
+
+## 2026-01-10 - 2.4.3
+
+### Changed
+
+- Evaluation of WEBSERVICE no longer requires external client, but will use oldCalculatedValue unless the request is for a domain in a user-supplied whitelist. Security-related backport of [PR #4751](https://github.com/PHPOffice/PhpSpreadsheet/pull/4751)
+
+### Deprecated
+
+- Settings methods setHttpClient, unsetHttpClient, getHttpClient, and getRequestFactory are no longer used. No replacement.
+
+### Fixed
+
+- Changes to WEBSERVICE. Backport of [PR #4751](https://github.com/PHPOffice/PhpSpreadsheet/pull/4751)
+
+## 2025-11-24 - 2.4.2
+
+### Added
+
+- Formal support for Php8.5. This is the last version of Php which can be used with this branch.
+
+### Fixed
+
+ - Php8.5 deprecates use of null as array index. [PR #4635](https://github.com/PHPOffice/PhpSpreadsheet/pull/4635)
+
 ## 2025-09-03 - 2.4.1
 
 ### Added

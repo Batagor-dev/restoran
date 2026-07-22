@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MenuGroup;
+use App\DataTables\MenuGroupDataTable;
 use App\Http\Requests\StoreMenuGroupRequest;
 use App\Http\Requests\UpdateMenuGroupRequest;
-use App\DataTables\MenuGroupDataTable;
+use App\Models\MenuGroup;
+use Illuminate\Http\Response;
 
 class MenuGroupController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(MenuGroupDataTable $dataTable)
     {
@@ -22,20 +23,20 @@ class MenuGroupController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
         $this->data['menugroups'] = MenuGroup::all();
-        $this->data['action'] = "/menugroup";
+        $this->data['action'] = '/menugroup';
+
         return view('menugroup.form', $this->data);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreMenuGroupRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(StoreMenuGroupRequest $request)
     {
@@ -47,23 +48,21 @@ class MenuGroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\MenuGroup  $menugroup
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit(MenuGroup $menugroup)
     {
         $this->data['menugroups'] = MenuGroup::all();
         $this->data['menugroup_data'] = $menugroup;
-        $this->data['action'] = "/menugroup/".$menugroup->uuid;
+        $this->data['action'] = '/menugroup/'.$menugroup->uuid;
+
         return view('menugroup.form', $this->data);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateMenuGroupRequest  $request
-     * @param  \App\Models\MenuGroup  $menugroup
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(UpdateMenuGroupRequest $request, MenuGroup $menugroup)
     {
@@ -75,12 +74,12 @@ class MenuGroupController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\MenuGroup  $menugroup
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(MenuGroup $menugroup)
     {
         $menugroup->delete();
+
         return redirect('/menugroup')->with('success', 'Menu group has been deleted!');
     }
 }

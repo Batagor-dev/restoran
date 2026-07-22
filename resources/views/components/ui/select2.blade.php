@@ -60,7 +60,6 @@
                 <template x-if="!multiple && selected.length > 0 && selected[0] !== ''">
                     <div class="flex items-center justify-between w-full min-w-0">
                         <span class="text-slate-900 truncate" x-text="getLabel(selected[0])"></span>
-                        <button type="button" @click.stop="clearSelection()" class="text-slate-400 hover:text-slate-600 font-satoshi-medium ml-2 text-sm leading-none p-1 rounded-md hover:bg-slate-200/50 flex-shrink-0" title="Clear">&times;</button>
                     </div>
                 </template>
                 <template x-if="!multiple && selected.length > 0 && selected[0] === ''">
@@ -135,6 +134,11 @@
                 {{ $errors->first($name) }}
             </span>
         @endif
+        
+        <!-- Hidden Slot Container for parsing manual options -->
+        <div style="display: none;" x-ref="slotContainer">
+            {{ $slot ?? '' }}
+        </div>
     </div>
 </div>
 
@@ -147,6 +151,28 @@
             isOpen: false,
             search: '',
             selected: (Array.isArray(config.selected) ? config.selected : (config.selected ? [config.selected] : [])).map(v => String(v).trim()).filter(v => v !== '' && v !== 'null' && v !== 'undefined'),
+
+            init() {
+                if (this.options.length === 0 && this.$refs.slotContainer) {
+                    const optionElements = this.$refs.slotContainer.querySelectorAll('option');
+                    const parsedOptions = [];
+                    optionElements.forEach(el => {
+                        parsedOptions.push({
+                            value: el.getAttribute('value') || '',
+                            label: el.textContent.trim()
+                        });
+                    });
+                    this.options = parsedOptions;
+                }
+
+                this.$watch('selected', (value) => {
+                    this.$el.dispatchEvent(new CustomEvent('select2-change', {
+                        detail: value,
+                        bubbles: true
+                    }));
+                    this.$el.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            },
 
             toggleDropdown() { this.isOpen = !this.isOpen; if(this.isOpen) this.search = ''; },
             closeDropdown() { this.isOpen = false; },
