@@ -16,7 +16,6 @@ class OutletController extends Controller
      */
     public function index(OutletDataTable $dataTable)
     {
-        abort_if(Gate::denies('Outlet Access'), 403, 'Unauthorized.');
 
         return $dataTable->render('outlets.index');
     }
@@ -26,7 +25,6 @@ class OutletController extends Controller
      */
     public function create()
     {
-        abort_if(Gate::denies('Outlet Create'), 403, 'Unauthorized.');
         $this->data['action'] = '/outlet';
 
         return view('outlets.form', $this->data);
@@ -37,8 +35,6 @@ class OutletController extends Controller
      */
     public function store(StoreOutletRequest $request)
     {
-        abort_if(Gate::denies('Outlet Create'), 403, 'Unauthorized.');
-
         $data = $request->validated();
         $data['status'] = $request->has('status') ? (bool) $request->status : true;
 
@@ -52,7 +48,6 @@ class OutletController extends Controller
      */
     public function edit(Outlet $outlet)
     {
-        abort_if(Gate::denies('Outlet Update'), 403, 'Unauthorized.');
         $this->data['outlet_data'] = $outlet;
         $this->data['action'] = '/outlet/'.$outlet->uuid;
 
@@ -64,7 +59,6 @@ class OutletController extends Controller
      */
     public function update(UpdateOutletRequest $request, Outlet $outlet)
     {
-        abort_if(Gate::denies('Outlet Update'), 403, 'Unauthorized.');
 
         $data = $request->validated();
         $data['status'] = $request->has('status') ? (bool) $request->status : false;
@@ -79,7 +73,6 @@ class OutletController extends Controller
      */
     public function destroy(Outlet $outlet)
     {
-        abort_if(Gate::denies('Outlet Delete'), 403, 'Unauthorized.');
 
         $outlet->delete();
 
