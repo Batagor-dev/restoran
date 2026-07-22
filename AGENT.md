@@ -1,102 +1,394 @@
-# AGENT.md — Redesign Admin Panel CMS
+# AGENTS.md
 
-## 1. Ringkasan Project
+# Project Overview
 
-Redesign total tampilan **admin panel (backend)** dari sebuah CMS. Bagian auth (login/register) sudah dibuat sebelumnya dan **tidak diubah** — fokus redesign ada di layout dashboard/admin setelah user login.
+Project Name:
+POS CMS Multi Outlet
 
-Prinsip utama pengerjaan:
+Stack:
+- Laravel 11
+- PostgreSQL
+- TailwindCSS
+- AlpineJS
+- Spatie Permission
+- Laravel Fortify (Auth)
+- Laravel Socialite (OAuth)
+- Yajra Laravel DataTables
+- Diglactic Laravel Breadcrumbs
+- Spatie Laravel Sluggable
+- Intervention Image v3
+- Laravel Pint (Linter)
 
-- **Cek kode/struktur lama dulu** sebelum menambah file baru — jangan duplikat komponen yang fungsinya sudah ada.
-- **Clean code & efisien** — hindari class Tailwind yang berulang-ulang ditulis manual di banyak file.
-- **Reusable component** — apapun yang muncul di lebih dari 1 halaman (button, card, table, badge, dll) WAJIB jadi Blade Component, bukan copy-paste.
+Architecture:
+Modular Monolith
 
-## 2. Tech Stack
+---
 
-| Layer              | Tools                                                                                                                          |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| Backend            | Laravel 11                                                                                                                     |
-| Styling            | Tailwind CSS v4 (`@tailwindcss/vite`, CSS-first config via `@theme`)                                                           |
-| Icon               | Remix Icon (`remixicon` — pakai class `ri-*`)                                                                                  |
-| Komponen           | Blade Components (`x-component`)                                                                                               |
-| Data Table         | Yajra Laravel DataTables + DataTables.js           |
-| Form Enhancement   | Select2 (`select2` — searchable select, multi-select, tagging)                                                                 |
-| Alert & Dialog     | SweetAlert2 (`sweetalert2` — alert, konfirmasi, toast notification)                                                            |
-| Chart (Opsional)   | ApexCharts — direkomendasikan karena ringan & gampang di-theme pakai CSS variable, cocok sama pendekatan CSS-first Tailwind v4 |
-| JavaScript         | Vanilla JavaScript (ES6+)                                                                                                      |
-| Build Tool         | Vite                                                                                                                           |
+# Goal
 
-> **Catatan Tailwind v4:** Konfigurasi warna, font, dan design token dilakukan lewat `@theme` di file CSS utama (bukan lagi `tailwind.config.js` untuk sebagian besar kasus). Sesuaikan bagian ini kalau project kamu masih memakai konfigurasi Tailwind versi sebelumnya.
+Membangun sistem POS + CMS Multi Outlet untuk bisnis F&B.
 
-## 3. Struktur Folder yang Disarankan
+Sistem harus scalable agar dapat digunakan oleh:
+
+- Single Outlet
+- Multi Outlet
+- Franchise
+- Enterprise
+
+Semua fitur baru wajib mempertimbangkan konsep Multi Outlet.
+
+---
+
+# Multi Outlet Concept
+
+Project menggunakan Single Database Multi Tenant.
+
+Bukan satu database per outlet.
+
+Semua data operasional dipisahkan menggunakan:
 
 ```
-resources/
-  views/
-    layouts/
-      backend/
-        main.blade.php          # layout utama admin (sidebar+header+body+footer+breadcumrd)
-    components/
-      layout/
-        admin/
-            sidebar.blade.php
-            header.blade.php
-            footer.blade.php
-            breadcrumb.blade.php
-            children.blade.php     # recursive helper untuk menu nested
-      ui/
-        button.blade.php
-        google-button.blade.php
-        input.blade.php
-        password.blade.php
-    dashboard/
-      index.blade.php
-    auth/
-      ...halaman auth ada di sini
+
+outlet_id
+
 ```
 
-> Catatan: struktur ini sejajar dengan folder view yang sudah ada. `layouts/backend/main.blade.php` tetap jadi wrapper admin, sementara potongan layout disimpan di `components/layout/`.
+Setiap query wajib menggunakan outlet_id kecuali data global.
 
-## 4. Scope Pengerjaan
+---
 
-### 4.1 Layout Backend (Admin Panel)
+# Hierarchy
 
-- [ ] `layouts/backend/main.blade.php` — Layout utama Admin Panel (Sidebar, Header, Breadcrumb, Content, Footer)
-- [ ] `x-layout.admin.sidebar` — Sidebar navigasi, mendukung active state dan submenu (collapsible jika diperlukan)
-- [ ] `x-layout.admin.header` — Header / Topbar (Search, Notification, Profile Dropdown)
-- [ ] `x-layout.admin.breadcrumb` — Breadcrumb dinamis, menerima prop `items`
+```
 
-      [
-          ['label' => 'Dashboard', 'url' => route('dashboard')],
-          ['label' => 'User', 'url' => route('users.index')],
-          ['label' => 'Create', 'url' => null],
-      ]
+Company
+│
+├── Outlet
+│ ├── Employee
+│ ├── Stock
+│ ├── Transaction
+│ ├── Expense
+│ ├── Cashier
+│ └── Printer
 
-- [ ] `x-layout.admin.children`
-  - Bertugas merender menu anak (`children`) secara rekursif.
-  - Digunakan oleh `x-layout.admin.sidebar`.
-  - Mendukung nested menu tanpa batas level.
-  - Mengikuti permission (`@can`) dan active state.
-- [ ] `x-layout.admin.footer` — Footer Admin (Copyright, Versi Aplikasi)
+```
 
+---
 
-### 4.2 Chart (Opsional)
+# Authentication
 
-- [ ] `x-admin.chart` — wrapper ApexCharts, terima props `type` (line/bar/donut) dan `data` (array/JSON) supaya bisa dipakai ulang di halaman manapun tanpa nulis ulang script inisialisasi
+User login menggunakan email.
 
-## 5. Aturan Kerja untuk AI/Developer
+Setelah login user memiliki:
 
-1. **Selalu cek dulu** apakah komponen serupa sudah ada di `resources/views/components/` sebelum bikin baru.
-2. Semua styling pakai **utility class Tailwind v4** langsung di Blade — hindari inline `<style>` kecuali benar-benar perlu.
-3. Icon pakai Remix Icon: `<i class="ri-dashboard-line"></i>` — jangan campur dengan icon library lain.
-4. Props Blade Component pakai `@props([...])` dengan default value yang jelas.
-5. Jangan sentuh/ubah logic auth yang sudah ada — redesign murni di sisi tampilan admin panel setelah login.
-6. Penamaan file & komponen: `kebab-case`, dikelompokkan per folder (`admin.*` untuk layout/UI, `forms.*` untuk elemen form).
-7. Konsisten warna & spacing: definisikan token warna sekali di `@theme` (CSS), semua komponen pakai token itu — jangan hex code lepas di tiap file.
+```
 
-## 6. Belum Diputuskan / Perlu Info Tambahan
+User
+Role
+Permission
+Accessible Outlets
 
-- Isi kode auth & layout lama belum di-review langsung — sebaiknya ditempel/upload supaya konvensi (penamaan, struktur folder existing) bisa disamakan, bukan dibuat dari asumsi.
-- Skema warna/branding admin panel belum ditentukan.
+```
 
-## Note
-Gunakan bahasa yang mudah di pahami dan pakai lah bahasa indonesai pada saat berinteraksi
+User dapat memiliki lebih dari satu outlet.
+
+Contoh:
+
+```
+
+User A
+├── Outlet Bandung
+└── Outlet Jakarta
+
+```
+
+Super Admin memiliki akses ke seluruh outlet.
+
+---
+
+# Authorization
+
+Gunakan Role Based Access Control.
+
+Role contoh:
+
+- Super Admin
+- Owner
+- Manager
+- Cashier
+- Kitchen
+- Waiter
+
+Permission hanya mengatur:
+
+Apa yang boleh dilakukan.
+
+Contoh:
+
+```
+
+create transaction
+update product
+delete outlet
+view report
+
+```
+
+Sedangkan outlet menentukan:
+
+Data mana yang boleh diakses.
+
+---
+
+# Data Scope
+
+Semua query harus mengikuti outlet aktif.
+
+Contoh:
+
+```
+
+Transaction::where('outlet_id', auth()->user()->current_outlet_id);
+
+```
+
+Jangan pernah mengambil seluruh data tanpa filter outlet kecuali Super Admin.
+
+---
+
+# Global Tables
+
+Tidak memiliki outlet_id.
+
+Contoh:
+
+- companies
+- roles
+- permissions
+- users
+- categories
+- products
+- taxes
+- units
+
+---
+
+# Outlet Tables
+
+Harus memiliki outlet_id.
+
+Contoh:
+
+- stocks
+- transactions
+- transaction_items
+- expenses
+- shifts
+- printers
+- employees
+- cash_drawers
+
+---
+
+# Product Strategy
+
+Product bersifat global.
+
+Harga dan stok dapat berbeda pada setiap outlet.
+
+Gunakan tabel:
+
+```
+
+product_outlets
+
+id
+product_id
+outlet_id
+price
+stock
+minimum_stock
+status
+
+```
+
+Jangan menyimpan stock langsung pada tabel products.
+
+---
+
+# User Outlet Relation
+
+Gunakan many-to-many.
+
+```
+
+users
+
+id
+name
+email
+
+```
+
+```
+
+outlets
+
+id
+company_id
+name
+
+```
+
+```
+
+outlet_user
+
+id
+user_id
+outlet_id
+role_id
+
+```
+
+---
+
+# Coding Rules
+
+- Gunakan Service Layer.
+- Jangan letakkan business logic di Controller.
+- Gunakan Repository bila query kompleks.
+- Validasi menggunakan Form Request.
+- Gunakan Policy untuk Authorization.
+- Hindari Query Builder di Blade.
+- Hindari N+1 Query.
+
+---
+
+# Developer Guide & Client Code Patterns
+
+Untuk memudahkan pemahaman dan pengembangan kode, ikuti standar / antarmuka "Client Code" berikut:
+
+### 1. Models & UUID
+Setiap model utama wajib memiliki kolom `id` (primary key auto-increment internal) dan `uuid` (untuk public exposure / url).
+- Gunakan trait `App\Models\Traits\HasUuid` untuk generate UUID otomatis saat record dibuat.
+- Override `getRouteKeyName` untuk binding route menggunakan `uuid`.
+- Gunakan SoftDeletes jika model tersebut memerlukan pengamanan data dari penghapusan permanen.
+```php
+use App\Models\Traits\HasUuid;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Menu extends Model {
+    use HasUuid, SoftDeletes;
+    
+    public function getRouteKeyName(): string {
+        return 'uuid';
+    }
+}
+```
+
+### 2. Yajra DataTables (Server-side Table)
+Untuk list data yang kompleks, gunakan Yajra DataTables dengan layout custom Tailwind + Remix Icons.
+- Definisikan class DataTable di `app/DataTables/` (contoh: `MenuDataTable.php`).
+- Atur CSS styling tabel di method `html()` menggunakan class Tailwind agar seragam dengan UI yang ada.
+- Gunakan controller untuk merender class DataTable tersebut:
+```php
+public function index(MenuDataTable $dataTable) {
+    return $dataTable->render('menu.index');
+}
+```
+
+### 3. Controller & Request Validation
+- Pastikan controller bersih dari logic bisnis yang berat.
+- Gunakan Form Request khusus untuk validasi data input (contoh: `StoreMenuRequest`).
+- Kirim data ke view menggunakan structured array `$this->data`.
+
+### 4. Settings System Helper
+Untuk mengakses/menyimpan konfigurasi aplikasi global:
+- Gunakan helper `settings()` yang mengembalikan array metadata.
+- Atau panggil static method pada model `Setting`:
+  - `Setting::getValue('key', $default)` (mendukung deserialisasi otomatis jika bertipe array/JSON).
+  - `Setting::setValue(['key1' => 'val1', 'key2' => 'val2'])` (mendukung upsert dan auto-serialize).
+  - `Setting::deleteOldFile('key')` untuk membersihkan disk dari file lama jika di-overwrite.
+
+### 5. Breadcrumbs
+Aplikasi menggunakan `diglactic/laravel-breadcrumbs`. Setiap halaman/route baru wajib didaftarkan breadcrumb-nya di `routes/breadcrumbs.php` agar mempermudah navigasi user.
+
+### 6. Image Resizing & Compression
+- Untuk mengunggah gambar, gunakan `App\Services\ImageService` yang memanfaatkan `Intervention Image v3` untuk kompresi dan scale aspect-ratio secara otomatis guna menghemat penyimpanan dan mengoptimalkan load time.
+
+---
+
+# Naming Convention
+
+Gunakan bahasa Inggris.
+
+Contoh:
+
+Product
+
+Transaction
+
+Expense
+
+Outlet
+
+Employee
+
+Bukan:
+
+Barang
+
+Penjualan
+
+Kasir
+
+---
+
+# Migration Rule
+
+Seluruh tabel operasional wajib memiliki:
+
+```
+
+outlet_id
+
+```
+
+Foreign key wajib dibuat.
+
+Gunakan cascade sesuai kebutuhan.
+
+---
+
+# Future Features
+
+Project harus mudah dikembangkan menjadi:
+
+- Warehouse
+- Transfer Stock
+- Purchase Order
+- Kitchen Display System
+- QR Ordering
+- Loyalty Member
+- Membership
+- Delivery Integration
+- Accounting
+- Multi Company
+- API
+- Mobile App
+
+Jangan membuat desain yang menghambat fitur-fitur tersebut.
+
+---
+
+# AI Instruction
+
+Saat menghasilkan kode:
+
+- **Selalu pertimbangkan konsep Multi Outlet**: Gunakan scope `outlet_id` di query, database migration, dan policy.
+- **Jangan menghapus filter outlet**: Pertahankan filter outlet aktif untuk menjaga integritas data antar outlet.
+- **Gunakan Laravel Best Practice**: Terapkan Form Request, Service Layer, HasUuid, dan Clean Code.
+- **Ikuti struktur project yang sudah ada**: Konsisten dengan penulisan DataTables, Form Request, controller, dan route binding menggunakan UUID.
+- **Jangan membuat duplikasi logic**: Manfaatkan service, helper, dan helper-helper lain yang tersedia.
+- **Prioritaskan scalability dibanding shortcut**: Pastikan arsitektur modular monolith tetap terjaga kebersihannya.
