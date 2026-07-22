@@ -30,6 +30,7 @@
         $groupData[] = [
             'name'  => $grp->name,
             'items' => $items,
+            'menu_group_names' => $grp->menuGroups->pluck('name')->implode(', '),
         ];
     }
 @endphp
@@ -113,7 +114,12 @@
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-slate-200 transition-colors">
                                 <i class="ri-folder-3-line text-slate-500"></i>
                             </div>
-                            <h6 class="text-sm font-satoshi-bold text-slate-700 uppercase tracking-wide group-hover:text-slate-900 transition-colors">{{ $group['name'] }}</h6>
+                            <h6 class="text-sm font-satoshi-bold text-slate-700 uppercase tracking-wide group-hover:text-slate-900 transition-colors">
+                                {{ $group['name'] }}
+                                @if(!empty($group['menu_group_names']))
+                                    <span class="text-xs font-satoshi-medium text-slate-400 normal-case ml-2">(Menu Group: {{ $group['menu_group_names'] }})</span>
+                                @endif
+                            </h6>
                             <i class="text-slate-400 transition-transform duration-200"
                                :class="open ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
                         </button>

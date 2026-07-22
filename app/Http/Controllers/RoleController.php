@@ -55,7 +55,7 @@ class RoleController extends Controller
     public function show(Role $role)
     {
         $this->data['action'] = '/role/showaction/'.$role->uuid;
-        $this->data['permission_groups'] = PermissionGroup::with('permissions')->get(); // eager-load
+        $this->data['permission_groups'] = PermissionGroup::with(['permissions', 'menuGroups'])->get(); // eager-load
         $this->data['permissions'] = Permission::whereNull('permission_group_id')->get();
         $this->data['role'] = $role->load('permissions'); // hak akses yg sudah dimiliki
 

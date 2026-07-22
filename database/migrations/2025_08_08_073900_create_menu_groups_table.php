@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('menu_groups', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
+            $table->foreignId('permission_group_id')->nullable()->unsigned();
             $table->string('name', 70);
             $table->tinyInteger('sort')->default(1);
             $table->boolean('status')->default(true);

@@ -12,12 +12,17 @@ class MenuGroup extends Model
     use HasFactory, HasUuid, SoftDeletes;
 
     protected $fillable = [
-        'name', 'sort', 'status',
+        'name', 'sort', 'status', 'permission_group_id',
     ];
 
     public function menus()
     {
         return $this->hasMany(Menu::class, 'menu_group_id')->orderBy('sort');
+    }
+
+    public function permissionGroup()
+    {
+        return $this->belongsTo(PermissionGroup::class, 'permission_group_id');
     }
 
     public function getRouteKeyName()

@@ -27,6 +27,7 @@ class UpdateMenuGroupRequest extends FormRequest
             'name' => 'required|string|max:70',
             'sort' => 'required|integer',
             'status' => 'required|in:0,1',
+            'permission_group_id' => 'nullable|exists:permission_groups,id',
         ];
     }
 }

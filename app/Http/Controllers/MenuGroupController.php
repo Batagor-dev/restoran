@@ -6,6 +6,7 @@ use App\DataTables\MenuGroupDataTable;
 use App\Http\Requests\StoreMenuGroupRequest;
 use App\Http\Requests\UpdateMenuGroupRequest;
 use App\Models\MenuGroup;
+use App\Models\PermissionGroup;
 use Illuminate\Http\Response;
 
 class MenuGroupController extends Controller
@@ -28,6 +29,7 @@ class MenuGroupController extends Controller
     public function create()
     {
         $this->data['menugroups'] = MenuGroup::all();
+        $this->data['permission_groups'] = PermissionGroup::all();
         $this->data['action'] = '/menugroup';
 
         return view('menugroup.form', $this->data);
@@ -53,6 +55,7 @@ class MenuGroupController extends Controller
     public function edit(MenuGroup $menugroup)
     {
         $this->data['menugroups'] = MenuGroup::all();
+        $this->data['permission_groups'] = PermissionGroup::all();
         $this->data['menugroup_data'] = $menugroup;
         $this->data['action'] = '/menugroup/'.$menugroup->uuid;
 

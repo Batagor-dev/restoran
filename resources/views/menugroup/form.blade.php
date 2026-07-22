@@ -28,7 +28,7 @@
                 <div>
                     <h5 class="text-lg font-satoshi-bold text-slate-900 mb-4">{{ $sub_title }}</h5>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Group Name -->
                         <x-ui.input 
                             name="name" 
@@ -47,6 +47,15 @@
                             value="{{ old('sort', $menugroup_data->sort ?? '1') }}"
                             min="0"
                             required
+                        />
+
+                        <!-- Permission Group -->
+                        <x-ui.select2
+                            name="permission_group_id"
+                            label="Permission Group"
+                            placeholder="Select Permission Group..."
+                            :options="array_merge([['value' => '', 'label' => 'None']], $permission_groups->map(fn($pg) => ['value' => (string)$pg->id, 'label' => $pg->name])->toArray())"
+                            value="{{ old('permission_group_id', $menugroup_data->permission_group_id ?? '') }}"
                         />
                     </div>
 

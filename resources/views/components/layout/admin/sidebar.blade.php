@@ -34,23 +34,27 @@
         @if(isset($groupedMenus) && count($groupedMenus) > 0)
           @foreach($groupedMenus as $groupId => $groupItems)
             @php
-              $groupName = $groupItems->first()?->menuGroup?->name;
+              $menuGroup = $groupItems->first()?->menuGroup;
+              $groupName = $menuGroup?->name;
+              $groupPermission = $menuGroup && $menuGroup->permissionGroup ? ($menuGroup->permissionGroup->name . ' Access') : null;
             @endphp
-            @if($groupName)
-              <li class="pt-4 pb-1 px-3 text-xs font-satoshi-bold uppercase tracking-wider text-slate-400 group-[.sidebar-collapsed]:hidden truncate select-none">
-                {{ $groupName }}
-              </li>
-              <li class="hidden group-[.sidebar-collapsed]:block my-2 border-t border-slate-100"></li>
-            @endif
-            @foreach($groupItems->sortBy('sort') as $menu)
-              @php
-                  $permissionName = optional($menu->permissionGroup)->name . ' Access';
-              @endphp
+            @if(!$groupPermission || auth()->user()->can($groupPermission))
+              @if($groupName)
+                <li class="pt-4 pb-1 px-3 text-xs font-satoshi-bold uppercase tracking-wider text-slate-400 group-[.sidebar-collapsed]:hidden truncate select-none">
+                  {{ $groupName }}
+                </li>
+                <li class="hidden group-[.sidebar-collapsed]:block my-2 border-t border-slate-100"></li>
+              @endif
+              @foreach($groupItems->sortBy('sort') as $menu)
+                @php
+                    $permissionName = optional($menu->permissionGroup)->name . ' Access';
+                @endphp
 
-              @can($permissionName)
-                  @include('components.layout.admin.children', ['menu' => $menu])
-              @endcan
-            @endforeach
+                @can($permissionName)
+                    @include('components.layout.admin.children', ['menu' => $menu])
+                @endcan
+              @endforeach
+            @endif
           @endforeach
         @else
           @foreach($menus as $menu)

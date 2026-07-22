@@ -9,17 +9,19 @@ class MenuGroupSeeder extends Seeder
 {
     public function run()
     {
-        MenuGroup::firstOrCreate(
+        MenuGroup::updateOrCreate(
             ['name' => 'KONTEN'],
             [
+                'permission_group_id' => 10,
                 'sort' => 1,
                 'status' => 1,
             ]
         );
 
-        MenuGroup::firstOrCreate(
+        MenuGroup::updateOrCreate(
             ['name' => 'PENGATURAN'],
             [
+                'permission_group_id' => 8,
                 'sort' => 2,
                 'status' => 1,
             ]
