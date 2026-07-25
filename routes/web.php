@@ -8,6 +8,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MenuGroupController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\DiningTableController;
 use App\Http\Controllers\PermissionGroupController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\PromoController;
@@ -77,6 +78,10 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
 
     Route::resource('/promo', PromoController::class, ['parameters' => [
         'promo' => 'promo:uuid',
+    ]])->except('show');
+
+    Route::resource('/tables', DiningTableController::class, ['parameters' => [
+        'tables' => 'table:uuid',
     ]])->except('show');
 
     // Route::prefix('setting')->group(function () {

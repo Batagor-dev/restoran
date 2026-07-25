@@ -301,4 +301,27 @@ Breadcrumbs::for('promo.create', function (BreadcrumbTrail $trail) {
 
 // **************************** END PROMO ***************************
 
+// **************************** TABLES (MEJA) ***************************
+
+// Home > Tables
+Breadcrumbs::for('tables.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Management Meja', route('tables.index'));
+});
+
+// Home > Tables > [Update]
+Breadcrumbs::for('tables.edit', function (BreadcrumbTrail $trail, $table) {
+    $trail->parent('tables.index');
+    $trail->push('Update ['.$table->number_table.']', route('tables.edit', $table));
+});
+
+// Home > Tables > Create
+Breadcrumbs::for('tables.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('tables.index');
+    $trail->push('Create', route('tables.create'));
+});
+
+// **************************** END TABLES ***************************
+
+
 
