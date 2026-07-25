@@ -256,3 +256,26 @@ Breadcrumbs::for('outlet.edit', function (BreadcrumbTrail $trail, $outlet) {
 });
 
 // **************************** END OUTLET ***************************
+
+// **************************** PRODUCT CATEGORY ***************************
+
+// Home > Product Category
+Breadcrumbs::for('product_categories.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Product Category', route('product_categories.index'));
+});
+
+// Home > Product Category > [Update]
+Breadcrumbs::for('product_categories.edit', function (BreadcrumbTrail $trail, $productCategory) {
+    $trail->parent('product_categories.index');
+    $trail->push('Update ['.$productCategory->name.']', route('product_categories.edit', $productCategory));
+});
+
+// Home > Product Category > Create
+Breadcrumbs::for('product_categories.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('product_categories.index');
+    $trail->push('Create', route('product_categories.create'));
+});
+
+// **************************** END PRODUCT CATEGORY ***************************
+

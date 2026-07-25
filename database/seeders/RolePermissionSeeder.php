@@ -17,21 +17,23 @@ class RolePermissionSeeder extends Seeder
     public function run()
     {
         $permissiongroups = [
-            'User',
-            'Role',
-            'Permission Group',
-            'Permission',
-            'Menu',
-            'Article Category',
-            'Article',
-            'Setting',
-            'Outlet',
-            'Konten',
-            'Pengaturan',
+            'User',                // 1
+            'Role',                // 2
+            'Permission Group',    // 3
+            'Permission',          // 4
+            'Menu',                // 5
+            'Article Category',    // 6
+            'Article',             // 7
+            'Setting',             // 8
+            'Outlet',              // 9
+            'Konten',              // 10
+            'Pengaturan',          // 11
+            'Product Category',    // 12
+            'Produk',              // 13
         ];
 
         foreach ($permissiongroups as $permissiongroup) {
-            PermissionGroup::create([
+            PermissionGroup::firstOrCreate([
                 'name' => $permissiongroup,
             ]);
         }
@@ -80,31 +82,34 @@ class RolePermissionSeeder extends Seeder
             'Outlet Delete-9',
             'Konten Access-10',
             'Pengaturan Access-11',
-
+            'Product Category Access-12',
+            'Product Category Create-12',
+            'Product Category Update-12',
+            'Product Category Delete-12',
+            'Produk Access-13',
         ];
 
         foreach ($permissions as $permission) {
             $permission_array = explode('-', $permission);
-            Permission::create([
+            Permission::firstOrCreate([
                 'name' => $permission_array[0],
                 'permission_group_id' => $permission_array[1],
             ]);
         }
 
-        $superAdmin = Role::create([
+        $superAdmin = Role::firstOrCreate([
             'name' => 'Super Admin',
             'guard_name' => 'web',
         ]);
+        $superAdmin->syncPermissions(Permission::all());
 
-        $superAdmin->givePermissionTo(Permission::all());
-
-        $owner = Role::create([
+        $owner = Role::firstOrCreate([
             'name' => 'Owner',
             'guard_name' => 'web',
         ]);
-        $owner->givePermissionTo(Permission::all());
+        $owner->syncPermissions(Permission::all());
 
-        $employee = Role::create([
+        $employee = Role::firstOrCreate([
             'name' => 'Employee',
             'guard_name' => 'web',
         ]);
@@ -112,9 +117,12 @@ class RolePermissionSeeder extends Seeder
             'Article Access',
             'Article Create',
             'Article Update',
+            'Product Category Access',
+            'Product Category Create',
+            'Product Category Update',
         ]);
 
-        $role = Role::create([
+        $role = Role::firstOrCreate([
             'name' => 'User',
             'guard_name' => 'web',
         ]);

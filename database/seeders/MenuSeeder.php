@@ -10,17 +10,37 @@ class MenuSeeder extends Seeder
 {
     public function run()
     {
-        $kontenGroup = MenuGroup::where('name', 'KONTEN')->where('permission_group_id', 10)->first();
-        $pengaturanGroup = MenuGroup::where('name', 'PENGATURAN')->where('permission_group_id', 8)->first();
+        $produkGroup = MenuGroup::where('name', 'PRODUK')->first();
+        $kontenGroup = MenuGroup::where('name', 'KONTEN')->first();
+        $pengaturanGroup = MenuGroup::where('name', 'PENGATURAN')->first();
 
-        // === Menu 1: Artikel (Group: KONTEN) ===
+        // === Menu 1: Produk (Group: PRODUK) ===
+        $produk = Menu::create([
+            'menu_group_id' => $produkGroup?->id,
+            'nama_menu' => 'Produk',
+            'permission_group_id' => 13,
+            'icon' => 'ri-shopping-bag-3-line',
+            'status' => '1',
+            'sort' => '1',
+        ]);
+
+        Menu::create([
+            'menu_id' => $produk->id,
+            'nama_menu' => 'Kategori Produk',
+            'permission_group_id' => 12,
+            'href' => '/product_categories',
+            'status' => '1',
+            'sort' => '1',
+        ]);
+
+        // === Menu 2: Artikel (Group: KONTEN) ===
         $artikel = Menu::create([
             'menu_group_id' => $kontenGroup?->id,
             'nama_menu' => 'Artikel',
             'permission_group_id' => 7,
             'icon' => 'ri-article-line',
             'status' => '1',
-            'sort' => '1',
+            'sort' => '2',
         ]);
 
         Menu::create([
@@ -41,14 +61,14 @@ class MenuSeeder extends Seeder
             'sort' => '2',
         ]);
 
-        // === Menu 2: Setting (Group: PENGATURAN) ===
+        // === Menu 3: Setting (Group: PENGATURAN) ===
         $setting = Menu::create([
             'menu_group_id' => $pengaturanGroup?->id,
             'nama_menu' => 'Setting',
             'permission_group_id' => 8,
             'icon' => 'ri-settings-3-line',
             'status' => '1',
-            'sort' => '2',
+            'sort' => '3',
         ]);
 
         // Submenu User Management
@@ -133,6 +153,5 @@ class MenuSeeder extends Seeder
             'status' => '1',
             'sort' => '4',
         ]);
-
     }
 }

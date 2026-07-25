@@ -9,6 +9,7 @@ use App\Http\Controllers\MenuGroupController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PermissionGroupController;
+use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteController;
@@ -68,6 +69,10 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
     Route::resource('/article', ArticleController::class)->parameters([
         'article' => 'article:slug',
     ]);
+
+    Route::resource('/product_categories', ProductCategoryController::class, ['parameters' => [
+        'product_categories' => 'productCategory:uuid',
+    ]])->except('show');
 
     // Route::prefix('setting')->group(function () {
     //     Route::get('/',[App\Http\Controllers\SettingController::class, 'index'])->name('setting.index');
