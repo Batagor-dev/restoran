@@ -193,6 +193,7 @@
                 mode: '{{ in_array($type, ['multiple', 'range']) ? $type : 'single' }}',
                 inline: {{ $inline ? 'true' : 'false' }},
                 position: 'below',
+                time_24hr: true,
             };
 
             @if($humanFriendly)

@@ -33,6 +33,15 @@ class MenuSeeder extends Seeder
             'sort' => '1',
         ]);
 
+        Menu::create([
+            'menu_id' => $produk->id,
+            'nama_menu' => 'Promo',
+            'permission_group_id' => 14,
+            'href' => '/promo',
+            'status' => '1',
+            'sort' => '2',
+        ]);
+
         // === Menu 2: Artikel (Group: KONTEN) ===
         $artikel = Menu::create([
             'menu_group_id' => $kontenGroup?->id,

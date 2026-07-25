@@ -279,3 +279,26 @@ Breadcrumbs::for('product_categories.create', function (BreadcrumbTrail $trail) 
 
 // **************************** END PRODUCT CATEGORY ***************************
 
+// **************************** PROMO ***************************
+
+// Home > Promo
+Breadcrumbs::for('promo.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Promo', route('promo.index'));
+});
+
+// Home > Promo > [Update]
+Breadcrumbs::for('promo.edit', function (BreadcrumbTrail $trail, $promo) {
+    $trail->parent('promo.index');
+    $trail->push('Update ['.$promo->name.']', route('promo.edit', $promo));
+});
+
+// Home > Promo > Create
+Breadcrumbs::for('promo.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('promo.index');
+    $trail->push('Create', route('promo.create'));
+});
+
+// **************************** END PROMO ***************************
+
+

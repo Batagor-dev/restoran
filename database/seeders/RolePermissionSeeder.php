@@ -30,6 +30,7 @@ class RolePermissionSeeder extends Seeder
             'Pengaturan',          // 11
             'Product Category',    // 12
             'Produk',              // 13
+            'Promo',               // 14
         ];
 
         foreach ($permissiongroups as $permissiongroup) {
@@ -87,6 +88,10 @@ class RolePermissionSeeder extends Seeder
             'Product Category Update-12',
             'Product Category Delete-12',
             'Produk Access-13',
+            'Promo Access-14',
+            'Promo Create-14',
+            'Promo Update-14',
+            'Promo Delete-14',
         ];
 
         foreach ($permissions as $permission) {
@@ -120,6 +125,9 @@ class RolePermissionSeeder extends Seeder
             'Product Category Access',
             'Product Category Create',
             'Product Category Update',
+            'Promo Access',
+            'Promo Create',
+            'Promo Update',
         ]);
 
         $role = Role::firstOrCreate([

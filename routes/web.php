@@ -10,6 +10,7 @@ use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PermissionGroupController;
 use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\PromoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteController;
@@ -72,6 +73,10 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
 
     Route::resource('/product_categories', ProductCategoryController::class, ['parameters' => [
         'product_categories' => 'productCategory:uuid',
+    ]])->except('show');
+
+    Route::resource('/promo', PromoController::class, ['parameters' => [
+        'promo' => 'promo:uuid',
     ]])->except('show');
 
     // Route::prefix('setting')->group(function () {
