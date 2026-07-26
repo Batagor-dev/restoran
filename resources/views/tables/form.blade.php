@@ -62,13 +62,12 @@
                         />
 
                         <!-- Is Active -->
-                        <div class="pt-2">
-                            <x-ui.checkbox 
+                        <div>
+                            <x-ui.switch 
                                 name="is_active" 
                                 label="Active Status" 
                                 :checked="old('is_active', $table_data->is_active ?? true)"
                                 value="1"
-                                :reverse="true"
                             />
                         </div>
                     </div>

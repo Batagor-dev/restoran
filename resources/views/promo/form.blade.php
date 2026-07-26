@@ -154,13 +154,12 @@
                         </div>
 
                         <!-- Is Active -->
-                        <div class="md:col-span-2 pt-2">
-                            <x-ui.checkbox 
+                        <div class="md:col-span-2">
+                            <x-ui.switch 
                                 name="is_active" 
                                 label="Active Status" 
                                 :checked="old('is_active', $promo_data->is_active ?? true)"
                                 value="1"
-                                :reverse="true"
                             />
                         </div>
                     </div>

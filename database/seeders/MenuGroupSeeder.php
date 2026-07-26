@@ -10,7 +10,7 @@ class MenuGroupSeeder extends Seeder
     public function run()
     {
         MenuGroup::updateOrCreate(
-            ['name' => 'PRODUK'],
+            ['name' => 'Management Product'],
             [
                 'permission_group_id' => 13,
                 'sort' => 1,
@@ -19,7 +19,7 @@ class MenuGroupSeeder extends Seeder
         );
 
         MenuGroup::updateOrCreate(
-            ['name' => 'MEJA'],
+            ['name' => 'Management Table'],
             [
                 'permission_group_id' => 15,
                 'sort' => 2,
@@ -28,7 +28,7 @@ class MenuGroupSeeder extends Seeder
         );
 
         MenuGroup::updateOrCreate(
-            ['name' => 'KONTEN'],
+            ['name' => 'Management Content'],
             [
                 'permission_group_id' => 10,
                 'sort' => 3,
@@ -37,7 +37,7 @@ class MenuGroupSeeder extends Seeder
         );
 
         MenuGroup::updateOrCreate(
-            ['name' => 'PENGATURAN'],
+            ['name' => 'Setting'],
             [
                 'permission_group_id' => 8,
                 'sort' => 4,

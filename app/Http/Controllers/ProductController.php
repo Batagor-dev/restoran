@@ -7,6 +7,8 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Services\ImageService;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -23,57 +25,61 @@ class ProductController extends Controller
         return view('products.form', $this->data);
     }
 
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request, ImageService $imageService)
     {
-        $data = $request->validated();
-        $data['is_active'] = $request->has('is_active') ? true : false;
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active');
 
-        // Handle image upload jika ada
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $file = $request->file('image');
+            $compressed = $imageService->compress($file);
+            $filename = 'product-images/'.uniqid().'.jpg';
+            Storage::disk('public')->put($filename, $compressed);
+            $data['image'] = $filename;
         }
 
         Product::create($data);
 
-        return redirect()
-            ->route('products.index')
-            ->with('success', 'Produk berhasil dibuat!');
+        return redirect('products')->with('success', 'New product has been created!');
     }
 
     public function edit(Product $product)
     {
         $this->data['product'] = $product;
+        $this->data['product_data'] = $product;
         $this->data['categories'] = ProductCategory::where('is_active', true)->get();
         $this->data['action'] = route('products.update', $product->uuid);
 
         return view('products.form', $this->data);
     }
 
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product, ImageService $imageService)
     {
-        $data = $request->validated();
-        $data['is_active'] = $request->has('is_active') ? true : false;
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('image')) {
-            // Hapus image lama jika ada
-            if ($product->image && file_exists(storage_path('app/public/' . $product->image))) {
-                unlink(storage_path('app/public/' . $product->image));
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->storage('products', 'public');
+
+            $file = $request->file('image');
+            $compressed = $imageService->compress($file);
+            $filename = 'product-images/'.uniqid().'.jpg';
+            Storage::disk('public')->put($filename, $compressed);
+            $data['image'] = $filename;
         }
 
         $product->update($data);
 
-        return redirect()
-            ->route('products.index')
-            ->with('success', 'Produk berhasil diupdate!');
+        return redirect('products')->with('success', 'Product has been updated!');
     }
 
     public function destroy(Product $product)
     {
         // Hapus image jika ada
-        if ($product->image && file_exists(storage_path('app/public/' . $product->image))) {
-            unlink(storage_path('app/public/' . $product->image));
+        if ($product->image && Storage::disk('public')->exists($product->image)) {
+            Storage::disk('public')->delete($product->image);
         }
 
         $product->delete();

@@ -29,7 +29,7 @@ class RolePermissionSeeder extends Seeder
             'Konten',              // 10
             'Pengaturan',          // 11
             'Product Category',    // 12
-            'Produk',              // 13
+            'Product',              // 13
             'Promo',               // 14
             'Table',               // 15
         ];
@@ -88,10 +88,10 @@ class RolePermissionSeeder extends Seeder
             'Product Category Create-12',
             'Product Category Update-12',
             'Product Category Delete-12',
-            'Produk Access-13',
-            'Produk Create-13',
-            'Produk Update-13',
-            'Produk Delete-13',
+            'Product Access-13',
+            'Product Create-13',
+            'Product Update-13',
+            'Product Delete-13',
             'Promo Access-14',
             'Promo Create-14',
             'Promo Update-14',

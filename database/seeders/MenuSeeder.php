@@ -10,10 +10,10 @@ class MenuSeeder extends Seeder
 {
     public function run()
     {
-        $produkGroup = MenuGroup::where('name', 'PRODUK')->first();
-        $mejaGroup = MenuGroup::where('name', 'MEJA')->first();
-        $kontenGroup = MenuGroup::where('name', 'KONTEN')->first();
-        $pengaturanGroup = MenuGroup::where('name', 'PENGATURAN')->first();
+        $produkGroup = MenuGroup::where('name', 'Management Product')->first();
+        $mejaGroup = MenuGroup::where('name', 'Management Table')->first();
+        $kontenGroup = MenuGroup::where('name', 'Management Content')->first();
+        $pengaturanGroup = MenuGroup::where('name', 'Setting')->first();
 
         // === Menu 1: Produk (Group: PRODUK) ===
         $produk = Menu::create([
@@ -23,6 +23,15 @@ class MenuSeeder extends Seeder
             'icon' => 'ri-shopping-bag-3-line',
             'status' => '1',
             'sort' => '1',
+        ]);
+
+        $promo = Menu::create([
+            'menu_group_id' => $produkGroup?->id,
+            'nama_menu' => 'Promo',
+            'permission_group_id' => 14,
+            'icon' => 'ri-gift-line',
+            'status' => '1',
+            'sort' => '2',
         ]);
 
         Menu::create([
@@ -36,11 +45,20 @@ class MenuSeeder extends Seeder
 
         Menu::create([
             'menu_id' => $produk->id,
+            'nama_menu' => 'Produk',
+            'permission_group_id' => 13,
+            'href' => '/products',
+            'status' => '1',
+            'sort' => '2',
+        ]);
+
+        Menu::create([
+            'menu_id' => $promo->id,
             'nama_menu' => 'Promo',
             'permission_group_id' => 14,
             'href' => '/promo',
             'status' => '1',
-            'sort' => '2',
+            'sort' => '3',
         ]);
 
         // === Menu 2: Meja (Group: MEJA) ===

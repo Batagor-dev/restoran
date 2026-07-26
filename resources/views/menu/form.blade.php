@@ -102,13 +102,12 @@
                         />
                     </div>
 
-                    <!-- Status Switch / Checkbox -->
+                    <!-- Status Switch -->
                     <div class="mt-6">
-                        <label class="mb-2 block text-base font-satoshi-medium text-slate-700">Status</label>
                         <input type="hidden" name="status" value="0">
-                        <x-ui.checkbox 
+                        <x-ui.switch 
                             name="status" 
-                            label="Active" 
+                            label="Status" 
                             value="1"
                             :checked="old('status', $menu_data->status ?? true) ? true : false"
                         />

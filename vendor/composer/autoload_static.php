@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
+class ComposerStaticInit7978b7b9c1dcc5a819746674fd7b8cbd
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -256,8 +256,8 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'ZipStream\\' => 
         array (
@@ -265,12 +265,12 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         ),
         'Yajra\\DataTables\\' => 
         array (
-            0 => __DIR__ . '/..' . '/yajra/laravel-datatables-buttons/src',
-            1 => __DIR__ . '/..' . '/yajra/laravel-datatables-editor/src',
-            2 => __DIR__ . '/..' . '/yajra/laravel-datatables-export/src',
-            3 => __DIR__ . '/..' . '/yajra/laravel-datatables-fractal/src',
-            4 => __DIR__ . '/..' . '/yajra/laravel-datatables-html/src',
-            5 => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src',
+            0 => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src',
+            1 => __DIR__ . '/..' . '/yajra/laravel-datatables-fractal/src',
+            2 => __DIR__ . '/..' . '/yajra/laravel-datatables-html/src',
+            3 => __DIR__ . '/..' . '/yajra/laravel-datatables-buttons/src',
+            4 => __DIR__ . '/..' . '/yajra/laravel-datatables-export/src',
+            5 => __DIR__ . '/..' . '/yajra/laravel-datatables-editor/src',
         ),
         'Whoops\\' => 
         array (
@@ -451,8 +451,8 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         ),
         'Spatie\\Ignition\\' => 
         array (
-            0 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/ignition',
-            1 => __DIR__ . '/..' . '/spatie/ignition/src',
+            0 => __DIR__ . '/..' . '/spatie/ignition/src',
+            1 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/ignition',
         ),
         'Spatie\\FlareClient\\' => 
         array (
@@ -488,8 +488,8 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -541,8 +541,8 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         ),
         'Nette\\' => 
         array (
-            0 => __DIR__ . '/..' . '/nette/utils/src',
-            1 => __DIR__ . '/..' . '/nette/schema/src',
+            0 => __DIR__ . '/..' . '/nette/schema/src',
+            1 => __DIR__ . '/..' . '/nette/utils/src',
         ),
         'Monolog\\' => 
         array (
@@ -562,8 +562,8 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri',
-            1 => __DIR__ . '/..' . '/league/uri-interfaces',
+            0 => __DIR__ . '/..' . '/league/uri-interfaces',
+            1 => __DIR__ . '/..' . '/league/uri',
         ),
         'League\\OAuth1\\Client\\' => 
         array (
@@ -780,11 +780,15 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         'App\\Actions\\Fortify\\UpdateUserProfileInformation' => __DIR__ . '/../..' . '/app/Actions/Fortify/UpdateUserProfileInformation.php',
         'App\\DataTables\\ArticleCategoryDataTable' => __DIR__ . '/../..' . '/app/DataTables/ArticleCategoryDataTable.php',
         'App\\DataTables\\ArticleDataTable' => __DIR__ . '/../..' . '/app/DataTables/ArticleDataTable.php',
+        'App\\DataTables\\DiningTableDataTable' => __DIR__ . '/../..' . '/app/DataTables/DiningTableDataTable.php',
         'App\\DataTables\\MenuDataTable' => __DIR__ . '/../..' . '/app/DataTables/MenuDataTable.php',
         'App\\DataTables\\MenuGroupDataTable' => __DIR__ . '/../..' . '/app/DataTables/MenuGroupDataTable.php',
         'App\\DataTables\\OutletDataTable' => __DIR__ . '/../..' . '/app/DataTables/OutletDataTable.php',
         'App\\DataTables\\PermissionDataTable' => __DIR__ . '/../..' . '/app/DataTables/PermissionDataTable.php',
         'App\\DataTables\\PermissionGroupDataTable' => __DIR__ . '/../..' . '/app/DataTables/PermissionGroupDataTable.php',
+        'App\\DataTables\\ProductCategoryDataTable' => __DIR__ . '/../..' . '/app/DataTables/ProductCategoryDataTable.php',
+        'App\\DataTables\\ProductDataTable' => __DIR__ . '/../..' . '/app/DataTables/ProductDataTable.php',
+        'App\\DataTables\\PromoDataTable' => __DIR__ . '/../..' . '/app/DataTables/PromoDataTable.php',
         'App\\DataTables\\RoleDataTable' => __DIR__ . '/../..' . '/app/DataTables/RoleDataTable.php',
         'App\\DataTables\\UserDataTable' => __DIR__ . '/../..' . '/app/DataTables/UserDataTable.php',
         'App\\Helpers\\MenuHelper' => __DIR__ . '/../..' . '/app/Helpers/MenuHelper.php',
@@ -793,11 +797,15 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         'App\\Http\\Controllers\\ArticleController' => __DIR__ . '/../..' . '/app/Http/Controllers/ArticleController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/DashboardController.php',
+        'App\\Http\\Controllers\\DiningTableController' => __DIR__ . '/../..' . '/app/Http/Controllers/DiningTableController.php',
         'App\\Http\\Controllers\\MenuController' => __DIR__ . '/../..' . '/app/Http/Controllers/MenuController.php',
         'App\\Http\\Controllers\\MenuGroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/MenuGroupController.php',
         'App\\Http\\Controllers\\OutletController' => __DIR__ . '/../..' . '/app/Http/Controllers/OutletController.php',
         'App\\Http\\Controllers\\PermissionController' => __DIR__ . '/../..' . '/app/Http/Controllers/PermissionController.php',
         'App\\Http\\Controllers\\PermissionGroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/PermissionGroupController.php',
+        'App\\Http\\Controllers\\ProductCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductCategoryController.php',
+        'App\\Http\\Controllers\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductController.php',
+        'App\\Http\\Controllers\\PromoController' => __DIR__ . '/../..' . '/app/Http/Controllers/PromoController.php',
         'App\\Http\\Controllers\\RoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoleController.php',
         'App\\Http\\Controllers\\SettingController' => __DIR__ . '/../..' . '/app/Http/Controllers/SettingController.php',
         'App\\Http\\Controllers\\SocialiteController' => __DIR__ . '/../..' . '/app/Http/Controllers/SocialiteController.php',
@@ -805,32 +813,44 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
         'App\\Http\\Middleware\\SetDefaultOutletMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/SetDefaultOutletMiddleware.php',
         'App\\Http\\Requests\\StoreArticleCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreArticleCategoryRequest.php',
         'App\\Http\\Requests\\StoreArticleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreArticleRequest.php',
+        'App\\Http\\Requests\\StoreDiningTableRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreDiningTableRequest.php',
         'App\\Http\\Requests\\StoreMenuGroupRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreMenuGroupRequest.php',
         'App\\Http\\Requests\\StoreMenuRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreMenuRequest.php',
         'App\\Http\\Requests\\StoreOutletRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreOutletRequest.php',
         'App\\Http\\Requests\\StorePermissionGroupRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StorePermissionGroupRequest.php',
         'App\\Http\\Requests\\StorePermissionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StorePermissionRequest.php',
+        'App\\Http\\Requests\\StoreProductCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreProductCategoryRequest.php',
+        'App\\Http\\Requests\\StoreProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreProductRequest.php',
+        'App\\Http\\Requests\\StorePromoRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StorePromoRequest.php',
         'App\\Http\\Requests\\StoreRoleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreRoleRequest.php',
         'App\\Http\\Requests\\StoreSettingRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreSettingRequest.php',
         'App\\Http\\Requests\\StoreUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreUserRequest.php',
         'App\\Http\\Requests\\UpdateAcountRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateAcountRequest.php',
         'App\\Http\\Requests\\UpdateArticleCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateArticleCategoryRequest.php',
         'App\\Http\\Requests\\UpdateArticleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateArticleRequest.php',
+        'App\\Http\\Requests\\UpdateDiningTableRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateDiningTableRequest.php',
         'App\\Http\\Requests\\UpdateMenuGroupRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateMenuGroupRequest.php',
         'App\\Http\\Requests\\UpdateMenuRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateMenuRequest.php',
         'App\\Http\\Requests\\UpdateOutletRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateOutletRequest.php',
         'App\\Http\\Requests\\UpdatePasswordRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdatePasswordRequest.php',
         'App\\Http\\Requests\\UpdatePermissionGroupRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdatePermissionGroupRequest.php',
         'App\\Http\\Requests\\UpdatePermissionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdatePermissionRequest.php',
+        'App\\Http\\Requests\\UpdateProductCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateProductCategoryRequest.php',
+        'App\\Http\\Requests\\UpdateProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateProductRequest.php',
+        'App\\Http\\Requests\\UpdatePromoRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdatePromoRequest.php',
         'App\\Http\\Requests\\UpdateRoleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateRoleRequest.php',
         'App\\Http\\Requests\\UpdateUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateUserRequest.php',
         'App\\Models\\Article' => __DIR__ . '/../..' . '/app/Models/Article.php',
         'App\\Models\\ArticleCategory' => __DIR__ . '/../..' . '/app/Models/ArticleCategory.php',
+        'App\\Models\\DiningTable' => __DIR__ . '/../..' . '/app/Models/DiningTable.php',
         'App\\Models\\Menu' => __DIR__ . '/../..' . '/app/Models/Menu.php',
         'App\\Models\\MenuGroup' => __DIR__ . '/../..' . '/app/Models/MenuGroup.php',
         'App\\Models\\Outlet' => __DIR__ . '/../..' . '/app/Models/Outlet.php',
         'App\\Models\\Permission' => __DIR__ . '/../..' . '/app/Models/Permission.php',
         'App\\Models\\PermissionGroup' => __DIR__ . '/../..' . '/app/Models/PermissionGroup.php',
+        'App\\Models\\Product' => __DIR__ . '/../..' . '/app/Models/Product.php',
+        'App\\Models\\ProductCategory' => __DIR__ . '/../..' . '/app/Models/ProductCategory.php',
+        'App\\Models\\Promo' => __DIR__ . '/../..' . '/app/Models/Promo.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Setting' => __DIR__ . '/../..' . '/app/Models/Setting.php',
         'App\\Models\\Traits\\BelongsToOutlet' => __DIR__ . '/../..' . '/app/Models/Traits/BelongsToOutlet.php',
@@ -10759,9 +10779,9 @@ class ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInite5fbbe6137dc77bcd5b6646b5dd75b52::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7978b7b9c1dcc5a819746674fd7b8cbd::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7978b7b9c1dcc5a819746674fd7b8cbd::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit7978b7b9c1dcc5a819746674fd7b8cbd::$classMap;
 
         }, null, ClassLoader::class);
     }

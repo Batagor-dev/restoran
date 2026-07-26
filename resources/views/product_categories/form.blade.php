@@ -1,75 +1,97 @@
 @php
-    $isEdit = isset($productCategory);
-    $title = $isEdit ? 'Edit Kategori Produk' : 'Tambah Kategori Produk';
+    $sub_title = ($breadcrumb = Breadcrumbs::current()) ? $breadcrumb->title : 'Product Category Form';
+
+    if (isset($product_category_data)) {
+        $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName(), $product_category_data);
+    } else {
+        $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName());
+    }
+    $breadcrumb_parent = $breadcrumbsData->where('title', '!=', $breadcrumb->title)->last();
 @endphp
 
 @extends('layouts.backend.main')
 
-@section('title', $title)
+@section('title', 'Product Category Form')
+@section('sub_title', $sub_title)
+
+@section('breadcrumb')
+    <x-layout.admin.breadcrumb :breadcrumbs="$breadcrumbsData" />
+@endsection
 
 @section('content')
-<div class="space-y-8 pb-12">
-    <x-ui.card>
-        <div class="flex items-center justify-between mb-6">
-            <h5 class="text-lg font-satoshi-bold text-slate-900 mb-0">{{ $title }}</h5>
-        </div>
+    <div class="space-y-6">
+        <x-ui.card>
+            <form method="POST" action="{{ $action }}" class="space-y-6">
+                @isset($product_category_data) @method('PUT') @endisset
+                @csrf
 
-        <form action="{{ $action }}" method="POST" class="space-y-6">
-            @csrf
-            @if($isEdit)
-                @method('PUT')
-            @endif
-
-            <div class="grid grid-cols-1 gap-6">
-                {{-- Nama Kategori --}}
                 <div>
-                    <x-ui.input 
-                        name="name" 
-                        id="name"
-                        label="Category Name"
-                        :value="old('name', $productCategory->name ?? '')"
-                        placeholder="Enter category name"
-                        :required="true"
-                        :error="$errors->first('name')"
-                    />
+                    <h5 class="text-lg font-satoshi-bold text-slate-900 mb-6">{{ $sub_title }}</h5>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Category Name -->
+                        <div class="md:col-span-2">
+                            <x-ui.input 
+                                name="name" 
+                                label="Category Name" 
+                                placeholder="Enter category name" 
+                                value="{{ old('name', $product_category_data->name ?? '') }}"
+                                required
+                            />
+                        </div>
+
+                        <!-- Description -->
+                        <div class="md:col-span-2">
+                            <label for="description" class="block text-sm font-satoshi-medium text-slate-700 mb-2">Description</label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                rows="3" 
+                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base font-satoshi-medium text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                                placeholder="Enter category description (optional)"
+                            >{{ old('description', $product_category_data->description ?? '') }}</textarea>
+                            @error('description')
+                                <p class="mt-1.5 block text-sm font-medium text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Active Status -->
+                        <div class="md:col-span-2">
+                            <x-ui.switch 
+                                name="is_active" 
+                                label="Active Status" 
+                                :checked="old('is_active', $product_category_data->is_active ?? true)"
+                                value="1"
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                {{-- Deskripsi --}}
-                <div>
-                    <label for="description" class="block text-sm font-satoshi-medium text-slate-700 mb-1">
-                        Description
-                    </label>
-                    <textarea name="description" id="description" rows="4"
-                        class="w-full rounded-lg border-slate-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 @error('description') border-red-500 @enderror"
-                        style="padding: 8px 12px;"
-                        placeholder="Enter category description">{{ old('description', $productCategory->description ?? '') }}</textarea>
-                    @error('description')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
+                <!-- Submit / Cancel -->
+                <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+                    <x-ui.button type="button" font="medium" size="sm" style="secondary" onclick="window.location.href='{{ $breadcrumb_parent?->url ?? route('product_categories.index') }}'">
+                        Cancel
+                    </x-ui.button>
+                    <x-ui.button type="submit" font="bold" size="sm">
+                        Submit
+                    </x-ui.button>
                 </div>
-
-                {{-- Status Active --}}
-                <div>
-                    <x-ui.checkbox 
-                        name="is_active" 
-                        id="is_active"
-                        label="Active"
-                        :checked="old('is_active', $productCategory->is_active ?? true)"
-                        value="1"
-                    />
-                </div>
-            </div>
-
-            {{-- Tombol Aksi --}}
-            <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
-                <x-ui.button type="submit" size="sm">
-                    <i></i> Sumbit
-                </x-ui.button>
-                <x-ui.button type="button" size="sm" style="secondary" onclick="window.location.href='{{ route('product_categories.index') }}'">
-                    Cancel
-                </x-ui.button>
-            </div>
-        </form>
-    </x-ui.card>
-</div>
+            </form>
+        </x-ui.card>
+    </div>
 @endsection
+
+@push('scripts')
+    {{-- SweetAlert Notification --}}
+    @if(session('success'))
+        <script>
+            Swal.fire({ icon: 'success', title: 'Success', text: "{{ session('success') }}" });
+        </script>
+    @endif
+
+    @if(session('error'))
+        <script>
+            Swal.fire({ icon: 'error', title: 'Error', text: "{{ session('error') }}" });
+        </script>
+    @endif
+@endpush

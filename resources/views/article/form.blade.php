@@ -96,12 +96,11 @@
                         />
 
                         <!-- Highlight -->
-                        <div class="pt-2">
-                            <x-ui.checkbox 
+                        <div>
+                            <x-ui.switch 
                                 name="highlite" 
                                 label="Highlight Article" 
                                 value="1"
-                                :reverse="true"
                                 :checked="old('highlite', $article_data->highlite ?? false) ? true : false"
                             />
                         </div>

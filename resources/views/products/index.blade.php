@@ -17,9 +17,9 @@
     <x-ui.card>
         <div class="flex items-center justify-between mb-4">
             <h5 class="text-lg font-satoshi-bold text-slate-900 mb-0">{{ $sub_title }}</h5>
-            @can('Product Create')
+             @can('Product Create')
                 <x-ui.button href="{{ route('products.create') }}" color="primary" size="sm">
-                    <i class="ri-add-line mr-1"></i> Tambah Produk
+                    <i class="ri-add-line mr-1"></i> Add Product
                 </x-ui.button>
             @endcan
         </div>

@@ -1,152 +1,145 @@
 @php
-    $isEdit = isset($product);
-    $title = $isEdit ? 'Edit Produk' : 'Tambah Produk';
+    $product_data = $product_data ?? $product ?? null;
+    $sub_title = ($breadcrumb = Breadcrumbs::current()) ? $breadcrumb->title : 'Product Form';
+
+    if (isset($product_data)) {
+        $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName(), $product_data);
+    } else {
+        $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName());
+    }
+    $breadcrumb_parent = $breadcrumbsData->where('title', '!=', $breadcrumb->title)->last();
 @endphp
 
 @extends('layouts.backend.main')
 
-@section('title', $title)
+@section('title', 'Product Form')
+@section('sub_title', $sub_title)
+
+@section('breadcrumb')
+    <x-layout.admin.breadcrumb :breadcrumbs="$breadcrumbsData" />
+@endsection
 
 @section('content')
-<div class="space-y-8 pb-12">
-    <x-ui.card>
-        <div class="flex items-center justify-between mb-6">
-            <h5 class="text-lg font-satoshi-bold text-slate-900 mb-0">{{ $title }}</h5>
-        </div>
+    <div class="space-y-6">
+        <x-ui.card>
+            <form method="POST" action="{{ $action }}" enctype="multipart/form-data" class="space-y-6">
+                @isset($product_data) @method('PUT') @endisset
+                @csrf
 
-        <form action="{{ $action }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-            @csrf
-            @if($isEdit)
-                @method('PUT')
-            @endif
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Kategori --}}
                 <div>
-                    <x-ui.select2 
-                        name="category_id" 
-                        id="category_id"
-                        label="Category"
-                        :required="true"
-                        :options="$categories"
-                        option-value="id"
-                        option-label="name"
-                        :selected="old('category_id', $product->category_id ?? '')"
-                        placeholder="Pilih Kategori"
-                        :error="$errors->first('category_id')"
-                    />
-                </div>
+                    <h5 class="text-lg font-satoshi-bold text-slate-900 mb-6">{{ $sub_title }}</h5>
 
-                {{-- Nama Produk --}}
-                <div>
-                    <x-ui.input 
-                        name="name" 
-                        id="name"
-                        label="Product Name"
-                        :value="old('name', $product->name ?? '')"
-                        placeholder="Enter the product name"
-                        :required="true"
-                        :error="$errors->first('name')"
-                    />
-                </div>
-
-                {{-- Harga --}}
-                <div>
-                    <x-ui.input 
-                        name="price_display" 
-                        id="price_display"
-                        label="Price (Rp)"
-                        :value="old('price', $product->price ?? 0) ? number_format(old('price', $product->price ?? 0), 0, ',', '.') : '0'"
-                        placeholder="Enter the product price"
-                        :required="true"
-                        :error="$errors->first('price')"
-                        oninput="formatPrice(this)"
-                    />
-                    <input type="hidden" name="price" id="price" value="{{ old('price', $product->price ?? 0) }}">
-                </div>
-
-                {{-- Gambar --}}
-                <div>
-                    @if(isset($product) && $product->image)
-                        <div class="mb-2">
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                class="h-20 w-20 object-cover rounded-lg border border-slate-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Product Name -->
+                        <div>
+                            <x-ui.input 
+                                name="name" 
+                                label="Product Name" 
+                                placeholder="Enter product name" 
+                                value="{{ old('name', $product_data->name ?? '') }}"
+                                required
+                            />
                         </div>
-                    @endif
-                    <x-ui.dropzone
-                        name="image"
-                        id="image"
-                        label="Product Image"
-                        accept="image/*"
-                        :error="$errors->first('image')"
-                    />
-                    <p class="mt-1 text-xs text-slate-500">Format: JPEG, PNG, JPG, GIF. Maks: 2MB</p>
+
+                        <!-- Category -->
+                        <div>
+                            <x-ui.select2 
+                                name="category_id" 
+                                label="Category"
+                                placeholder="Select category..."
+                                :value="old('category_id', $product_data->category_id ?? '')"
+                                :options="$categories->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()"
+                            />
+                        </div>
+
+                        <!-- Price -->
+                        <div>
+                            <x-ui.input 
+                                type="text"
+                                name="price" 
+                                label="Price (Rp)" 
+                                placeholder="e.g. 25.000" 
+                                value="{{ old('price', isset($product_data->price) ? number_format($product_data->price, 0, ',', '.') : '') }}"
+                                class="currency-format"
+                                required
+                            />
+                        </div>
+
+                        <!-- Active Status -->
+                        <div>
+                            <x-ui.switch 
+                                name="is_active" 
+                                label="Active Status" 
+                                :checked="old('is_active', $product_data->is_active ?? true)"
+                                value="1"
+                            />
+                        </div>
+
+                        <!-- Description -->
+                        <div class="md:col-span-2">
+                            <label for="description" class="block text-sm font-satoshi-medium text-slate-700 mb-2">Description</label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                rows="3" 
+                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base font-satoshi-medium text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                                placeholder="Enter product description (optional)"
+                            >{{ old('description', $product_data->description ?? '') }}</textarea>
+                            @error('description')
+                                <p class="mt-1.5 block text-sm font-medium text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Cover Image -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-satoshi-medium text-slate-700 mb-2">Cover Image</label>
+                            <x-ui.dropzone 
+                                name="image" 
+                                accept="image/*"
+                                :previewUrl="isset($product_data->image) ? asset('storage/'.$product_data->image) : null"
+                                :required="!isset($product_data)"
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                {{-- Deskripsi (Full Width) --}}
-                <div class="md:col-span-2">
-                    <x-ui.editor 
-                        name="description" 
-                        id="description"
-                        label="Description"
-                        :value="old('description', $product->description ?? '')"
-                        placeholder="Enter the product description"
-                        :error="$errors->first('description')"
-                    />
+                <!-- Submit / Cancel -->
+                <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+                    <x-ui.button type="button" font="medium" size="sm" style="secondary" onclick="window.location.href='{{ $breadcrumb_parent?->url ?? route('products.index') }}'">
+                        Cancel
+                    </x-ui.button>
+                    <x-ui.button type="submit" font="bold" size="sm">
+                        Submit
+                    </x-ui.button>
                 </div>
-
-                {{-- Status Active --}}
-                <div>
-                    <x-ui.checkbox 
-                        name="is_active" 
-                        id="is_active"
-                        label="Active"
-                        :checked="old('is_active', $product->is_active ?? true)"
-                        value="1"
-                    />
-                </div>
-            </div>
-
-            {{-- Tombol Aksi --}}
-            <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
-                <x-ui.button type="submit" size="sm">
-                    <i class="ri-save-line mr-1"></i> Save
-                </x-ui.button>
-                <x-ui.button type="button" size="sm" style="secondary" onclick="window.location.href='{{ route('products.index') }}'">
-                    Cancel
-                </x-ui.button>
-            </div>
-        </form>
-    </x-ui.card>
-</div>
+            </form>
+        </x-ui.card>
+    </div>
 @endsection
 
 @push('scripts')
-<script>
-    function formatPrice(input) {
-        let value = input.value.replace(/\D/g, '');
-        if (value === '') {
-            input.value = '0';
-            document.getElementById('price').value = '0';
-            return;
-        }
-        let number = parseInt(value);
-        let formatted = number.toLocaleString('id-ID');
-        input.value = formatted;
-        document.getElementById('price').value = number;
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const priceDisplay = document.getElementById('price_display');
-        const priceHidden = document.getElementById('price');
-        if (priceDisplay && priceHidden) {
-            let raw = priceDisplay.value.replace(/\D/g, '');
-            if (raw && raw !== '0') {
-                let number = parseInt(raw);
-                priceDisplay.value = number.toLocaleString('id-ID');
-                priceHidden.value = number;
-            }
+    {{-- Live thousand dot currency formatting --}}
+    <script>
+    $(document).on('input', '.currency-format', function () {
+        let value = $(this).val().replace(/[^0-9]/g, '');
+        if (value) {
+            $(this).val(new Intl.NumberFormat('id-ID').format(value));
+        } else {
+            $(this).val('');
         }
     });
-</script>
+    </script>
+
+    {{-- SweetAlert Notification --}}
+    @if(session('success'))
+        <script>
+            Swal.fire({ icon: 'success', title: 'Success', text: "{{ session('success') }}" });
+        </script>
+    @endif
+
+    @if(session('error'))
+        <script>
+            Swal.fire({ icon: 'error', title: 'Error', text: "{{ session('error') }}" });
+        </script>
+    @endif
 @endpush
