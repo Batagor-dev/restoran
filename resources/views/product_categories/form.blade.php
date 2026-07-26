@@ -63,7 +63,7 @@
             {{-- Tombol Aksi --}}
             <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
                 <x-ui.button type="submit" size="sm">
-                    <i class="ri-save-line mr-1"></i> Save
+                    <i></i> Sumbit
                 </x-ui.button>
                 <x-ui.button type="button" size="sm" style="secondary" onclick="window.location.href='{{ route('product_categories.index') }}'">
                     Cancel

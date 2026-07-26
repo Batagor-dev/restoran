@@ -11,6 +11,7 @@ class MenuSeeder extends Seeder
     public function run()
     {
         $produkGroup = MenuGroup::where('name', 'PRODUK')->first();
+        $mejaGroup = MenuGroup::where('name', 'MEJA')->first();
         $kontenGroup = MenuGroup::where('name', 'KONTEN')->first();
         $pengaturanGroup = MenuGroup::where('name', 'PENGATURAN')->first();
 
@@ -42,14 +43,25 @@ class MenuSeeder extends Seeder
             'sort' => '2',
         ]);
 
-        // === Menu 2: Artikel (Group: KONTEN) ===
+        // === Menu 2: Meja (Group: MEJA) ===
+        Menu::create([
+            'menu_group_id' => $mejaGroup?->id,
+            'nama_menu' => 'Management Meja',
+            'permission_group_id' => 15,
+            'icon' => 'ri-layout-grid-line',
+            'href' => '/tables',
+            'status' => '1',
+            'sort' => '1',
+        ]);
+
+        // === Menu 3: Artikel (Group: KONTEN) ===
         $artikel = Menu::create([
             'menu_group_id' => $kontenGroup?->id,
             'nama_menu' => 'Artikel',
             'permission_group_id' => 7,
             'icon' => 'ri-article-line',
             'status' => '1',
-            'sort' => '2',
+            'sort' => '1',
         ]);
 
         Menu::create([
@@ -70,14 +82,14 @@ class MenuSeeder extends Seeder
             'sort' => '2',
         ]);
 
-        // === Menu 3: Setting (Group: PENGATURAN) ===
+        // === Menu 4: Setting (Group: PENGATURAN) ===
         $setting = Menu::create([
             'menu_group_id' => $pengaturanGroup?->id,
             'nama_menu' => 'Setting',
             'permission_group_id' => 8,
             'icon' => 'ri-settings-3-line',
             'status' => '1',
-            'sort' => '3',
+            'sort' => '1',
         ]);
 
         // Submenu User Management

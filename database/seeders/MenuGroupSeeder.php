@@ -19,10 +19,19 @@ class MenuGroupSeeder extends Seeder
         );
 
         MenuGroup::updateOrCreate(
+            ['name' => 'MEJA'],
+            [
+                'permission_group_id' => 15,
+                'sort' => 2,
+                'status' => 1,
+            ]
+        );
+
+        MenuGroup::updateOrCreate(
             ['name' => 'KONTEN'],
             [
                 'permission_group_id' => 10,
-                'sort' => 2,
+                'sort' => 3,
                 'status' => 1,
             ]
         );
@@ -31,7 +40,7 @@ class MenuGroupSeeder extends Seeder
             ['name' => 'PENGATURAN'],
             [
                 'permission_group_id' => 8,
-                'sort' => 3,
+                'sort' => 4,
                 'status' => 1,
             ]
         );

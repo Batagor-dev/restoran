@@ -321,4 +321,55 @@ Breadcrumbs::for('promo.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('promo.create'));
 });
 
+<<<<<<< HEAD
 // **************************** END PROMO ***************************
+=======
+// **************************** PRODUCT ***************************
+
+// Home > Product
+Breadcrumbs::for('products.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Product', route('products.index'));
+});
+
+// Home > Product > [Update]
+Breadcrumbs::for('products.edit', function (BreadcrumbTrail $trail, $product) {
+    $trail->parent('products.index');
+    $trail->push('Update ['.$product->name.']', route('products.edit', $product));
+});
+
+// Home > Product > Create
+Breadcrumbs::for('products.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('products.index');
+    $trail->push('Create', route('products.create'));
+});
+
+// **************************** END PRODUCT ***************************
+
+// **************************** END PROMO ***************************
+
+// **************************** TABLES (MEJA) ***************************
+
+// Home > Tables
+Breadcrumbs::for('tables.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Management Meja', route('tables.index'));
+});
+
+// Home > Tables > [Update]
+Breadcrumbs::for('tables.edit', function (BreadcrumbTrail $trail, $table) {
+    $trail->parent('tables.index');
+    $trail->push('Update ['.$table->number_table.']', route('tables.edit', $table));
+});
+
+// Home > Tables > Create
+Breadcrumbs::for('tables.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('tables.index');
+    $trail->push('Create', route('tables.create'));
+});
+
+// **************************** END TABLES ***************************
+
+
+
+>>>>>>> a1dede6110c65531e17a827ef97c03ea140ec933
