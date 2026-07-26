@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(RolePermissionSeeder::class);
+        $this->call(ProductPermissionSeeder::class,);
 
         // Seed Outlets
         $outletBandung = Outlet::create([

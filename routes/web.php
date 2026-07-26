@@ -12,6 +12,7 @@ use App\Http\Controllers\DiningTableController;
 use App\Http\Controllers\PermissionGroupController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\PromoController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteController;
@@ -80,9 +81,19 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
         'promo' => 'promo:uuid',
     ]])->except('show');
 
+<<<<<<< HEAD
     Route::resource('/tables', DiningTableController::class, ['parameters' => [
         'tables' => 'table:uuid',
     ]])->except('show');
+=======
+    Route::resource('/product_categories', ProductCategoryController::class, ['parameters' => [
+    'product_categories' => 'productCategory:uuid',
+]])->except('show');
+
+Route::resource('/products', ProductController::class, ['parameters' => [
+    'products' => 'product:uuid',
+]])->except('show');
+>>>>>>> f2079dca8bb0b0ccbaf29a945f1cedf59fc7f4c9
 
     // Route::prefix('setting')->group(function () {
     //     Route::get('/',[App\Http\Controllers\SettingController::class, 'index'])->name('setting.index');
