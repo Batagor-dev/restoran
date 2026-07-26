@@ -26,9 +26,9 @@
                     <x-ui.input 
                         name="name" 
                         id="name"
-                        label="Nama Kategori"
+                        label="Category Name"
                         :value="old('name', $productCategory->name ?? '')"
-                        placeholder="Masukkan nama kategori"
+                        placeholder="Enter category name"
                         :required="true"
                         :error="$errors->first('name')"
                     />
@@ -37,12 +37,12 @@
                 {{-- Deskripsi --}}
                 <div>
                     <label for="description" class="block text-sm font-satoshi-medium text-slate-700 mb-1">
-                        Deskripsi
+                        Description
                     </label>
                     <textarea name="description" id="description" rows="4"
                         class="w-full rounded-lg border-slate-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 @error('description') border-red-500 @enderror"
                         style="padding: 8px 12px;"
-                        placeholder="Masukkan deskripsi kategori">{{ old('description', $productCategory->description ?? '') }}</textarea>
+                        placeholder="Enter category description">{{ old('description', $productCategory->description ?? '') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -53,7 +53,7 @@
                     <x-ui.checkbox 
                         name="is_active" 
                         id="is_active"
-                        label="Aktif"
+                        label="Active"
                         :checked="old('is_active', $productCategory->is_active ?? true)"
                         value="1"
                     />
@@ -63,10 +63,10 @@
             {{-- Tombol Aksi --}}
             <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
                 <x-ui.button type="submit" size="sm">
-                    <i class="ri-save-line mr-1"></i> Simpan
+                    <i class="ri-save-line mr-1"></i> Save
                 </x-ui.button>
                 <x-ui.button type="button" size="sm" style="secondary" onclick="window.location.href='{{ route('product_categories.index') }}'">
-                    Batal
+                    Cancel
                 </x-ui.button>
             </div>
         </form>

@@ -279,6 +279,28 @@ Breadcrumbs::for('product_categories.create', function (BreadcrumbTrail $trail) 
 
 // **************************** END PRODUCT CATEGORY ***************************
 
+// **************************** PRODUCT ***************************
+
+// Home > Product
+Breadcrumbs::for('products.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Product', route('products.index'));
+});
+
+// Home > Product > [Update]
+Breadcrumbs::for('products.edit', function (BreadcrumbTrail $trail, $product) {
+    $trail->parent('products.index');
+    $trail->push('Edit Product', route('products.edit', $product));
+});
+
+// Home > Product > Create
+Breadcrumbs::for('products.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('products.index');
+    $trail->push('Create Product', route('products.create'));
+});
+
+// **************************** END PRODUCT ***************************
+
 // **************************** PROMO ***************************
 
 // Home > Promo
@@ -299,28 +321,4 @@ Breadcrumbs::for('promo.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('promo.create'));
 });
 
-// **************************** PRODUCT ***************************
-
-// Home > Product
-Breadcrumbs::for('products.index', function (BreadcrumbTrail $trail) {
-    $trail->parent('dashboard');
-    $trail->push('Product', route('products.index'));
-});
-
-// Home > Product > [Update]
-Breadcrumbs::for('products.edit', function (BreadcrumbTrail $trail, $product) {
-    $trail->parent('products.index');
-    $trail->push('Update ['.$product->name.']', route('products.edit', $product));
-});
-
-// Home > Product > Create
-Breadcrumbs::for('products.create', function (BreadcrumbTrail $trail) {
-    $trail->parent('products.index');
-    $trail->push('Create', route('products.create'));
-});
-
-// **************************** END PRODUCT ***************************
-
 // **************************** END PROMO ***************************
-
-

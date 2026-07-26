@@ -26,7 +26,7 @@
                     <x-ui.select2 
                         name="category_id" 
                         id="category_id"
-                        label="Kategori"
+                        label="Category"
                         :required="true"
                         :options="$categories"
                         option-value="id"
@@ -42,9 +42,9 @@
                     <x-ui.input 
                         name="name" 
                         id="name"
-                        label="Nama Produk"
+                        label="Product Name"
                         :value="old('name', $product->name ?? '')"
-                        placeholder="Masukkan nama produk"
+                        placeholder="Enter the product name"
                         :required="true"
                         :error="$errors->first('name')"
                     />
@@ -55,9 +55,9 @@
                     <x-ui.input 
                         name="price_display" 
                         id="price_display"
-                        label="Harga (Rp)"
+                        label="Price (Rp)"
                         :value="old('price', $product->price ?? 0) ? number_format(old('price', $product->price ?? 0), 0, ',', '.') : '0'"
-                        placeholder="Masukkan harga produk"
+                        placeholder="Enter the product price"
                         :required="true"
                         :error="$errors->first('price')"
                         oninput="formatPrice(this)"
@@ -76,7 +76,7 @@
                     <x-ui.dropzone
                         name="image"
                         id="image"
-                        label="Gambar Produk"
+                        label="Product Image"
                         accept="image/*"
                         :error="$errors->first('image')"
                     />
@@ -88,9 +88,9 @@
                     <x-ui.editor 
                         name="description" 
                         id="description"
-                        label="Deskripsi"
+                        label="Description"
                         :value="old('description', $product->description ?? '')"
-                        placeholder="Masukkan deskripsi produk"
+                        placeholder="Enter the product description"
                         :error="$errors->first('description')"
                     />
                 </div>
@@ -100,7 +100,7 @@
                     <x-ui.checkbox 
                         name="is_active" 
                         id="is_active"
-                        label="Aktif"
+                        label="Active"
                         :checked="old('is_active', $product->is_active ?? true)"
                         value="1"
                     />
@@ -110,10 +110,10 @@
             {{-- Tombol Aksi --}}
             <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
                 <x-ui.button type="submit" size="sm">
-                    <i class="ri-save-line mr-1"></i> Simpan
+                    <i class="ri-save-line mr-1"></i> Save
                 </x-ui.button>
                 <x-ui.button type="button" size="sm" style="secondary" onclick="window.location.href='{{ route('products.index') }}'">
-                    Batal
+                    Cancel
                 </x-ui.button>
             </div>
         </form>

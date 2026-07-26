@@ -31,23 +31,6 @@
             <span class="transition-all duration-300 group-[.sidebar-collapsed]:w-0 group-[.sidebar-collapsed]:opacity-0 overflow-hidden whitespace-nowrap">Dashboard</span>
           </a>
         </li>
-        @can('Product Category Access')
-    <li>
-        <a href="{{ route('product_categories.index') }}" class="group/item flex items-center gap-3 px-3 py-2.5 rounded-xl text-base font-satoshi-medium transition-all duration-200 {{ request()->routeIs('product_categories.*') ? 'bg-slate-900 text-white shadow-md shadow-slate-900/15' : 'text-slate-600 hover:bg-slate-50/70 hover:text-slate-900' }} group-[.sidebar-collapsed]:justify-center group-[.sidebar-collapsed]:px-0">
-            <i class="ri-folder-line text-xl w-5 text-center flex-shrink-0 transition-colors duration-200 {{ request()->routeIs('product_categories.*') ? 'text-white' : 'text-slate-400 group-hover/item:text-slate-600' }}"></i>
-            <span class="transition-all duration-300 group-[.sidebar-collapsed]:w-0 group-[.sidebar-collapsed]:opacity-0 overflow-hidden whitespace-nowrap">Kategori Produk</span>
-        </a>
-    </li>
-@endcan
-
-@can('Product Access')
-    <li>
-        <a href="{{ route('products.index') }}" class="group/item flex items-center gap-3 px-3 py-2.5 rounded-xl text-base font-satoshi-medium transition-all duration-200 {{ request()->routeIs('products.*') ? 'bg-slate-900 text-white shadow-md shadow-slate-900/15' : 'text-slate-600 hover:bg-slate-50/70 hover:text-slate-900' }} group-[.sidebar-collapsed]:justify-center group-[.sidebar-collapsed]:px-0">
-            <i class="ri-box-3-line text-xl w-5 text-center flex-shrink-0 transition-colors duration-200 {{ request()->routeIs('products.*') ? 'text-white' : 'text-slate-400 group-hover/item:text-slate-600' }}"></i>
-            <span class="transition-all duration-300 group-[.sidebar-collapsed]:w-0 group-[.sidebar-collapsed]:opacity-0 overflow-hidden whitespace-nowrap">Produk</span>
-        </a>
-    </li>
-@endcan
         @if(isset($groupedMenus) && count($groupedMenus) > 0)
           @foreach($groupedMenus as $groupId => $groupItems)
             @php
