@@ -34,6 +34,15 @@ class MenuSeeder extends Seeder
             'sort' => '2',
         ]);
 
+        $managementStock = Menu::create([
+            'menu_group_id' => $produkGroup?->id,
+            'nama_menu' => 'Management Stock',
+            'permission_group_id' => 16,
+            'icon' => 'ri-stack-line',
+            'status' => '1',
+            'sort' => '3',
+        ]);
+
         Menu::create([
             'menu_id' => $produk->id,
             'nama_menu' => 'Kategori Produk',
@@ -59,6 +68,24 @@ class MenuSeeder extends Seeder
             'href' => '/promo',
             'status' => '1',
             'sort' => '3',
+        ]);
+
+        Menu::create([
+            'menu_id' => $managementStock->id,
+            'nama_menu' => 'Product Stocks',
+            'permission_group_id' => 16,
+            'href' => '/product-stocks',
+            'status' => '1',
+            'sort' => '1',
+        ]);
+
+        Menu::create([
+            'menu_id' => $managementStock->id,
+            'nama_menu' => 'Stock Movements',
+            'permission_group_id' => 17,
+            'href' => '/stock-movements',
+            'status' => '1',
+            'sort' => '2',
         ]);
 
         // === Menu 2: Meja (Group: MEJA) ===
