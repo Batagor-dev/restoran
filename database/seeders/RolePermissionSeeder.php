@@ -32,6 +32,8 @@ class RolePermissionSeeder extends Seeder
             'Product',              // 13
             'Promo',               // 14
             'Table',               // 15
+            'Product Stock',        // 16
+            'Stock Movement',       // 17
         ];
 
         foreach ($permissiongroups as $permissiongroup) {
@@ -100,6 +102,13 @@ class RolePermissionSeeder extends Seeder
             'Table Create-15',
             'Table Update-15',
             'Table Delete-15',
+            'Product Stock Access-16',
+            'Product Stock Create-16',
+            'Product Stock Update-16',
+            'Product Stock Delete-16',
+            'Stock Movement Access-17',
+            'Stock Movement Create-17',
+            'Stock Movement Delete-17',
         ];
 
         foreach ($permissions as $permission) {

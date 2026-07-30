@@ -13,9 +13,11 @@ use App\Http\Controllers\PermissionGroupController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -91,6 +93,14 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
 
     Route::resource('/products', ProductController::class, ['parameters' => [
         'products' => 'product:uuid',
+    ]])->except('show');
+
+    Route::resource('/product-stocks', ProductStockController::class, ['parameters' => [
+        'product-stocks' => 'productStock:uuid',
+    ]])->except('show');
+
+    Route::resource('/stock-movements', StockMovementController::class, ['parameters' => [
+        'stock-movements' => 'stockMovement:uuid',
     ]])->except('show');
 
     // Route::prefix('setting')->group(function () {

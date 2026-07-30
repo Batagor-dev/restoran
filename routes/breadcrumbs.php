@@ -346,3 +346,29 @@ Breadcrumbs::for('tables.create', function (BreadcrumbTrail $trail) {
 
 // **************************** END TABLES ***************************
 
+// **************************** PRODUCT STOCK ***************************
+Breadcrumbs::for('product-stocks.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Product Stocks', route('product-stocks.index'));
+});
+
+Breadcrumbs::for('product-stocks.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('product-stocks.index');
+    $trail->push('Create Stock', route('product-stocks.create'));
+});
+
+Breadcrumbs::for('product-stocks.edit', function (BreadcrumbTrail $trail, $productStock) {
+    $trail->parent('product-stocks.index');
+    $trail->push('Edit Stock', route('product-stocks.edit', $productStock));
+});
+
+// **************************** STOCK MOVEMENT ***************************
+Breadcrumbs::for('stock-movements.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Stock Movements', route('stock-movements.index'));
+});
+
+Breadcrumbs::for('stock-movements.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('stock-movements.index');
+    $trail->push('Create Movement', route('stock-movements.create'));
+});
