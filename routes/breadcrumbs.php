@@ -395,3 +395,31 @@ Breadcrumbs::for('customer-promos.edit', function (BreadcrumbTrail $trail, $cust
 });
 
 // **************************** END CUSTOMER PROMO ***************************
+
+// **************************** ORDER ***************************
+
+// Home > Orders
+Breadcrumbs::for('orders.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Orders', route('orders.index'));
+});
+
+// Home > Orders > Create
+Breadcrumbs::for('orders.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('orders.index');
+    $trail->push('Create Order', route('orders.create'));
+});
+
+// Home > Orders > Edit
+Breadcrumbs::for('orders.edit', function (BreadcrumbTrail $trail, $order) {
+    $trail->parent('orders.index');
+    $trail->push('Edit Order', route('orders.edit', $order));
+});
+
+// Home > Orders > Show
+Breadcrumbs::for('orders.show', function (BreadcrumbTrail $trail, $order) {
+    $trail->parent('orders.index');
+    $trail->push('Order #' . $order->code_invoice, route('orders.show', $order));
+});
+
+// **************************** END ORDER ***************************

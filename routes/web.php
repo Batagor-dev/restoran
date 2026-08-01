@@ -20,6 +20,7 @@ use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerPromoController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -107,6 +108,10 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
     Route::resource('/customer-promos', CustomerPromoController::class, ['parameters' => [
         'customer-promos' => 'customerPromo:uuid',
     ]])->except('show');
+
+    Route::resource('/orders', OrderController::class, ['parameters' => [
+        'orders' => 'order:uuid',
+    ]]);
 
     // Route::prefix('setting')->group(function () {
     //     Route::get('/',[App\Http\Controllers\SettingController::class, 'index'])->name('setting.index');

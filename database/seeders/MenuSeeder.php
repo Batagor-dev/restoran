@@ -244,5 +244,25 @@ class MenuSeeder extends Seeder
             'status' => true,
             'sort' => 1,
         ]);
+
+        // Orders
+        $orders = Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Orders',
+            'icon' => 'ri-shopping-cart-line',
+            'permission_group_id' => PermissionGroup::where('name', 'Order')->first()->id,
+            'status' => true,
+            'sort' => 5,
+        ]);
+
+        Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Orders',
+            'menu_id' => $orders->id,
+            'permission_group_id' => PermissionGroup::where('name', 'Order')->first()->id,
+            'href' => '/orders',
+            'status' => true,
+            'sort' => 1,
+        ]);
     }
 }
