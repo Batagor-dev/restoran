@@ -26,7 +26,17 @@ class ProductStockDataTable extends DataTable
                 return number_format($stock->quantity);
             })
             ->addColumn('action', function ($stock) {
-                return view('product-stocks.action', compact('stock'));
+                $editBtn = '<a href="' . route('product-stocks.edit', $stock->uuid) . '" class="btn btn-sm btn-primary">
+                    <i class="ri-edit-line"></i>
+                </a>';
+                $deleteBtn = '<form action="' . route('product-stocks.destroy', $stock->uuid) . '" method="POST" style="display:inline">
+                    ' . csrf_field() . '
+                    ' . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure?\')">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </form>';
+                return $editBtn . ' ' . $deleteBtn;
             })
             ->rawColumns(['action']);
     }

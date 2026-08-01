@@ -8,6 +8,9 @@ use App\Models\Outlet;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Models\PermissionGroup;
+use App\Models\Menu;
 
 class DatabaseSeeder extends Seeder
 {
@@ -106,6 +109,36 @@ class DatabaseSeeder extends Seeder
             'published_at' => now(),
             'highlite' => false,
             'outlet_id' => $outletJakarta->id,
+        ]);
+
+        // Stock Management
+        $stockManagement = Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Stock Management',
+            'icon' => 'ri-stack-line',
+            'permission_group_id' => 16, // Product Stock
+            'status' => true,
+            'sort' => 3,
+        ]);
+
+        Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Product Stocks',
+            'menu_id' => $stockManagement->id,
+            'permission_group_id' => 16, // Product Stock
+            'href' => '/product-stocks',
+            'status' => true,
+            'sort' => 1,
+        ]);
+
+        Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Stock Movements',
+            'menu_id' => $stockManagement->id,
+            'permission_group_id' => 17, // Stock Movement
+            'href' => '/stock-movements',
+            'status' => true,
+            'sort' => 2,
         ]);
     }
 }

@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Menu;
 use App\Models\MenuGroup;
+use App\Models\PermissionGroup;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class MenuSeeder extends Seeder
 {
@@ -191,6 +193,56 @@ class MenuSeeder extends Seeder
             'href' => '/menugroup',
             'status' => '1',
             'sort' => '4',
+        ]);
+
+        // Stock Management
+        $stockManagement = Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Stock Management',
+            'icon' => 'ri-stack-line',
+            'permission_group_id' => PermissionGroup::where('name', 'Product Stock')->first()->id,
+            'status' => true,
+            'sort' => 3,
+        ]);
+
+        Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Product Stocks',
+            'menu_id' => $stockManagement->id,
+            'permission_group_id' => PermissionGroup::where('name', 'Product Stock')->first()->id,
+            'href' => '/product-stocks',
+            'status' => true,
+            'sort' => 1,
+        ]);
+
+        Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Stock Movements',
+            'menu_id' => $stockManagement->id,
+            'permission_group_id' => PermissionGroup::where('name', 'Stock Movement')->first()->id,
+            'href' => '/stock-movements',
+            'status' => true,
+            'sort' => 2,
+        ]);
+
+        // Customer Promo
+        $customerPromo = Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Customer Promo',
+            'icon' => 'ri-gift-line',
+            'permission_group_id' => PermissionGroup::where('name', 'Customer Promo')->first()->id,
+            'status' => true,
+            'sort' => 4,
+        ]);
+
+        Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Customer Promo',
+            'menu_id' => $customerPromo->id,
+            'permission_group_id' => PermissionGroup::where('name', 'Customer Promo')->first()->id,
+            'href' => '/customer-promos',
+            'status' => true,
+            'sort' => 1,
         ]);
     }
 }

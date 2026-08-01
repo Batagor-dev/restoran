@@ -19,6 +19,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CustomerPromoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -101,6 +102,10 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
 
     Route::resource('/stock-movements', StockMovementController::class, ['parameters' => [
         'stock-movements' => 'stockMovement:uuid',
+    ]])->except('show');
+
+    Route::resource('/customer-promos', CustomerPromoController::class, ['parameters' => [
+        'customer-promos' => 'customerPromo:uuid',
     ]])->except('show');
 
     // Route::prefix('setting')->group(function () {

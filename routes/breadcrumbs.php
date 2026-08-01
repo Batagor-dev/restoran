@@ -361,6 +361,7 @@ Breadcrumbs::for('product-stocks.edit', function (BreadcrumbTrail $trail, $produ
     $trail->parent('product-stocks.index');
     $trail->push('Edit Stock', route('product-stocks.edit', $productStock));
 });
+// **************************** END PRODUCT STOCK ***************************
 
 // **************************** STOCK MOVEMENT ***************************
 Breadcrumbs::for('stock-movements.index', function (BreadcrumbTrail $trail) {
@@ -372,3 +373,25 @@ Breadcrumbs::for('stock-movements.create', function (BreadcrumbTrail $trail) {
     $trail->parent('stock-movements.index');
     $trail->push('Create Movement', route('stock-movements.create'));
 });
+// **************************** END STOCK MOVEMENT ***************************
+
+// **************************** CUSTOMER PROMO ***************************
+// Home > Customer Promo
+Breadcrumbs::for('customer-promos.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Customer Promo', route('customer-promos.index'));
+});
+
+// Home > Customer Promo > Create
+Breadcrumbs::for('customer-promos.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('customer-promos.index');
+    $trail->push('Create Customer Promo', route('customer-promos.create'));
+});
+
+// Home > Customer Promo > Edit
+Breadcrumbs::for('customer-promos.edit', function (BreadcrumbTrail $trail, $customerPromo) {
+    $trail->parent('customer-promos.index');
+    $trail->push('Edit Customer Promo', route('customer-promos.edit', $customerPromo));
+});
+
+// **************************** END CUSTOMER PROMO ***************************

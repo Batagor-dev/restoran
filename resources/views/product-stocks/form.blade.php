@@ -79,12 +79,12 @@
             @endif
 
             {{-- Action Buttons --}}
-            <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
-                <x-ui.button type="submit" size="sm">
-                    <i class="ri-save-line mr-1"></i> Save
-                </x-ui.button>
+            <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
                 <x-ui.button type="button" size="sm" style="secondary" onclick="window.location.href='{{ route('product-stocks.index') }}'">
                     Cancel
+                </x-ui.button>
+                <x-ui.button type="submit" size="sm">
+                    <i></i> Sumbit
                 </x-ui.button>
             </div>
         </form>

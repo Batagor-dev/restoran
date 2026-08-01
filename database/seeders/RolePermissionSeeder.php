@@ -29,11 +29,12 @@ class RolePermissionSeeder extends Seeder
             'Konten',              // 10
             'Pengaturan',          // 11
             'Product Category',    // 12
-            'Product',              // 13
+            'Product',             // 13
             'Promo',               // 14
             'Table',               // 15
-            'Product Stock',        // 16
-            'Stock Movement',       // 17
+            'Product Stock',       // 16
+            'Stock Movement',      // 17
+            'Customer Promo',      // 18
         ];
 
         foreach ($permissiongroups as $permissiongroup) {
@@ -109,6 +110,10 @@ class RolePermissionSeeder extends Seeder
             'Stock Movement Access-17',
             'Stock Movement Create-17',
             'Stock Movement Delete-17',
+            'Customer Promo Access-18',
+            'Customer Promo Create-18',
+            'Customer Promo Update-18',
+            'Customer Promo Delete-18',
         ];
 
         foreach ($permissions as $permission) {

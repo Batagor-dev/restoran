@@ -36,9 +36,18 @@ class StockMovementDataTable extends DataTable
                 return $movement->created_at->format('d M Y H:i');
             })
             ->addColumn('action', function ($movement) {
-                return view('stock-movements.action', compact('movement'));
+                $deleteBtn = '<form action="' . route('stock-movements.destroy', $movement->uuid) . '" method="POST" style="display:inline">
+                    ' . csrf_field() . '
+                    ' . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure?\')">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </form>';
+                return $deleteBtn;
             })
+            ->rawColumns(['action'])
             ->rawColumns(['movement_type', 'action']);
+            
     }
 
     public function query(StockMovement $model): QueryBuilder
