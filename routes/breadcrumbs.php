@@ -423,3 +423,41 @@ Breadcrumbs::for('orders.show', function (BreadcrumbTrail $trail, $order) {
 });
 
 // **************************** END ORDER ***************************
+
+// **************************** CUSTOMER ***************************
+
+// Home > Customers
+Breadcrumbs::for('customers.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Customers', route('customers.index'));
+});
+
+// Home > Customers > Create
+Breadcrumbs::for('customers.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('customers.index');
+    $trail->push('Create Customer', route('customers.create'));
+});
+
+// Home > Customers > Edit
+Breadcrumbs::for('customers.edit', function (BreadcrumbTrail $trail, $customer) {
+    $trail->parent('customers.index');
+    $trail->push('Edit Customer', route('customers.edit', $customer));
+});
+
+// **************************** END CUSTOMER ***************************
+
+// **************************** KITCHEN ***************************
+
+// Home > Kitchen
+Breadcrumbs::for('kitchen.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Kitchen', route('kitchen.index'));
+});
+
+// Home > Kitchen > Show
+Breadcrumbs::for('kitchen.show', function (BreadcrumbTrail $trail, $order) {
+    $trail->parent('kitchen.index');
+    $trail->push('Order #' . $order->code_invoice, route('kitchen.show', $order));
+});
+
+// **************************** END KITCHEN ***************************

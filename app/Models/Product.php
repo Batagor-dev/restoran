@@ -18,6 +18,10 @@ class Product extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $appends = [
+        'is_favorite',
+    ];
+
     public function getRouteKeyName()
     {
         return 'uuid';
@@ -26,5 +30,28 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'category_id');
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(FavoriteProduct::class);
+    }
+
+    public function scopeFavorite($query)
+    {
+        if (auth()->check()) {
+            return $query->whereHas('favorites', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
+        }
+        return $query;
+    }
+
+    public function getIsFavoriteAttribute()
+    {
+        if (auth()->check()) {
+            return $this->favorites()->where('user_id', auth()->id())->exists();
+        }
+        return false;
     }
 }

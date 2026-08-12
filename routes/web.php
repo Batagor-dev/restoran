@@ -21,6 +21,9 @@ use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerPromoController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PosController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\KitchenController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -113,6 +116,30 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
         'orders' => 'order:uuid',
     ]]);
 
+    // POS Routes
+    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::get('/pos/products', [PosController::class, 'getProducts'])->name('pos.products');
+    Route::post('/pos/favorite', [PosController::class, 'toggleFavorite'])->name('pos.favorite');
+    Route::get('/pos/cart', [PosController::class, 'getCart'])->name('pos.cart');
+    Route::post('/pos/cart/add', [PosController::class, 'addToCart'])->name('pos.cart.add');
+    Route::post('/pos/cart/update', [PosController::class, 'updateCart'])->name('pos.cart.update');
+    Route::delete('/pos/cart/remove', [PosController::class, 'removeFromCart'])->name('pos.cart.remove');
+    Route::delete('/pos/cart/clear', [PosController::class, 'clearCart'])->name('pos.cart.clear');
+    Route::post('/pos/promo/apply', [PosController::class, 'applyPromo'])->name('pos.promo.apply');
+    Route::post('/pos/order', [PosController::class, 'processOrder'])->name('pos.order');
+    Route::post('/pos/promo/remove', [PosController::class, 'removePromo']) ->name('pos.promo.remove');
+
+    Route::resource('/customers', CustomerController::class, ['parameters' => [
+        'customers' => 'customer:uuid',
+    ]])->except('show');
+
+    // Kitchen Routes
+    Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
+    Route::get('/kitchen/orders', [KitchenController::class, 'getOrders'])->name('kitchen.orders');
+    Route::post('/kitchen/{orderId}/status', [KitchenController::class, 'updateStatus'])->name('kitchen.status');
+    Route::get('/kitchen/{order}', [KitchenController::class, 'show'])->name('kitchen.show');
+    Route::get('/kitchen/{order}/print', [KitchenController::class, 'print'])->name('kitchen.print');
+
     // Route::prefix('setting')->group(function () {
     //     Route::get('/',[App\Http\Controllers\SettingController::class, 'index'])->name('setting.index');
     //     Route::get('/create',[App\Http\Controllers\SettingController::class, 'create'])->name('setting.create');
@@ -121,4 +148,5 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
     //     // Route::put('/update/{setting}',[App\Http\Controllers\SettingController::class, 'update'])->name('setting.update');
     //     Route::delete('/delete/{setting}',[App\Http\Controllers\SettingController::class, 'delete'])->name('setting.delete');
     // });
+
 });

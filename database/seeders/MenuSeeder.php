@@ -264,5 +264,54 @@ class MenuSeeder extends Seeder
             'status' => true,
             'sort' => 1,
         ]);
+
+        // POS
+        $posMenu = Menu::create([
+            'uuid' => Str::uuid(),
+            'menu_group_id' => null, // Atau bisa di group Management Product
+            'menu_id' => null,
+            'nama_menu' => 'POS',
+            'icon' => 'ri-shopping-cart-2-line',
+            'permission_group_id' => PermissionGroup::where('name', 'POS')->first()->id,
+            'href' => '/pos',
+            'status' => true,
+            'sort' => 1,
+        ]);
+
+        // Customer
+        Menu::create([
+            'uuid' => Str::uuid(),
+            'nama_menu' => 'Customers',
+            'icon' => 'ri-user-line',
+            'permission_group_id' => PermissionGroup::where('name', 'Customer')->first()->id,
+            'status' => true,
+            'sort' => 1,
+        ]);
+
+        // Customer
+        $customerMenu = Menu::create([
+            'uuid' => Str::uuid(),
+            'menu_group_id' => null, // Bisa di group terpisah atau di Management Product
+            'menu_id' => null,
+            'nama_menu' => 'Customers',
+            'icon' => 'ri-user-line',
+            'permission_group_id' => PermissionGroup::where('name', 'Customer')->first()->id,
+            'href' => '/customers',
+            'status' => true,
+            'sort' => 6,
+        ]);
+
+        // Kitchen
+        $kitchenMenu = Menu::create([
+            'uuid' => Str::uuid(),
+            'menu_group_id' => null,
+            'menu_id' => null,
+            'nama_menu' => 'Kitchen',
+            'icon' => 'ri-restaurant-2-line',
+            'permission_group_id' => PermissionGroup::where('name', 'Kitchen')->first()->id,
+            'href' => '/kitchen',
+            'status' => true,
+            'sort' => 1,
+        ]);
     }
 }

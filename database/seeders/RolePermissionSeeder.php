@@ -37,6 +37,9 @@ class RolePermissionSeeder extends Seeder
             'Customer Promo',      // 18
             'Order',               // 19
             'Order Item',          // 20
+            'POS',                 // 21
+            'Customer',            // 22
+            'Kitchen',             // 23
         ];
 
         foreach ($permissiongroups as $permissiongroup) {
@@ -124,6 +127,12 @@ class RolePermissionSeeder extends Seeder
             'Order Item Create-20',
             'Order Item Update-20',
             'Order Item Delete-20',
+            'POS Access-21',
+            'Customer Access-22',
+            'Customer Create-22',
+            'Customer Update-22',
+            'Customer Delete-22',
+            'Kitchen Access-23',
         ];
 
         foreach ($permissions as $permission) {

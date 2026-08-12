@@ -44,5 +44,14 @@ class MenuGroupSeeder extends Seeder
                 'status' => 1,
             ]
         );
+
+        MenuGroup::updateOrCreate(
+            ['name' => 'Customer'],
+            [
+                'permission_group_id' => 21,
+                'sort' => 5,
+                'status' => 1,
+            ]
+        );
     }
 }

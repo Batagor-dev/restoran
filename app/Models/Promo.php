@@ -27,4 +27,14 @@ class Promo extends Model
     {
         return 'uuid';
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'promo_products');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(ProductCategory::class, 'promo_categories');
+    }
 }

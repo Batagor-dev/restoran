@@ -21,7 +21,7 @@
                 <p><strong>Customer:</strong> {{ $order->customer_name ?? '-' }}</p>
                 <p><strong>Outlet:</strong> {{ $order->outlet->name ?? '-' }}</p>
                 <p><strong>Cashier:</strong> {{ $order->cashier->name ?? '-' }}</p>
-                <p><strong>Table:</strong> {{ $order->table->table_number ?? '-' }}</p>
+                <p><strong>Table:</strong> {{ $order->table->number_table ?? '-' }}</p>
             </div>
             <div>
                 <p><strong>Status:</strong> <span class="badge bg-{{ ['pending' => 'warning', 'processing' => 'info', 'completed' => 'success', 'cancelled' => 'danger'][$order->status_order] ?? 'secondary' }}">{{ ucfirst($order->status_order) }}</span></p>

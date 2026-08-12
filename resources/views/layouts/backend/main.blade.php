@@ -9,6 +9,7 @@
     <title>{{ settings()['title'] ?? config('app.name') }}</title>
     <meta name="author" content="{{ settings()['author'] ?? '' }}">
     <meta name="description" content="{{ settings()['description'] ?? '' }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png"
       href="{{ settings()['favicon'] ? asset('storage/' . settings()['favicon']) : asset('images/no-image.png') }}">
 

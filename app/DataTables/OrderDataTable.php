@@ -24,7 +24,10 @@ class OrderDataTable extends DataTable
                 return $row->cashier->name ?? '-';
             })
             ->addColumn('table_number', function ($row) {
-                return $row->table->number_table ?? '-';
+                return $row->table->number_table ?? $row->table->table_number ?? '-';
+            })
+            ->addColumn('customer_name', function ($row) {
+                return $row->customer->name ?? $row->customer_name ?? '-';
             })
             ->editColumn('grand_total', function ($row) {
                 return 'Rp ' . number_format($row->grand_total, 0, ',', '.');
@@ -63,7 +66,7 @@ class OrderDataTable extends DataTable
 
     public function query(Order $model): QueryBuilder
     {
-        return $model->newQuery()->with(['outlet', 'cashier', 'table']);
+        return $model->newQuery()->with(['outlet', 'cashier', 'table', 'customer']);
     }
 
     public function html(): HtmlBuilder
@@ -92,7 +95,7 @@ class OrderDataTable extends DataTable
             Column::make('outlet_name')->title('Outlet')->orderable(false),
             Column::make('cashier_name')->title('Cashier')->orderable(false),
             Column::make('table_number')->title('Table')->orderable(false),
-            Column::make('customer_name')->title('Customer'),
+            Column::make('customer_name')->title('Customer')->orderable(false),
             Column::make('grand_total')->title('Total'),
             Column::make('status_order')->title('Status'),
             Column::make('created_at')->title('Date'),
