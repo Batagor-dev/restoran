@@ -461,3 +461,13 @@ Breadcrumbs::for('kitchen.show', function (BreadcrumbTrail $trail, $order) {
 });
 
 // **************************** END KITCHEN ***************************
+
+// **************************** KITCHEN HISTORY ***************************
+
+// Home > Kitchen > History
+Breadcrumbs::for('kitchen.history', function (BreadcrumbTrail $trail) {
+    $trail->parent('kitchen.index');
+    $trail->push('Kitchen History', route('kitchen.history'));
+});
+
+// **************************** END KITCHEN HISTORY ***************************

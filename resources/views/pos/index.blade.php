@@ -221,7 +221,7 @@ $title = 'Point of Sale';
                     <button @click="paymentMethod = 'cash'"
                         class="py-2 px-3 rounded-lg border text-sm font-satoshi-medium transition-all duration-200"
                         :class="paymentMethod === 'cash' ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-300 hover:bg-slate-50'">
-                        <i class="ri-money-cash-line block text-xl mb-1"></i>
+                        <i class="ri-money-dollar-circle-line block text-xl mb-1"></i>
                         Cash
                     </button>
                     <button @click="paymentMethod = 'qris'"

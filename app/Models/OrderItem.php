@@ -18,6 +18,7 @@ class OrderItem extends Model
         'discount_amount' => 'decimal:2',
         'subtotal' => 'decimal:2',
         'quantity' => 'integer',
+        'ready_at' => 'datetime',
     ];
 
     public function getRouteKeyName()
@@ -33,5 +34,22 @@ class OrderItem extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function cookedBy()
+    {
+        return $this->belongsTo(User::class, 'cooked_by');
+    }
+
+    // Scope untuk item yang belum siap
+    public function scopeNotReady($query)
+    {
+        return $query->where('kitchen_status', '!=', 'ready');
+    }
+
+    // Scope untuk item yang sedang dimasak
+    public function scopeCooking($query)
+    {
+        return $query->where('kitchen_status', 'cooking');
     }
 }

@@ -127,7 +127,7 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
     Route::delete('/pos/cart/clear', [PosController::class, 'clearCart'])->name('pos.cart.clear');
     Route::post('/pos/promo/apply', [PosController::class, 'applyPromo'])->name('pos.promo.apply');
     Route::post('/pos/order', [PosController::class, 'processOrder'])->name('pos.order');
-    Route::post('/pos/promo/remove', [PosController::class, 'removePromo']) ->name('pos.promo.remove');
+    Route::post('/pos/promo/remove', [PosController::class, 'removePromo'])->name('pos.promo.remove');
 
     Route::resource('/customers', CustomerController::class, ['parameters' => [
         'customers' => 'customer:uuid',
@@ -135,11 +135,13 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
 
     // Kitchen Routes
     Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
-    Route::get('/kitchen/orders', [KitchenController::class, 'getOrders'])->name('kitchen.orders');
-    Route::post('/kitchen/{orderId}/status', [KitchenController::class, 'updateStatus'])->name('kitchen.status');
+    Route::get('/kitchen/history', [KitchenController::class, 'history'])->name('kitchen.history');  // 👈 HARUS DI ATAS /{order}
+    Route::get('/kitchen/new-orders', [KitchenController::class, 'getNewOrders'])->name('kitchen.new-orders');
+    Route::post('/kitchen/item/{item}/status', [KitchenController::class, 'updateItemStatus'])->name('kitchen.item.status');
+    Route::post('/kitchen/{order}/status', [KitchenController::class, 'updateStatus'])->name('kitchen.status');
     Route::get('/kitchen/{order}', [KitchenController::class, 'show'])->name('kitchen.show');
     Route::get('/kitchen/{order}/print', [KitchenController::class, 'print'])->name('kitchen.print');
-
+    
     // Route::prefix('setting')->group(function () {
     //     Route::get('/',[App\Http\Controllers\SettingController::class, 'index'])->name('setting.index');
     //     Route::get('/create',[App\Http\Controllers\SettingController::class, 'create'])->name('setting.create');
