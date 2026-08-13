@@ -25,7 +25,7 @@ return new class extends Migration
             $table->enum('status_order', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->softDeletes();
             $table->timestamps();
-            $table->enum('payment_method', ['cash', 'qris', 'debit', 'credit'])->default('cash');
+            
         });
     }
 
