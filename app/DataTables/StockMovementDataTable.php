@@ -23,30 +23,15 @@ class StockMovementDataTable extends DataTable
                 return $row->productStock->outlet->name ?? '-';
             })
             ->editColumn('movement_type', function ($row) {
-                $type = strtolower($row->movement_type);
-                $badges = [
-                    'in' => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-emerald-100 text-emerald-800">In</span>',
-                    'out' => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-rose-100 text-rose-800">Out</span>',
-                    'adjustment' => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-amber-100 text-amber-800">Adjustment</span>',
-                    'return' => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-sky-100 text-sky-800">Return</span>',
-                ];
+                $badge = [
+                    'in' => 'success',
+                    'out' => 'danger',
+                    'adjustment' => 'warning',
+                    'return' => 'info'
+                ][$row->movement_type] ?? 'secondary';
 
-                return $badges[$type] ?? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-slate-100 text-slate-600">' . ucfirst($type) . '</span>';
+                return '<span class="badge bg-' . $badge . '">' . ucfirst($row->movement_type) . '</span>';
             })
-            ->editColumn('created_at', function ($row) {
-                return $row->created_at ? $row->created_at->format('d M Y H:i') : '-';
-            })
-
-            ->addColumn('action', function ($movement) {
-                $deleteBtn = '<form action="' . route('stock-movements.destroy', $movement->uuid) . '" method="POST" style="display:inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure?\')">
-                        <i class="ri-delete-bin-line"></i>
-                    </button>
-                </form>';
-                return $deleteBtn;
-
             ->editColumn('quantity', function ($row) {
                 return number_format($row->quantity);
             })
@@ -56,6 +41,9 @@ class StockMovementDataTable extends DataTable
             ->editColumn('stock_after', function ($row) {
                 return number_format($row->stock_after);
             })
+            ->editColumn('created_at', function ($row) {
+                return $row->created_at ? $row->created_at->format('d M Y H:i') : '-';
+            })
             ->addColumn('notes', function ($row) {
                 return $row->notes ?: '-';
             })
@@ -64,23 +52,20 @@ class StockMovementDataTable extends DataTable
 
                 if (auth()->user()->can('Stock Movement Delete')) {
                     $delete = '
-                        <form action="'.route('stock-movements.destroy', $row->uuid).'"
+                        <form action="' . route('stock-movements.destroy', $row->uuid) . '"
                               method="POST" style="display:inline-block;" class="delete-form m-0">
-                            '.csrf_field().method_field('DELETE').'
+                            ' . csrf_field() . method_field('DELETE') . '
                             <button type="button" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors delete-btn font-satoshi-medium"
-                                data-id="'.$row->uuid.'"
+                                data-id="' . $row->uuid . '"
                                 data-bs-toggle="tooltip" title="Delete">
                                 <i class="ri ri-delete-bin-line text-lg"></i>
                             </button>
                         </form>';
                 }
 
-                return '<div class="flex items-center space-x-2 justify-center">'.$delete.'</div>';
-
+                return '<div class="flex items-center space-x-2 justify-center">' . $delete . '</div>';
             })
-            ->rawColumns(['action'])
             ->rawColumns(['movement_type', 'action']);
-            
     }
 
     /**
@@ -100,16 +85,16 @@ class StockMovementDataTable extends DataTable
             ->setTableId('stock-movements-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(8, 'desc')
+            ->orderBy(1)
             ->responsive(true)
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
-                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'.
-                         '<"overflow-x-auto w-full"tr>'.
-                         '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
+                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'
+                    . '<"overflow-x-auto w-full"tr>'
+                    . '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     'search' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Search:</span>',
-                    'searchPlaceholder' => 'Search movement...',
+                    'searchPlaceholder' => 'Search movements...',
                     'lengthMenu' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Show</span> _MENU_ <span class="text-slate-600 ml-2 font-satoshi-medium">Entries</span>',
                     'info' => 'Showing _START_ to _END_ of _TOTAL_ entries',
                     'paginate' => [
@@ -129,12 +114,12 @@ class StockMovementDataTable extends DataTable
     {
         return [
             Column::make('DT_RowIndex')->title('No')->searchable(false)->orderable(false)->width(40)->addClass('text-center px-4 py-3 bg-slate-50 font-satoshi-medium text-slate-500 border-b border-slate-200'),
-            Column::make('product_name')->title('Product Name')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-900 font-semibold'),
+            Column::make('product_name')->title('Product')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-900 font-semibold'),
             Column::make('outlet_name')->title('Outlet')->orderable(false)->addClass('px-4 py-3 border-b border-slate-200 text-slate-700'),
-            Column::make('movement_type')->title('Type')->addClass('px-4 py-3 border-b border-slate-200 text-center'),
-            Column::make('quantity')->title('Quantity')->addClass('px-4 py-3 border-b border-slate-200 text-slate-900 font-semibold text-center'),
-            Column::make('stock_before')->title('Before')->addClass('px-4 py-3 border-b border-slate-200 text-slate-700 text-center'),
-            Column::make('stock_after')->title('After')->addClass('px-4 py-3 border-b border-slate-200 text-slate-700 text-center'),
+            Column::make('movement_type')->title('Type')->addClass('px-4 py-3 border-b border-slate-200 text-slate-700'),
+            Column::make('quantity')->title('Qty')->addClass('px-4 py-3 border-b border-slate-200 text-slate-700'),
+            Column::make('stock_before')->title('Before')->addClass('px-4 py-3 border-b border-slate-200 text-slate-700'),
+            Column::make('stock_after')->title('After')->addClass('px-4 py-3 border-b border-slate-200 text-slate-700'),
             Column::make('notes')->title('Notes')->addClass('px-4 py-3 border-b border-slate-200 text-slate-700'),
             Column::make('created_at')->title('Date')->addClass('px-4 py-3 border-b border-slate-200 text-slate-700'),
             Column::computed('action')
@@ -151,6 +136,6 @@ class StockMovementDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'StockMovement_'.date('YmdHis');
+        return 'StockMovement_' . date('YmdHis');
     }
 }

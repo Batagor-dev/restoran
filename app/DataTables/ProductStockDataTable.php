@@ -25,44 +25,35 @@ class ProductStockDataTable extends DataTable
             ->editColumn('quantity', function ($row) {
                 return number_format($row->quantity);
             })
-            ->addColumn('action', function ($stock) {
-                $editBtn = '<a href="' . route('product-stocks.edit', $stock->uuid) . '" class="btn btn-sm btn-primary">
-                    <i class="ri-edit-line"></i>
-                </a>';
-                $deleteBtn = '<form action="' . route('product-stocks.destroy', $stock->uuid) . '" method="POST" style="display:inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure?\')">
-                        <i class="ri-delete-bin-line"></i>
-                    </button>
-                </form>';
-                return $editBtn . ' ' . $deleteBtn; 
-                ->addColumn('action', function ($row) {
-                $edit = '';
-                $delete = '';
-
+            ->addColumn('action', function ($row) {
+                // Edit button
                 if (auth()->user()->can('Product Stock Update')) {
-                    $edit = '<a href="'.route('product-stocks.edit', $row->uuid).'"
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors font-satoshi-medium"
-                                data-bs-toggle="tooltip" title="Edit">
-                                <i class="ri ri-edit-line text-lg"></i>
-                             </a>';
+                    $edit = '<a href="' . route('product-stocks.edit', $row->uuid) . '"
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors font-satoshi-medium"
+                            data-bs-toggle="tooltip" title="Edit">
+                            <i class="ri ri-edit-line text-lg"></i>
+                         </a>';
+                } else {
+                    $edit = '';
                 }
 
+                // Delete button
                 if (auth()->user()->can('Product Stock Delete')) {
                     $delete = '
-                        <form action="'.route('product-stocks.destroy', $row->uuid).'"
-                              method="POST" style="display:inline-block;" class="delete-form m-0">
-                            '.csrf_field().method_field('DELETE').'
-                            <button type="button" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors delete-btn font-satoshi-medium"
-                                data-id="'.$row->uuid.'"
-                                data-bs-toggle="tooltip" title="Delete">
-                                <i class="ri ri-delete-bin-line text-lg"></i>
-                            </button>
-                        </form>';
+                    <form action="' . route('product-stocks.destroy', $row->uuid) . '"
+                          method="POST" style="display:inline-block;" class="delete-form m-0">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="button" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors delete-btn font-satoshi-medium"
+                            data-id="' . $row->uuid . '"
+                            data-bs-toggle="tooltip" title="Delete">
+                            <i class="ri ri-delete-bin-line text-lg"></i>
+                        </button>
+                    </form>';
+                } else {
+                    $delete = '';
                 }
 
-                return '<div class="flex items-center space-x-2 justify-center">'.$edit.' '.$delete.'</div>';
+                return '<div class="flex items-center space-x-2 justify-center">' . $edit . ' ' . $delete . '</div>';
             })
             ->rawColumns(['action']);
     }
@@ -88,9 +79,9 @@ class ProductStockDataTable extends DataTable
             ->responsive(true)
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
-                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'.
-                         '<"overflow-x-auto w-full"tr>'.
-                         '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
+                'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>' .
+                    '<"overflow-x-auto w-full"tr>' .
+                    '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     'search' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Search:</span>',
                     'searchPlaceholder' => 'Search stock...',
@@ -130,6 +121,6 @@ class ProductStockDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'ProductStock_'.date('YmdHis');
+        return 'ProductStock_' . date('YmdHis');
     }
 }

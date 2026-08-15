@@ -12,46 +12,77 @@ class MenuSeeder extends Seeder
 {
     public function run()
     {
-        $produkGroup = MenuGroup::where('name', 'Management Product')->first();
-        $mejaGroup = MenuGroup::where('name', 'Management Table')->first();
-        $kontenGroup = MenuGroup::where('name', 'Management Content')->first();
-        $pengaturanGroup = MenuGroup::where('name', 'Setting')->first();
+        // ============================================================
+        // 1. BUAT / AMBIL MENU GROUP (OTOMATIS)
+        // ============================================================
+        $produkGroup = MenuGroup::firstOrCreate(
+            ['name' => 'Management Product'],
+            ['permission_group_id' => 13, 'sort' => 1, 'status' => 1]
+        );
 
-        // === Menu 1: Produk (Group: PRODUK) ===
+        $mejaGroup = MenuGroup::firstOrCreate(
+            ['name' => 'Management Table'],
+            ['permission_group_id' => 15, 'sort' => 2, 'status' => 1]
+        );
+
+        $kontenGroup = MenuGroup::firstOrCreate(
+            ['name' => 'Management Content'],
+            ['permission_group_id' => 10, 'sort' => 3, 'status' => 1]
+        );
+
+        $pengaturanGroup = MenuGroup::firstOrCreate(
+            ['name' => 'Setting'],
+            ['permission_group_id' => 8, 'sort' => 4, 'status' => 1]
+        );
+
+        // ============================================================
+        // 2. MANAGEMENT PRODUCT
+        // ============================================================
         $produk = Menu::create([
-            'menu_group_id' => $produkGroup?->id,
+            'menu_group_id' => $produkGroup->id,
             'nama_menu' => 'Produk',
             'permission_group_id' => 13,
             'icon' => 'ri-shopping-bag-3-line',
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
         $promo = Menu::create([
-            'menu_group_id' => $produkGroup?->id,
+            'menu_group_id' => $produkGroup->id,
             'nama_menu' => 'Promo',
             'permission_group_id' => 14,
             'icon' => 'ri-gift-line',
-            'status' => '1',
-            'sort' => '2',
+            'status' => true,
+            'sort' => 2,
         ]);
 
-        $managementStock = Menu::create([
-            'menu_group_id' => $produkGroup?->id,
-            'nama_menu' => 'Management Stock',
+        // Stock Management (HANYA SATU, TIDAK DUPLIKAT)
+        $stockManagement = Menu::create([
+            'menu_group_id' => $produkGroup->id,
+            'nama_menu' => 'Stock Management',
             'permission_group_id' => 16,
             'icon' => 'ri-stack-line',
-            'status' => '1',
-            'sort' => '3',
+            'status' => true,
+            'sort' => 3,
         ]);
 
+        $customerPromo = Menu::create([
+            'menu_group_id' => $produkGroup->id,
+            'nama_menu' => 'Customer Promo',
+            'permission_group_id' => 26,
+            'icon' => 'ri-gift-line',
+            'status' => true,
+            'sort' => 4,
+        ]);
+
+        // Submenu Produk
         Menu::create([
             'menu_id' => $produk->id,
             'nama_menu' => 'Kategori Produk',
             'permission_group_id' => 12,
             'href' => '/product_categories',
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
         Menu::create([
@@ -59,56 +90,72 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Produk',
             'permission_group_id' => 13,
             'href' => '/products',
-            'status' => '1',
-            'sort' => '2',
+            'status' => true,
+            'sort' => 2,
         ]);
 
+        // Submenu Promo
         Menu::create([
             'menu_id' => $promo->id,
             'nama_menu' => 'Promo',
             'permission_group_id' => 14,
             'href' => '/promo',
-            'status' => '1',
-            'sort' => '3',
+            'status' => true,
+            'sort' => 1,
         ]);
 
+        // Submenu Stock Management
         Menu::create([
-            'menu_id' => $managementStock->id,
+            'menu_id' => $stockManagement->id,
             'nama_menu' => 'Product Stocks',
             'permission_group_id' => 16,
             'href' => '/product-stocks',
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
         Menu::create([
-            'menu_id' => $managementStock->id,
+            'menu_id' => $stockManagement->id,
             'nama_menu' => 'Stock Movements',
             'permission_group_id' => 17,
             'href' => '/stock-movements',
-            'status' => '1',
-            'sort' => '2',
+            'status' => true,
+            'sort' => 2,
         ]);
 
-        // === Menu 2: Meja (Group: MEJA) ===
+        // Submenu Customer Promo
         Menu::create([
-            'menu_group_id' => $mejaGroup?->id,
+            'menu_id' => $customerPromo->id,
+            'nama_menu' => 'Customer Promo',
+            'permission_group_id' => 26,
+            'href' => '/customer-promos',
+            'status' => true,
+            'sort' => 1,
+        ]);
+
+        // ============================================================
+        // 3. MANAGEMENT TABLE
+        // ============================================================
+        Menu::create([
+            'menu_group_id' => $mejaGroup->id,
             'nama_menu' => 'Management Meja',
             'permission_group_id' => 15,
             'icon' => 'ri-layout-grid-line',
             'href' => '/tables',
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
-        // === Menu 3: Artikel (Group: KONTEN) ===
+        // ============================================================
+        // 4. MANAGEMENT CONTENT (Artikel)
+        // ============================================================
         $artikel = Menu::create([
-            'menu_group_id' => $kontenGroup?->id,
+            'menu_group_id' => $kontenGroup->id,
             'nama_menu' => 'Artikel',
             'permission_group_id' => 7,
             'icon' => 'ri-article-line',
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
         Menu::create([
@@ -116,8 +163,8 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Artikel Kategori',
             'permission_group_id' => 7,
             'href' => '/article_categories',
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
         Menu::create([
@@ -125,27 +172,28 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Artikel',
             'permission_group_id' => 7,
             'href' => '/article',
-            'status' => '1',
-            'sort' => '2',
+            'status' => true,
+            'sort' => 2,
         ]);
 
-        // === Menu 4: Setting (Group: PENGATURAN) ===
+        // ============================================================
+        // 5. SETTING
+        // ============================================================
         $setting = Menu::create([
-            'menu_group_id' => $pengaturanGroup?->id,
+            'menu_group_id' => $pengaturanGroup->id,
             'nama_menu' => 'Setting',
             'permission_group_id' => 8,
             'icon' => 'ri-settings-3-line',
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
-        // Submenu User Management
         $userManagement = Menu::create([
             'menu_id' => $setting->id,
             'nama_menu' => 'User Management',
             'permission_group_id' => 8,
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
         // Level 3 dari User Management
@@ -154,8 +202,8 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Users',
             'permission_group_id' => 1,
             'href' => '/user',
-            'status' => '1',
-            'sort' => '1',
+            'status' => true,
+            'sort' => 1,
         ]);
 
         Menu::create([
@@ -163,8 +211,8 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Permission Group',
             'permission_group_id' => 8,
             'href' => '/permissiongroup',
-            'status' => '1',
-            'sort' => '2',
+            'status' => true,
+            'sort' => 2,
         ]);
 
         Menu::create([
@@ -172,8 +220,8 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Permissions',
             'permission_group_id' => 8,
             'href' => '/permission',
-            'status' => '1',
-            'sort' => '3',
+            'status' => true,
+            'sort' => 3,
         ]);
 
         Menu::create([
@@ -181,8 +229,8 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Roles',
             'permission_group_id' => 8,
             'href' => '/role',
-            'status' => '1',
-            'sort' => '4',
+            'status' => true,
+            'sort' => 4,
         ]);
 
         Menu::create([
@@ -190,8 +238,8 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Outlets',
             'permission_group_id' => 9,
             'href' => '/outlet',
-            'status' => '1',
-            'sort' => '5',
+            'status' => true,
+            'sort' => 5,
         ]);
 
         // Submenu Web Setting (langsung di bawah Setting)
@@ -200,8 +248,8 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Web Setting',
             'permission_group_id' => 8,
             'href' => '/setting',
-            'status' => '1',
-            'sort' => '2',
+            'status' => true,
+            'sort' => 2,
         ]);
 
         Menu::create([
@@ -209,8 +257,8 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Menu Management',
             'permission_group_id' => 8,
             'href' => '/menu',
-            'status' => '1',
-            'sort' => '3',
+            'status' => true,
+            'sort' => 3,
         ]);
 
         Menu::create([
@@ -218,124 +266,65 @@ class MenuSeeder extends Seeder
             'nama_menu' => 'Menu Group',
             'permission_group_id' => 8,
             'href' => '/menugroup',
-            'status' => '1',
-            'sort' => '4',
-        ]);
-
-        // Stock Management
-        $stockManagement = Menu::create([
-            'uuid' => Str::uuid(),
-            'nama_menu' => 'Stock Management',
-            'icon' => 'ri-stack-line',
-            'permission_group_id' => PermissionGroup::where('name', 'Product Stock')->first()->id,
-            'status' => true,
-            'sort' => 3,
-        ]);
-
-        Menu::create([
-            'uuid' => Str::uuid(),
-            'nama_menu' => 'Product Stocks',
-            'menu_id' => $stockManagement->id,
-            'permission_group_id' => PermissionGroup::where('name', 'Product Stock')->first()->id,
-            'href' => '/product-stocks',
-            'status' => true,
-            'sort' => 1,
-        ]);
-
-        Menu::create([
-            'uuid' => Str::uuid(),
-            'nama_menu' => 'Stock Movements',
-            'menu_id' => $stockManagement->id,
-            'permission_group_id' => PermissionGroup::where('name', 'Stock Movement')->first()->id,
-            'href' => '/stock-movements',
-            'status' => true,
-            'sort' => 2,
-        ]);
-
-        // Customer Promo
-        $customerPromo = Menu::create([
-            'uuid' => Str::uuid(),
-            'nama_menu' => 'Customer Promo',
-            'icon' => 'ri-gift-line',
-            'permission_group_id' => PermissionGroup::where('name', 'Customer Promo')->first()->id,
             'status' => true,
             'sort' => 4,
         ]);
 
+        // ============================================================
+        // 6. ORDERS (LANGSUNG KE HALAMAN - TANPA DROPDOWN)
+        // ============================================================
         Menu::create([
             'uuid' => Str::uuid(),
-            'nama_menu' => 'Customer Promo',
-            'menu_id' => $customerPromo->id,
-            'permission_group_id' => PermissionGroup::where('name', 'Customer Promo')->first()->id,
-            'href' => '/customer-promos',
-            'status' => true,
-            'sort' => 1,
-        ]);
-
-        // Orders
-        $orders = Menu::create([
-            'uuid' => Str::uuid(),
+            'menu_group_id' => null,
+            'menu_id' => null,
             'nama_menu' => 'Orders',
             'icon' => 'ri-shopping-cart-line',
-            'permission_group_id' => PermissionGroup::where('name', 'Order')->first()->id,
-            'status' => true,
-            'sort' => 5,
-        ]);
-
-        Menu::create([
-            'uuid' => Str::uuid(),
-            'nama_menu' => 'Orders',
-            'menu_id' => $orders->id,
-            'permission_group_id' => PermissionGroup::where('name', 'Order')->first()->id,
+            'permission_group_id' => 18,
             'href' => '/orders',
             'status' => true,
             'sort' => 1,
         ]);
 
-        // POS
-        $posMenu = Menu::create([
+        // ============================================================
+        // 7. POS (LANGSUNG KE HALAMAN)
+        // ============================================================
+        Menu::create([
             'uuid' => Str::uuid(),
-            'menu_group_id' => null, // Atau bisa di group Management Product
+            'menu_group_id' => null,
             'menu_id' => null,
             'nama_menu' => 'POS',
             'icon' => 'ri-shopping-cart-2-line',
-            'permission_group_id' => PermissionGroup::where('name', 'POS')->first()->id,
+            'permission_group_id' => 20,
             'href' => '/pos',
             'status' => true,
             'sort' => 1,
         ]);
 
-        // Customer
+        // ============================================================
+        // 8. CUSTOMERS (LANGSUNG KE HALAMAN)
+        // ============================================================
         Menu::create([
             'uuid' => Str::uuid(),
+            'menu_group_id' => null,
+            'menu_id' => null,
             'nama_menu' => 'Customers',
             'icon' => 'ri-user-line',
-            'permission_group_id' => PermissionGroup::where('name', 'Customer')->first()->id,
+            'permission_group_id' => 21,
+            'href' => '/customers',
             'status' => true,
             'sort' => 1,
         ]);
 
-        // Customer
-        $customerMenu = Menu::create([
-            'uuid' => Str::uuid(),
-            'menu_group_id' => null, // Bisa di group terpisah atau di Management Product
-            'menu_id' => null,
-            'nama_menu' => 'Customers',
-            'icon' => 'ri-user-line',
-            'permission_group_id' => PermissionGroup::where('name', 'Customer')->first()->id,
-            'href' => '/customers',
-            'status' => true,
-            'sort' => 6,
-        ]);
-
-        // Kitchen
-        $kitchenMenu = Menu::create([
+        // ============================================================
+        // 9. KITCHEN (LANGSUNG KE HALAMAN)
+        // ============================================================
+        Menu::create([
             'uuid' => Str::uuid(),
             'menu_group_id' => null,
             'menu_id' => null,
             'nama_menu' => 'Kitchen',
             'icon' => 'ri-restaurant-2-line',
-            'permission_group_id' => PermissionGroup::where('name', 'Kitchen')->first()->id,
+            'permission_group_id' => 22,
             'href' => '/kitchen',
             'status' => true,
             'sort' => 1,
