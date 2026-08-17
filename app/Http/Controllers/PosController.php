@@ -12,7 +12,6 @@ use App\Models\ProductStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Models\Customer;
 use App\Models\DiningTable;
 
 class PosController extends Controller
@@ -23,7 +22,6 @@ class PosController extends Controller
         $this->data['products'] = $this->getProducts($request);
         $this->data['favorites'] = $this->getFavorites();
         $this->data['promos'] = Promo::where('is_active', true)->get();
-        $this->data['customers'] = Customer::where('is_active', true)->get();
         $this->data['tables'] = DiningTable::where('is_active', true)->get();
         // $this->data['customers'] = Customer::all(); // COMMENT KARENA MODEL CUSTOMER BELUM ADA
 
@@ -351,18 +349,18 @@ class PosController extends Controller
 
             // Create order
             $order = Order::create([
-                'uuid' => (string) Str::uuid(),
+                'uuid' => Str::uuid(),
                 'code_invoice' => $invoice,
-                'outlet_id' => auth()->user()->current_outlet_id ?? 1,
+                'outlet_id' => auth()->user()->current_outlet_id,
                 'cashier_id' => auth()->id(),
-                'customer_id' => $data['customer_id'] ?? null,
-                'table_id' => $data['table_id'] ?? null,
-                'customer_name' => $data['customer_name'] ?? $data['customer'] ?? null,
-                'subtotal' => $data['subtotal'] ?? 0,
-                'discount' => $data['discount'] ?? 0,
-                'tax' => $data['tax'] ?? 0,
-                'grand_total' => $data['grand_total'] ?? 0,
-                'payment_method' => $data['payment_method'] ?? 'cash',
+                'table_id' => $request->table_id ?? null, // ← INI PENTING!
+                'customer_id' => null,
+                'customer_name' => $request->customer_name ?? 'Guest',
+                'subtotal' => $request->subtotal,
+                'discount' => $request->discount ?? 0,
+                'tax' => $request->tax ?? 0,
+                'grand_total' => $request->grand_total,
+                'payment_method' => $request->payment_method ?? 'cash',
                 'status_order' => 'pending',
             ]);
 

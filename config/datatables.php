@@ -1,10 +1,5 @@
 <?php
 
-use Yajra\DataTables\ApiResourceDataTable;
-use Yajra\DataTables\CollectionDataTable;
-use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\QueryDataTable;
-
 return [
     /*
      * DataTables search options.
@@ -50,10 +45,10 @@ return [
      * This is where you can register your custom DataTables builder.
      */
     'engines' => [
-        'eloquent' => EloquentDataTable::class,
-        'query' => QueryDataTable::class,
-        'collection' => CollectionDataTable::class,
-        'resource' => ApiResourceDataTable::class,
+        'eloquent' => Yajra\DataTables\EloquentDataTable::class,
+        'query' => Yajra\DataTables\QueryDataTable::class,
+        'collection' => Yajra\DataTables\CollectionDataTable::class,
+        'resource' => Yajra\DataTables\ApiResourceDataTable::class,
     ],
 
     /*

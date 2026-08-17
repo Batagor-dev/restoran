@@ -1,128 +1,82 @@
 @php
-    $stock_movement_data = $stock_movement_data ?? $stockMovement ?? null;
-    $sub_title = ($breadcrumb = Breadcrumbs::current()) ? $breadcrumb->title : 'Stock Movement Form';
-
-    if (isset($stock_movement_data)) {
-        $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName(), $stock_movement_data);
-    } else {
-        $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName());
-    }
-    $breadcrumb_parent = $breadcrumbsData->where('title', '!=', $breadcrumb->title)->last();
-
-    $stockOptions = isset($stocks) ? (is_array($stocks) ? $stocks : $stocks->toArray()) : [];
-    $movementTypes = [
-        ['value' => 'in', 'label' => 'Stock In'],
-        ['value' => 'out', 'label' => 'Stock Out'],
-        ['value' => 'adjustment', 'label' => 'Adjustment'],
-        ['value' => 'return', 'label' => 'Return'],
-    ];
+    $isEdit = isset($stockMovement);
+    $title = $isEdit ? 'Edit Stock Movement' : 'Add Stock Movement';
 @endphp
 
 @extends('layouts.backend.main')
 
-@section('title', 'Stock Movement Form')
-@section('sub_title', $sub_title)
-
-@section('breadcrumb')
-    <x-layout.admin.breadcrumb :breadcrumbs="$breadcrumbsData" />
-@endsection
+@section('title', $title)
 
 @section('content')
-    <div class="space-y-6">
-        <x-ui.card>
-            <form method="POST" action="{{ $action }}" class="space-y-6">
-                @isset($stock_movement_data) @method('PUT') @endisset
-                @csrf
+<div class="space-y-8 pb-12">
+    <x-ui.card>
+        <div class="flex items-center justify-between mb-6">
+            <h5 class="text-lg font-satoshi-bold text-slate-900 mb-0">{{ $title }}</h5>
+        </div>
 
+        <form action="{{ $action }}" method="POST" class="space-y-6">
+            @csrf
+            @if($isEdit)
+                @method('PUT')
+            @endif
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- Product Stock --}}
                 <div>
-                    <h5 class="text-lg font-satoshi-bold text-slate-900 mb-6">{{ $sub_title }}</h5>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Product Stock -->
-                        <div>
-                            <x-ui.select2 
-                                name="product_stock_id" 
-                                label="Product Stock"
-                                placeholder="Select Product Stock"
-                                :value="old('product_stock_id', $stock_movement_data->product_stock_id ?? '')"
-                                :options="$stockOptions"
-                                required
-                            />
-                        </div>
-
-                        <!-- Movement Type -->
-                        <div>
-                            <x-ui.select2 
-                                name="movement_type" 
-                                label="Movement Type"
-                                placeholder="Select Movement Type"
-                                :value="old('movement_type', $stock_movement_data->movement_type ?? '')"
-                                :options="$movementTypes"
-                                required
-                            />
-                        </div>
-
-                        <!-- Quantity -->
-                        <div>
-                            <x-ui.input 
-                                type="number"
-                                name="quantity" 
-                                label="Quantity" 
-                                placeholder="Enter quantity" 
-                                value="{{ old('quantity', $stock_movement_data->quantity ?? 1) }}"
-                                min="1"
-                                required
-                            />
-                        </div>
-
-                        <!-- Reference Type -->
-                        <div>
-                            <x-ui.input 
-                                name="reference_type" 
-                                label="Reference Type" 
-                                placeholder="e.g. purchase, sale, return" 
-                                value="{{ old('reference_type', $stock_movement_data->reference_type ?? '') }}"
-                            />
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="md:col-span-2">
-                            <label for="notes" class="block text-sm font-satoshi-medium text-slate-700 mb-2">Notes</label>
-                            <textarea 
-                                id="notes" 
-                                name="notes" 
-                                rows="3" 
-                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base font-satoshi-medium text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
-                                placeholder="Enter notes (optional)"
-                            >{{ old('notes', $stock_movement_data->notes ?? '') }}</textarea>
-                            @error('notes')
-                                <p class="mt-1.5 block text-sm font-medium text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
+                    <x-ui.select2
+                        name="product_stock_id"
+                        id="product_stock_id"
+                        label="Product Stock"
+                        :required="true"
+                        :options="$stocks->map(function($stock) {
+                            return [
+                                'value' => $stock->id,
+                                'label' => ($stock->product->name ?? 'Unknown') . ' - ' . ($stock->outlet->name ?? 'Unknown') . ' (' . $stock->quantity . ')'
+                            ];
+                        })->toArray()"
+                        option-value="value"
+                        option-label="label"
+                        :selected="old('product_stock_id', $stockMovement->product_stock_id ?? '')"
+                        placeholder="Select Product Stock"
+                        :error="$errors->first('product_stock_id')"
+                    />
                 </div>
 
-                <!-- Submit / Cancel -->
-                <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
-                    <x-ui.button type="button" font="medium" size="sm" style="secondary" onclick="window.location.href='{{ $breadcrumb_parent?->url ?? route('stock-movements.index') }}'">
-                        Cancel
-                    </x-ui.button>
-                    <x-ui.button type="submit" font="bold" size="sm">
-                        Submit
-                    </x-ui.button>
+                {{-- Movement Type --}}
+                <div>
+                    <x-ui.select2
+                        name="movement_type"
+                        id="movement_type"
+                        label="Movement Type"
+                        :required="true"
+                        :options="[
+                            ['value' => 'in', 'label' => 'Stock In'],
+                            ['value' => 'out', 'label' => 'Stock Out'],
+                            ['value' => 'adjustment', 'label' => 'Adjustment'],
+                            ['value' => 'return', 'label' => 'Return']
+                        ]"
+                        option-value="value"
+                        option-label="label"
+                        :selected="old('movement_type', $stockMovement->movement_type ?? '')"
+                        placeholder="Select Movement Type"
+                        :error="$errors->first('movement_type')"
+                    />
                 </div>
-            </form>
-        </x-ui.card>
-    </div>
-@endsection
 
-@push('scripts')
-    {{-- SweetAlert Notification --}}
-    @if(session('success'))
-        <script>
-            Swal.fire({ icon: 'success', title: 'Success', text: "{{ session('success') }}" });
-        </script>
-    @endif
+                {{-- Quantity --}}
+                <div>
+                    <x-ui.input
+                        name="quantity"
+                        id="quantity"
+                        label="Quantity"
+                        type="number"
+                        :value="old('quantity', $stockMovement->quantity ?? 1)"
+                        placeholder="Enter quantity"
+                        :required="true"
+                        min="1"
+                        :error="$errors->first('quantity')"
+                    />
+                </div>
 
                 {{-- Reference Type --}}
                 <div>
@@ -136,7 +90,7 @@
                     />
                 </div>
 
-                {{-- Notes --}}
+                {{-- Notes (Full Width) --}}
                 <div class="md:col-span-2">
                     <x-ui.textarea
                         name="notes"
@@ -156,7 +110,7 @@
                     Cancel
                 </x-ui.button>
                 <x-ui.button type="submit" size="sm">
-                    <i></i> Sumbit
+                    <i class="ri-save-line mr-1"></i> Save
                 </x-ui.button>
             </div>
         </form>
@@ -164,10 +118,17 @@
 </div>
 @endsection
 
+@push('scripts')
+    {{-- SweetAlert Notification --}}
+    @if(session('success'))
+        <script>
+            Swal.fire({ icon: 'success', title: 'Success', text: "{{ session('success') }}" });
+        </script>
+    @endif
+
     @if(session('error'))
         <script>
             Swal.fire({ icon: 'error', title: 'Error', text: "{{ session('error') }}" });
         </script>
     @endif
 @endpush
-

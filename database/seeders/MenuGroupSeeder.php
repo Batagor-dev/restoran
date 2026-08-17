@@ -9,6 +9,7 @@ class MenuGroupSeeder extends Seeder
 {
     public function run()
     {
+        // Management Product
         MenuGroup::updateOrCreate(
             ['name' => 'Management Product'],
             [
@@ -18,6 +19,7 @@ class MenuGroupSeeder extends Seeder
             ]
         );
 
+        // Management Table
         MenuGroup::updateOrCreate(
             ['name' => 'Management Table'],
             [
@@ -27,6 +29,7 @@ class MenuGroupSeeder extends Seeder
             ]
         );
 
+        // Management Content
         MenuGroup::updateOrCreate(
             ['name' => 'Management Content'],
             [
@@ -36,6 +39,7 @@ class MenuGroupSeeder extends Seeder
             ]
         );
 
+        // Setting
         MenuGroup::updateOrCreate(
             ['name' => 'Setting'],
             [
@@ -45,11 +49,12 @@ class MenuGroupSeeder extends Seeder
             ]
         );
 
+        // Management Report
         MenuGroup::updateOrCreate(
-            ['name' => 'Customer'],
+            ['name' => 'Management Report'],
             [
-                'permission_group_id' => 21,
-                'sort' => 5,
+                'permission_group_id' => 18,
+                'sort' => 6,
                 'status' => 1,
             ]
         );

@@ -12,9 +12,15 @@ class KitchenController extends Controller
     public function index()
     {
         // Ambil order dengan status pending atau processing
-        $orders = Order::with(['items' => function ($query) {
-            $query->where('kitchen_status', '!=', 'ready');
-        }, 'items.product', 'outlet', 'cashier', 'table', 'customer'])
+        $orders = Order::with([
+            'items' => function ($query) {
+                $query->where('kitchen_status', '!=', 'ready');
+            },
+            'items.product',
+            'outlet',
+            'cashier',
+            'table'
+        ])
             ->whereIn('status_order', ['pending', 'processing'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -92,7 +98,7 @@ class KitchenController extends Controller
     // 2. History (Completed Orders)
     public function history()
     {
-        $orders = Order::with(['items', 'outlet', 'cashier', 'table', 'customer'])
+        $orders = Order::with(['items', 'outlet', 'cashier', 'table'])
             ->where('status_order', 'completed')
             ->orderBy('updated_at', 'desc')
             ->paginate(20);
@@ -107,9 +113,16 @@ class KitchenController extends Controller
     {
         $lastCheck = $request->last_check ?? now()->subMinutes(5);
 
-        $newOrders = Order::with(['items' => function ($query) {
-            $query->where('kitchen_status', 'pending');
-        }, 'items.product', 'outlet', 'cashier', 'table', 'customer'])
+        $newOrders = Order::with([
+            'items' => function ($query) {
+                $query->where('kitchen_status', 'pending');
+            },
+            'items.product',
+            'outlet',
+            'cashier',
+            'table',
+            'customer'
+        ])
             ->whereIn('status_order', ['pending', 'processing'])
             ->where('created_at', '>', $lastCheck)
             ->get();

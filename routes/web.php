@@ -129,10 +129,6 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
     Route::post('/pos/order', [PosController::class, 'processOrder'])->name('pos.order');
     Route::post('/pos/promo/remove', [PosController::class, 'removePromo'])->name('pos.promo.remove');
 
-    Route::resource('/customers', CustomerController::class, ['parameters' => [
-        'customers' => 'customer:uuid',
-    ]])->except('show');
-
     // Kitchen Routes
     Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
     Route::get('/kitchen/history', [KitchenController::class, 'history'])->name('kitchen.history');  // 👈 HARUS DI ATAS /{order}

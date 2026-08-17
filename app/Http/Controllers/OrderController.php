@@ -54,6 +54,7 @@ class OrderController extends Controller
             $data['code_invoice'] = 'INV-' . date('Ymd') . '-' . strtoupper(Str::random(6));
             $data['outlet_id'] = auth()->user()->current_outlet_id ?? 1;
             $data['cashier_id'] = auth()->id();
+            $data['table_id'] = $request->table_id ?? null;
 
             // Calculate totals
             $subtotal = 0;

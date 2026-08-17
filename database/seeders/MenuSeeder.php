@@ -35,6 +35,11 @@ class MenuSeeder extends Seeder
             ['permission_group_id' => 8, 'sort' => 4, 'status' => 1]
         );
 
+        $reportGroup = MenuGroup::firstOrCreate(
+            ['name' => 'Management Report'],
+            ['permission_group_id' => 18, 'sort' => 6, 'status' => 1]
+        );
+
         // ============================================================
         // 2. MANAGEMENT PRODUCT
         // ============================================================
@@ -275,7 +280,7 @@ class MenuSeeder extends Seeder
         // ============================================================
         Menu::create([
             'uuid' => Str::uuid(),
-            'menu_group_id' => null,
+            'menu_group_id' => $reportGroup->id,
             'menu_id' => null,
             'nama_menu' => 'Orders',
             'icon' => 'ri-shopping-cart-line',
@@ -301,22 +306,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // ============================================================
-        // 8. CUSTOMERS (LANGSUNG KE HALAMAN)
-        // ============================================================
-        Menu::create([
-            'uuid' => Str::uuid(),
-            'menu_group_id' => null,
-            'menu_id' => null,
-            'nama_menu' => 'Customers',
-            'icon' => 'ri-user-line',
-            'permission_group_id' => 21,
-            'href' => '/customers',
-            'status' => true,
-            'sort' => 1,
-        ]);
-
-        // ============================================================
-        // 9. KITCHEN (LANGSUNG KE HALAMAN)
+        // 8. KITCHEN (LANGSUNG KE HALAMAN)
         // ============================================================
         Menu::create([
             'uuid' => Str::uuid(),
