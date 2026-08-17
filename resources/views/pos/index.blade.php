@@ -254,14 +254,19 @@
                 allowClear: true
             });
 
-            // SYNC Select2 KE ALPINE (VERSION 2 - LEBIH AMAN)
             $('#select-table').on('change', function () {
                 var val = $(this).val();
-                // Cari Alpine component
-                var component = document.querySelector('[x-data]').__x;
-                if (component) {
-                    component.$data.tableId = val;
-                    console.log('Table ID updated to:', val);
+
+                // Sinkronisasi Select2 ke Alpine
+                var element = document.querySelector('.pos-container');
+
+                if (element && window.Alpine) {
+                    var data = Alpine.$data(element);
+
+                    if (data) {
+                        data.tableId = val || '';
+                        console.log('Table ID updated to:', data.tableId);
+                    }
                 }
             });
         });
