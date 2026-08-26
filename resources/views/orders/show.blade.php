@@ -24,8 +24,30 @@
                 <p><strong>Table:</strong> {{ $order->table->number_table ?? '-' }}</p>
             </div>
             <div>
-                <p><strong>Status:</strong> <span class="badge bg-{{ ['pending' => 'warning', 'processing' => 'info', 'completed' => 'success', 'cancelled' => 'danger'][$order->status_order] ?? 'secondary' }}">{{ ucfirst($order->status_order) }}</span></p>
+                <p><strong>Status:</strong>
+                    <span class="px-2 py-1 text-xs rounded-full font-satoshi-semibold
+                        {{ $order->status_order === 'pending' ? 'bg-amber-50 text-amber-600' : '' }}
+                        {{ $order->status_order === 'processing' ? 'bg-slate-900 text-white' : '' }}
+                        {{ $order->status_order === 'completed' ? 'bg-emerald-50 text-emerald-600' : '' }}
+                        {{ $order->status_order === 'cancelled' ? 'bg-rose-50 text-rose-600' : '' }}">
+                        {{ ucfirst($order->status_order) }}
+                    </span>
+                </p>
                 <p><strong>Payment:</strong> {{ ucfirst($order->payment_method) }}</p>
+                <p><strong>Order Type:</strong>
+                    <span class="px-2 py-1 text-xs rounded-full font-satoshi-semibold bg-slate-100 text-slate-600">
+                        {{ $order->order_type === 'takeaway' ? 'Take Away' : 'Dine In' }}
+                    </span>
+                </p>
+                <p>
+                    <strong>Voucher:</strong>
+                    @if($order->promo)
+                        <span class="px-2 py-1 text-xs rounded-full font-satoshi-semibold bg-emerald-50 text-emerald-600"><i class="ri-coupon-line"></i> {{ $order->promo->name }}</span>
+                        <small class="text-muted">(-Rp {{ number_format($order->discount, 0, ',', '.') }})</small>
+                    @else
+                        -
+                    @endif
+                </p>
                 <p><strong>Date:</strong> {{ $order->created_at->format('d M Y H:i') }}</p>
             </div>
         </div>
@@ -56,6 +78,15 @@
                     <tr>
                         <td colspan="3" class="border border-slate-200 px-4 py-2 text-left">Subtotal :</td>
                         <td class="border border-slate-200 px-4 py-2 text-left">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
+                        <td class="border border-slate-200 px-4 py-2"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="border border-slate-200 px-4 py-2 text-left">
+                            Voucher {{ $order->promo ? '('.$order->promo->name.')' : '' }} :
+                        </td>
+                        <td class="border border-slate-200 px-4 py-2 text-left text-red-500">
+                            -Rp {{ number_format($order->discount, 0, ',', '.') }}
+                        </td>
                         <td class="border border-slate-200 px-4 py-2"></td>
                     </tr>
                     <tr>

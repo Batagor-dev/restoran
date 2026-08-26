@@ -15,6 +15,7 @@ class Product extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'cost_price' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
@@ -37,6 +38,29 @@ class Product extends Model
         return $this->hasMany(FavoriteProduct::class);
     }
 
+    public function stocks()
+    {
+        return $this->hasMany(ProductStock::class);
+    }
+
+    /**
+     * Effective selling price at the given outlet.
+     * Falls back to the global product price when no outlet override exists.
+     */
+    public function priceForOutlet(?int $outletId): float
+    {
+        if ($outletId) {
+            $stock = $this->stocks->firstWhere('outlet_id', $outletId)
+                ?? ProductStock::where('product_id', $this->id)->where('outlet_id', $outletId)->first();
+
+            if ($stock && $stock->price !== null) {
+                return (float) $stock->price;
+            }
+        }
+
+        return (float) $this->price;
+    }
+
     public function scopeFavorite($query)
     {
         if (auth()->check()) {
@@ -44,14 +68,21 @@ class Product extends Model
                 $q->where('user_id', auth()->id());
             });
         }
+
         return $query;
     }
 
     public function getIsFavoriteAttribute()
     {
-        if (auth()->check()) {
-            return $this->favorites()->where('user_id', auth()->id())->exists();
+        if (! auth()->check()) {
+            return false;
         }
-        return false;
+
+        // Gunakan relasi yang sudah di-eager-load bila ada untuk hindari N+1
+        if ($this->relationLoaded('favorites')) {
+            return $this->favorites->contains('user_id', auth()->id());
+        }
+
+        return $this->favorites()->where('user_id', auth()->id())->exists();
     }
 }

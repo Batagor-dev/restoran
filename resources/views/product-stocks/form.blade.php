@@ -69,6 +69,21 @@
                         :error="$errors->first('quantity')"
                     />
                 </div>
+
+                {{-- Price per outlet override --}}
+                <div>
+                    <x-ui.input
+                        name="price"
+                        id="price"
+                        label="Price for this Outlet (optional)"
+                        type="text"
+                        class="currency-format"
+                        :value="old('price', isset($productStock?->price) && $productStock->price !== null ? number_format($productStock->price, 0, ',', '.') : '')"
+                        placeholder="Leave empty to use global product price"
+                        min="0"
+                        :error="$errors->first('price')"
+                    />
+                </div>
             </div>
 
             @if($isEdit)
@@ -93,6 +108,18 @@
 @endsection
 
 @push('scripts')
+    {{-- Live thousand dot currency formatting --}}
+    <script>
+    $(document).on('input', '.currency-format', function () {
+        let value = $(this).val().replace(/[^0-9]/g, '');
+        if (value) {
+            $(this).val(new Intl.NumberFormat('id-ID').format(value));
+        } else {
+            $(this).val('');
+        }
+    });
+    </script>
+
     {{-- SweetAlert Notification --}}
     @if(session('success'))
         <script>

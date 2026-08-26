@@ -7,16 +7,16 @@
 @section('title', $title)
 
 @section('content')
-<div class="space-y-8 pb-12">
+<div class="space-y-8 pb-12" x-data="kitchenDetail({{ $order->id }})">
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div class="flex items-center justify-between mb-6">
             <h5 class="text-lg font-satoshi-bold text-slate-900">Order #{{ $order->code_invoice }}</h5>
             <div class="flex items-center gap-2">
                 <span class="px-3 py-1 text-sm rounded-full font-satoshi-medium
-                    {{ $order->status_order === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                    {{ $order->status_order === 'processing' ? 'bg-blue-100 text-blue-700' : '' }}
-                    {{ $order->status_order === 'completed' ? 'bg-green-100 text-green-700' : '' }}
-                    {{ $order->status_order === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}">
+                    {{ $order->status_order === 'pending' ? 'bg-slate-100 text-slate-600' : '' }}
+                    {{ $order->status_order === 'processing' ? 'bg-slate-900 text-white' : '' }}
+                    {{ $order->status_order === 'completed' ? 'bg-emerald-50 text-emerald-600' : '' }}
+                    {{ $order->status_order === 'cancelled' ? 'bg-rose-50 text-rose-600' : '' }}">
                     {{ ucfirst($order->status_order) }}
                 </span>
                 <a href="{{ route('kitchen.index') }}" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition">
@@ -31,8 +31,16 @@
                 <p class="font-satoshi-medium">{{ $order->code_invoice }}</p>
             </div>
             <div>
+                <p class="text-xs text-slate-500">Outlet</p>
+                <p class="font-satoshi-medium">{{ $order->outlet?->name ?? '-' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500">Order Type</p>
+                <p class="font-satoshi-medium">{{ $order->order_type === 'takeaway' ? 'Take Away' : 'Dine In' }}</p>
+            </div>
+            <div>
                 <p class="text-xs text-slate-500">Table</p>
-                <p class="font-satoshi-medium">{{ $order->table->number_table ?? '-' }}</p>
+                <p class="font-satoshi-medium">{{ $order->table?->number_table ?? '-' }}</p>
             </div>
             <div>
                 <p class="text-xs text-slate-500">Customer</p>
@@ -79,7 +87,7 @@
                     </tr>
                     <tr>
                         <td colspan="3" class="border border-slate-200 px-4 py-2 text-right text-lg">Grand Total</td>
-                        <td class="border border-slate-200 px-4 py-2 text-right text-lg text-green-600">Rp {{ number_format($order->grand_total, 0, ',', '.') }}</td>
+                        <td class="border border-slate-200 px-4 py-2 text-right text-lg text-emerald-600">Rp {{ number_format($order->grand_total, 0, ',', '.') }}</td>
                         <td class="border border-slate-200 px-4 py-2"></td>
                     </tr>
                 </tfoot>
@@ -88,33 +96,24 @@
 
         <div class="mt-6 flex items-center gap-2">
             @if($order->status_order === 'pending')
-                <form action="{{ route('kitchen.status', $order->uuid) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="status" value="processing">
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                        Process Order
-                    </button>
-                </form>
+                <button type="button" @click="updateStatus('processing')"
+                        class="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition cursor-pointer">
+                    Process Order
+                </button>
             @endif
 
             @if($order->status_order === 'processing')
-                <form action="{{ route('kitchen.status', $order->uuid) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="status" value="completed">
-                    <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
-                        Complete Order
-                    </button>
-                </form>
+                <button type="button" @click="updateStatus('completed')"
+                        class="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition cursor-pointer">
+                    Complete Order
+                </button>
             @endif
 
             @if($order->status_order !== 'completed' && $order->status_order !== 'cancelled')
-                <form action="{{ route('kitchen.status', $order->uuid) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="status" value="cancelled">
-                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
-                        Cancel Order
-                    </button>
-                </form>
+                <button type="button" @click="updateStatus('cancelled')"
+                        class="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition cursor-pointer">
+                    Cancel Order
+                </button>
             @endif
 
             <a href="{{ route('kitchen.print', $order->uuid) }}" target="_blank" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition">
@@ -124,3 +123,37 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('kitchenDetail', (orderId) => ({
+            updateStatus(status) {
+                if (!confirm('Update order to "' + status + '"?')) return;
+
+                fetch('/kitchen/' + orderId + '/status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ status: status })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        createToast('success', data.message);
+                        setTimeout(() => location.reload(), 1200);
+                    } else {
+                        createToast('error', data.message || 'Failed to update order status');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    createToast('error', 'Failed to update order status');
+                });
+            }
+        }));
+    });
+</script>
+@endpush

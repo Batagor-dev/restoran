@@ -35,7 +35,15 @@ class KitchenController extends Controller
     public function updateStatus(Request $request, $orderId)
     {
         try {
-            $order = Order::findOrFail($orderId);
+            // Terima baik numeric ID (dari kartu index) maupun UUID (dari halaman detail)
+            $order = is_numeric($orderId)
+                ? Order::find((int) $orderId)
+                : Order::where('uuid', $orderId)->first();
+
+            if (! $order) {
+                return response()->json(['status' => 'error', 'message' => 'Order not found'], 404);
+            }
+
             $status = $request->status;
 
             if (!in_array($status, ['pending', 'processing', 'completed', 'cancelled'])) {

@@ -27,7 +27,7 @@ class UpdateDiningTableRequest extends FormRequest
     {
         $table = $this->route('table');
         $outletId = $this->outlet_id ?: ($table ? $table->outlet_id : auth()->user()->current_outlet_id);
-        if (!$outletId) {
+        if (! $outletId) {
             $firstOutlet = Outlet::where('status', true)->first() ?: Outlet::first();
             $outletId = $firstOutlet?->id;
         }

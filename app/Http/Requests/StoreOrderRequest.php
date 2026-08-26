@@ -17,6 +17,7 @@ class StoreOrderRequest extends FormRequest
             'customer_name' => 'nullable|string|max:255',
             'table_id' => 'nullable|exists:dining_tables,id',
             'payment_method' => 'required|in:cash,qris,debit,credit',
+            'order_type' => 'nullable|in:dine_in,takeaway',
             'status_order' => 'required|in:pending,processing,completed,cancelled',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',

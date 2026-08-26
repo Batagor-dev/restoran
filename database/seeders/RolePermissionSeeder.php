@@ -6,178 +6,142 @@ use App\Models\Permission;
 use App\Models\PermissionGroup;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
-     *
-     * @return void
+     * Ambil / buat role secara aman:
+     * - jika pernah dihapus (SoftDeletes) -> restore, JANGAN buat baris baru
+     *   (mencegah putusnya relasi model_has_roles ke user).
      */
+    private function ensureRole(string $name): Role
+    {
+        $role = Role::withTrashed()->firstOrCreate(
+            ['name' => $name, 'guard_name' => 'web'],
+            ['uuid' => Str::uuid()->toString()]
+        );
+
+        if ($role->trashed()) {
+            $role->restore();
+        }
+
+        return $role;
+    }
+
+    private function ensureGroup(string $name): PermissionGroup
+    {
+        return PermissionGroup::firstOrCreate(['name' => $name]);
+    }
+
     public function run()
     {
+        // Reset cache permission Spatie di awal & akhir agar hasil konsisten
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
         $permissiongroups = [
-            'User',                // 1
-            'Role',                // 2
-            'Permission Group',    // 3
-            'Permission',          // 4
-            'Menu',                // 5
-            'Article Category',    // 6
-            'Article',             // 7
-            'Setting',             // 8
-            'Outlet',              // 9
-            'Konten',              // 10
-            'Pengaturan',          // 11
-            'Product Category',    // 12
-            'Product',             // 13
-            'Promo',               // 14
-            'Table',               // 15
-            'Product Stock',       // 16
-            'Stock Movement',      // 17
-            'Customer Promo',      // 18
-            'Order',               // 19
-            'Order Item',          // 20
-            'POS',                 // 21
-            'Customer',            // 22
-            'Kitchen',             // 23
+            'User', 'Role', 'Permission Group', 'Permission', 'Menu',
+            'Article Category', 'Article', 'Setting', 'Outlet', 'Konten',
+            'Pengaturan', 'Product Category', 'Product', 'Promo', 'Table',
+            'Product Stock', 'Stock Movement', 'Customer Promo', 'Order',
+            'Order Item', 'POS', 'Customer', 'Kitchen',
+            'Transaction', // dibuat via ensureGroup (id non-hardcode)
+            'Report',
         ];
 
         foreach ($permissiongroups as $permissiongroup) {
-            PermissionGroup::firstOrCreate([
-                'name' => $permissiongroup,
-            ]);
+            $this->ensureGroup($permissiongroup);
         }
 
         $permissions = [
-            'User Access-1',
-            'User Detail-1',
-            'User Create-1',
-            'User Update-1',
-            'User Banned-1',
-            'User Role Create-1',
-            'Role Access-2',
-            'Role Detail-2',
-            'Role Create-2',
-            'Role Update-2',
-            'Role Delete-2',
-            'Permission Group Access-3',
-            'Permission Group Create-3',
-            'Permission Group Update-3',
-            'Permission Group Delete-3',
-            'Permission Access-4',
-            'Permission Create-4',
-            'Permission Update-4',
-            'Permission Delete-4',
-            'Menu Access-5',
-            'Menu Create-5',
-            'Menu Update-5',
-            'Menu Delete-5',
-            'Article Category Access-6',
-            'Article Category Create-6',
-            'Article Category Update-6',
-            'Article Category Delete-6',
-            'Article Access-7',
-            'Article Detail-7',
-            'Article Create-7',
-            'Article Update-7',
-            'Article Delete-7',
-            'Setting Access-8',
-            'Setting Detail-8',
-            'Setting Create-8',
-            'Setting Update-8',
-            'Setting Delete-8',
-            'Outlet Access-9',
-            'Outlet Create-9',
-            'Outlet Update-9',
-            'Outlet Delete-9',
-            'Konten Access-10',
-            'Pengaturan Access-11',
-            'Product Category Access-12',
-            'Product Category Create-12',
-            'Product Category Update-12',
-            'Product Category Delete-12',
-            'Product Access-13',
-            'Product Create-13',
-            'Product Update-13',
-            'Product Delete-13',
-            'Promo Access-14',
-            'Promo Create-14',
-            'Promo Update-14',
-            'Promo Delete-14',
-            'Table Access-15',
-            'Table Create-15',
-            'Table Update-15',
-            'Table Delete-15',
-            'Product Stock Access-16',
-            'Product Stock Create-16',
-            'Product Stock Update-16',
-            'Product Stock Delete-16',
-            'Stock Movement Access-17',
-            'Stock Movement Create-17',
-            'Stock Movement Delete-17',
-            'Customer Promo Access-18',
-            'Customer Promo Create-18',
-            'Customer Promo Update-18',
-            'Customer Promo Delete-18',
-            'Order Access-19',
-            'Order Create-19',
-            'Order Update-19',
-            'Order Delete-19',
-            'Order Item Access-20',
-            'Order Item Create-20',
-            'Order Item Update-20',
-            'Order Item Delete-20',
-            'POS Access-21',
-            'Customer Access-22',
-            'Customer Create-22',
-            'Customer Update-22',
-            'Customer Delete-22',
-            'Kitchen Access-23',
+            'User Access', 'User Detail', 'User Create', 'User Update',
+            'User Banned', 'User Role Create',
+            'Role Access', 'Role Detail', 'Role Create', 'Role Update', 'Role Delete',
+            'Permission Group Access', 'Permission Group Create', 'Permission Group Update', 'Permission Group Delete',
+            'Permission Access', 'Permission Create', 'Permission Update', 'Permission Delete',
+            'Menu Access', 'Menu Create', 'Menu Update', 'Menu Delete',
+            'Article Category Access', 'Article Category Create', 'Article Category Update', 'Article Category Delete',
+            'Article Access', 'Article Detail', 'Article Create', 'Article Update', 'Article Delete',
+            'Setting Access', 'Setting Detail', 'Setting Create', 'Setting Update', 'Setting Delete',
+            'Outlet Access', 'Outlet Create', 'Outlet Update', 'Outlet Delete',
+            'Konten Access', 'Pengaturan Access',
+            'Product Category Access', 'Product Category Create', 'Product Category Update', 'Product Category Delete',
+            'Product Access', 'Product Create', 'Product Update', 'Product Delete',
+            'Promo Access', 'Promo Create', 'Promo Update', 'Promo Delete',
+            'Table Access', 'Table Create', 'Table Update', 'Table Delete',
+            'Product Stock Access', 'Product Stock Create', 'Product Stock Update', 'Product Stock Delete',
+            'Stock Movement Access', 'Stock Movement Create', 'Stock Movement Delete',
+            'Customer Promo Access', 'Customer Promo Create', 'Customer Promo Update', 'Customer Promo Delete',
+            'Order Access', 'Order Create', 'Order Update', 'Order Delete',
+            'Order Item Access', 'Order Item Create', 'Order Item Update', 'Order Item Delete',
+            'POS Access',
+            'Kitchen Access',
         ];
 
-        foreach ($permissions as $permission) {
-            $permission_array = explode('-', $permission);
-            Permission::firstOrCreate([
-                'name' => $permission_array[0],
-                'permission_group_id' => $permission_array[1],
-            ]);
+        // Grup mengikuti urutan nama (satu permission pertama per grup cukup representatif)
+        $groupByName = [
+            'User' => 'User', 'Role' => 'Role', 'Permission Group' => 'Permission Group',
+            'Permission' => 'Permission', 'Menu' => 'Menu', 'Article Category' => 'Article Category',
+            'Article' => 'Article', 'Setting' => 'Setting', 'Outlet' => 'Outlet',
+            'Konten' => 'Konten', 'Pengaturan' => 'Pengaturan', 'Product Category' => 'Product Category',
+            'Product' => 'Product', 'Promo' => 'Promo', 'Table' => 'Table',
+            'Product Stock' => 'Product Stock', 'Stock Movement' => 'Stock Movement',
+            'Customer Promo' => 'Customer Promo', 'Order' => 'Order', 'Order Item' => 'Order Item',
+            'POS' => 'POS', 'Kitchen' => 'Kitchen',
+        ];
+
+        foreach ($permissions as $name) {
+            $groupName = $groupByName[$name] ?? null;
+
+            Permission::withTrashed()->updateOrCreate(
+                ['name' => $name, 'guard_name' => 'web'],
+                ['deleted_at' => null] + ($groupName ? [
+                    'permission_group_id' => $this->ensureGroup($groupName)->id,
+                ] : [])
+            );
+
+            if (str_starts_with($name, 'Transaction ') || str_starts_with($name, 'Report ')) {
+                // permission modul baru diletakkan di grup masing-masing
+                $target = str_starts_with($name, 'Transaction ') ? 'Transaction' : 'Report';
+                Permission::where('name', $name)->where('guard_name', 'web')
+                    ->update(['permission_group_id' => $this->ensureGroup($target)->id, 'deleted_at' => null]);
+            }
         }
 
-        $superAdmin = Role::firstOrCreate([
-            'name' => 'Super Admin',
-            'guard_name' => 'web',
-        ]);
+        // Permission modul tambahan (nama mengandung spasi + suffix grup lama sudah tidak dipakai)
+        foreach ([
+            'Transaction' => ['Transaction Access', 'Transaction Refund', 'Transaction Void', 'Transaction Report'],
+            'Report' => ['Report Access'],
+        ] as $groupName => $permNames) {
+            $group = $this->ensureGroup($groupName);
+
+            foreach ($permNames as $name) {
+                Permission::withTrashed()->updateOrCreate(
+                    ['name' => $name, 'guard_name' => 'web'],
+                    ['permission_group_id' => $group->id, 'deleted_at' => null]
+                );
+            }
+        }
+
+        // ---- Roles ----
+        $superAdmin = $this->ensureRole('Super Admin');
         $superAdmin->syncPermissions(Permission::all());
 
-        $owner = Role::firstOrCreate([
-            'name' => 'Owner',
-            'guard_name' => 'web',
-        ]);
+        $owner = $this->ensureRole('Owner');
         $owner->syncPermissions(Permission::all());
 
-        $employee = Role::firstOrCreate([
-            'name' => 'Employee',
-            'guard_name' => 'web',
-        ]);
+        $employee = $this->ensureRole('Employee');
         $employee->givePermissionTo([
-            'Article Access',
-            'Article Create',
-            'Article Update',
-            'Product Category Access',
-            'Product Category Create',
-            'Product Category Update',
-            'Promo Access',
-            'Promo Create',
-            'Promo Update',
-            'Table Access',
-            'Table Create',
-            'Table Update',
+            'Article Access', 'Article Create', 'Article Update',
+            'Product Category Access', 'Product Category Create', 'Product Category Update',
+            'Promo Access', 'Promo Create', 'Promo Update',
+            'Table Access', 'Table Create', 'Table Update',
         ]);
 
-        $role = Role::firstOrCreate([
-            'name' => 'User',
-            'guard_name' => 'web',
-        ]);
-        $role->givePermissionTo('Article Access');
+        $userRole = $this->ensureRole('User');
+        $userRole->givePermissionTo('Article Access');
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

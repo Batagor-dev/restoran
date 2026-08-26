@@ -19,14 +19,16 @@ class CustomerPromoDataTable extends DataTable
             ->addIndexColumn()
             ->editColumn('discount_value', function ($row) {
                 if ($row->type == 'percentage') {
-                    return $row->discount_value . '%';
+                    return $row->discount_value.'%';
                 }
-                return 'Rp ' . number_format($row->discount_value, 0, ',', '.');
+
+                return 'Rp '.number_format($row->discount_value, 0, ',', '.');
             })
             ->editColumn('minimum_purchase', function ($row) {
                 if ($row->minimum_purchase) {
-                    return 'Rp ' . number_format($row->minimum_purchase, 0, ',', '.');
+                    return 'Rp '.number_format($row->minimum_purchase, 0, ',', '.');
                 }
+
                 return '-';
             })
             ->editColumn('start_date', function ($row) {
@@ -37,21 +39,22 @@ class CustomerPromoDataTable extends DataTable
             })
             ->editColumn('is_active', function ($row) {
                 return $row->is_active
-                    ? '<span class="badge bg-success">Active</span>'
-                    : '<span class="badge bg-danger">Inactive</span>';
+                    ? '<span class="badge bg-emerald-50 text-emerald-600">Active</span>'
+                    : '<span class="badge bg-rose-50 text-rose-600">Inactive</span>';
             })
             ->addColumn('action', function ($row) {
-                $editBtn = '<a href="' . route('customer-promos.edit', $row->uuid) . '" class="btn btn-sm btn-primary">
-                    <i class="ri-edit-line"></i>
+                $editBtn = '<a href="'.route('customer-promos.edit', $row->uuid).'" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors" title="Edit">
+                    <i class="ri-edit-line text-lg"></i>
                 </a>';
-                $deleteBtn = '<form action="' . route('customer-promos.destroy', $row->uuid) . '" method="POST" style="display:inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure?\')">
-                        <i class="ri-delete-bin-line"></i>
+                $deleteBtn = '<form action="'.route('customer-promos.destroy', $row->uuid).'" method="POST" style="display:inline">
+                    '.csrf_field().'
+                    '.method_field('DELETE').'
+                    <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-rose-500 hover:bg-rose-50 transition-colors" onclick="return confirm(\'Are you sure?\')" title="Delete">
+                        <i class="ri-delete-bin-line text-lg"></i>
                     </button>
                 </form>';
-                return $editBtn . ' ' . $deleteBtn;
+
+                return $editBtn.' '.$deleteBtn;
             })
             ->rawColumns(['is_active', 'action']);
     }
@@ -101,6 +104,6 @@ class CustomerPromoDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'CustomerPromo_' . date('YmdHis');
+        return 'CustomerPromo_'.date('YmdHis');
     }
 }

@@ -23,6 +23,7 @@ class DiningTableDataTable extends DataTable
                 if ($row->is_active) {
                     return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-emerald-100 text-emerald-800">Active</span>';
                 }
+
                 return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-slate-100 text-slate-600">Inactive</span>';
             })
             ->addColumn('action', function ($row) {

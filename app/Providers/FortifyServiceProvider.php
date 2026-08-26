@@ -6,9 +6,12 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
@@ -50,6 +53,31 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
+
+        // Custom credential check: tolak user yang sudah di-banned (banned_at terisi)
+        Fortify::authenticateUsing(function (Request $request) {
+            $validator = Validator::make($request->all(), [
+                Fortify::username() => 'required|string',
+                'password' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return null;
+            }
+
+            $user = User::where('email', $request->{Fortify::username()})->first();
+
+            if ($user && Hash::check($request->password, $user->password)) {
+                if ($user->banned_at) {
+                    // Kredensial benar tapi akun diblokir — jangan autentikasi
+                    return null;
+                }
+
+                return $user;
+            }
+
+            return null;
+        });
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());

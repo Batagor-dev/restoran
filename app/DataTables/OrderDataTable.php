@@ -30,36 +30,37 @@ class OrderDataTable extends DataTable
                 return $row->customer_name ?? '-';
             })
             ->editColumn('grand_total', function ($row) {
-                return 'Rp ' . number_format($row->grand_total, 0, ',', '.');
+                return 'Rp '.number_format($row->grand_total, 0, ',', '.');
             })
             ->editColumn('status_order', function ($row) {
                 $badge = [
-                    'pending' => 'warning',
-                    'processing' => 'info',
-                    'completed' => 'success',
-                    'cancelled' => 'danger',
-                ][$row->status_order] ?? 'secondary';
+                    'pending' => 'bg-amber-50 text-amber-600',
+                    'processing' => 'bg-slate-900 text-white',
+                    'completed' => 'bg-emerald-50 text-emerald-600',
+                    'cancelled' => 'bg-rose-50 text-rose-600',
+                ][$row->status_order] ?? 'bg-slate-100 text-slate-500';
 
-                return '<span class="badge bg-' . $badge . '">' . ucfirst($row->status_order) . '</span>';
+                return '<span class="badge '.$badge.'">'.ucfirst($row->status_order).'</span>';
             })
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d M Y H:i');
             })
             ->addColumn('action', function ($row) {
-                $editBtn = '<a href="' . route('orders.edit', $row->uuid) . '" class="btn btn-sm btn-primary">
-                                <i class="ri-edit-line"></i>
+                $detailBtn = '<a href="'.route('orders.show', $row->uuid).'" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors" title="Detail">
+                                <i class="ri-eye-line text-lg"></i>
                             </a>';
-                $deleteBtn = '<form action="' . route('orders.destroy', $row->uuid) . '" method="POST" style="display:inline">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure?\')">
-                                    <i class="ri-delete-bin-line"></i>
+                $editBtn = auth()->user()->can('Order Update') ? '<a href="'.route('orders.edit', $row->uuid).'" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors" title="Edit">
+                                <i class="ri-edit-line text-lg"></i>
+                            </a>' : '';
+                $deleteBtn = auth()->user()->can('Order Delete') ? '<form action="'.route('orders.destroy', $row->uuid).'" method="POST" style="display:inline">
+                                '.csrf_field().'
+                                '.method_field('DELETE').'
+                                <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-rose-500 hover:bg-rose-50 transition-colors" onclick="return confirm(\'Are you sure?\')" title="Delete">
+                                    <i class="ri-delete-bin-line text-lg"></i>
                                 </button>
-                            </form>';
-                $detailBtn = '<a href="' . route('orders.show', $row->uuid) . '" class="btn btn-sm btn-info">
-                                <i class="ri-eye-line"></i>
-                            </a>';
-                return $detailBtn . ' ' . $editBtn . ' ' . $deleteBtn;
+                            </form>' : '';
+
+                return $detailBtn.' '.$editBtn.' '.$deleteBtn;
             })
             ->rawColumns(['status_order', 'action']);
     }
@@ -79,8 +80,8 @@ class OrderDataTable extends DataTable
             ->selectStyleSingle()
             ->parameters([
                 'language' => [
-                    'searchPlaceholder' => 'Search invoice, customer, outlet...'
-                ]
+                    'searchPlaceholder' => 'Search invoice, customer, outlet...',
+                ],
             ])
             ->buttons([
                 Button::make('excel'),
@@ -114,6 +115,6 @@ class OrderDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Order_' . date('YmdHis');
+        return 'Order_'.date('YmdHis');
     }
 }

@@ -16,10 +16,10 @@
         .order-info { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .order-info div { flex: 1; }
         .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
-        .badge-pending { background: #fef3c7; color: #92400e; }
-        .badge-processing { background: #dbeafe; color: #1e40af; }
-        .badge-completed { background: #d1fae5; color: #065f46; }
-        .badge-cancelled { background: #fee2e2; color: #991b1b; }
+        .badge-pending { background: #fffbeb; color: #b45309; }
+        .badge-processing { background: #eff6ff; color: #1d4ed8; }
+        .badge-completed { background: #ecfdf5; color: #047857; }
+        .badge-cancelled { background: #fff1f2; color: #be123c; }
         @media print {
             .no-print { display: none; }
             body { padding: 10px; }
@@ -35,7 +35,13 @@
 
     <div class="order-info">
         <div>
-            <strong>Table:</strong> {{ $order->table->table_number ?? '-' }}
+            <strong>Outlet:</strong> {{ $order->outlet?->name ?? '-' }}
+        </div>
+        <div>
+            <strong>Type:</strong> {{ $order->order_type === 'takeaway' ? 'Take Away' : 'Dine In' }}
+        </div>
+        <div>
+            <strong>Table:</strong> {{ $order->table?->number_table ?? '-' }}
         </div>
         <div>
             <strong>Customer:</strong> {{ $order->customer_name ?? '-' }}

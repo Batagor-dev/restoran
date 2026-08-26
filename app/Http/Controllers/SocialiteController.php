@@ -49,6 +49,11 @@ class SocialiteController extends Controller
 
             Auth::login($user);
 
+            // Pastikan user baru via Google punya minimal role
+            if ($user->roles->isEmpty()) {
+                $user->assignRole('User');
+            }
+
             return redirect()->intended(config('fortify.home'));
 
         } catch (\Exception $e) {

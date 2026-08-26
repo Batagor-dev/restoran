@@ -80,7 +80,10 @@
 
     {{-- Select2 --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
-    
+
+    {{-- SweetAlert2 (global: dipakai konfirmasi & notifikasi semua modul) --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     {{-- Custom Components --}}
     <x-ui.notification />
     <x-ui.modal-confirm />

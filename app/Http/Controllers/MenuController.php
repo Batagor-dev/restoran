@@ -88,15 +88,4 @@ class MenuController extends Controller
 
         return redirect('/menu')->with('success', 'Menu has been deleted!');
     }
-
-    public function sidebar()
-    {
-        $menus = Menu::whereNull('menu_id')
-            ->where('status', 1)
-            ->with('children')
-            ->orderBy('sort')
-            ->get();
-
-        return view('layout.backend.sidebar', compact('menus'));
-    }
 }

@@ -57,7 +57,7 @@
                             <div class="p-3">
                                 <h6 class="font-satoshi-medium text-sm text-slate-900 truncate" x-text="product.name"></h6>
                                 <p class="text-sm font-satoshi-bold text-slate-900 mt-1">
-                                    Rp <span x-text="formatNumber(product.price)"></span>
+                                    Rp <span x-text="formatNumber(product.effective_price ?? product.price)"></span>
                                 </p>
                             </div>
                         </div>
@@ -180,12 +180,39 @@
                 {{-- Customer --}}
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
                     <h6 class="font-satoshi-bold text-slate-900 mb-2">Customer</h6>
-                    <input type="text" x-model="customerName" placeholder="Enter customer name..."
-                        class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all">
+                    <div class="space-y-2">
+                        <select x-cloak id="select-customer" class="select2 w-full">
+                            <option value="">Guest (no member)</option>
+                            @foreach($customers as $customer)
+                                <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                            @endforeach
+                        </select>
+                        <input type="text" x-model="customerName" placeholder="Or type a walk-in name..."
+                            class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all">
+                    </div>
+                </div>
+
+                {{-- Order Type --}}
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                    <h6 class="font-satoshi-bold text-slate-900 mb-2">Order Type</h6>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" @click="orderType = 'dine_in'"
+                            class="py-2 px-3 rounded-lg border text-sm font-satoshi-medium transition-all duration-200"
+                            :class="orderType === 'dine_in' ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-300 hover:bg-slate-50'">
+                            <i class="ri-restaurant-line block text-xl mb-1"></i>
+                            Dine In
+                        </button>
+                        <button type="button" @click="orderType = 'takeaway'"
+                            class="py-2 px-3 rounded-lg border text-sm font-satoshi-medium transition-all duration-200"
+                            :class="orderType === 'takeaway' ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-300 hover:bg-slate-50'">
+                            <i class="ri-shopping-bag-line block text-xl mb-1"></i>
+                            Take Away
+                        </button>
+                    </div>
                 </div>
 
                 {{-- Table --}}
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4" x-show="orderType === 'dine_in'" x-cloak>
                     <h6 class="font-satoshi-bold text-slate-900 mb-2">Table</h6>
                     <select x-model="tableId" id="select-table" class="select2 w-full">
                         <option value="">No Table</option>
@@ -237,9 +264,8 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function () {
+    $(document).ready(function () {
             // Inisialisasi Category dropdown
             $('.select2-category').select2({
                 width: '150px',
@@ -269,6 +295,33 @@
                     }
                 }
             });
+
+            $('#select-customer').select2({
+                width: '100%',
+                placeholder: 'Guest (no member)',
+                allowClear: true
+            });
+
+            $('#select-customer').on('change', function () {
+                var val = $(this).val();
+                var element = document.querySelector('.pos-container');
+
+                if (element && window.Alpine) {
+                    var data = Alpine.$data(element);
+
+                    if (data) {
+                        data.customerId = val || '';
+
+                        // Isi otomatis nama dari customer terpilih
+                        if (val) {
+                            var label = $(this).find('option:selected').text().trim();
+                            if (!data.customerName.trim()) {
+                                data.customerName = label;
+                            }
+                        }
+                    }
+                }
+            });
         });
     </script>
     <script>
@@ -284,8 +337,10 @@
                 discount: 0,
                 tax: 0,
                 customer: '',
+                customerId: '',
                 tableId: '',
                 customerName: '',
+                orderType: 'dine_in',
                 subtotal: 0,
                 grandTotal: 0,
                 paymentMethod: 'cash',
@@ -397,7 +452,7 @@
                         return;
                     }
 
-                    const price = parseFloat(product.price) || 0;
+                    const price = parseFloat(product.effective_price ?? product.price) || 0;
                     const quantity = 1;
 
                     if (price <= 0) {
@@ -543,7 +598,8 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
                         body: JSON.stringify({
-                            promo_code: this.promoCode.trim()
+                            promo_code: this.promoCode.trim(),
+                            customer_id: this.customerId || null
                         })
                     })
                         .then(res => {
@@ -659,8 +715,10 @@
                     }));
 
                     const orderData = {
+                        customer_id: this.customerId || null,
                         customer_name: this.customerName || 'Guest',
-                        table_id: this.tableId || null,
+                        order_type: this.orderType || 'dine_in',
+                        table_id: this.orderType === 'takeaway' ? null : (this.tableId || null),
                         items: items,
                         subtotal: this.subtotal,
                         discount: this.discount || 0,
@@ -678,11 +736,14 @@
                         },
                         body: JSON.stringify(orderData)
                     })
-                        .then(res => {
+                        .then(async res => {
+                            const data = await res.json().catch(() => ({}));
+
                             if (!res.ok) {
-                                throw new Error('Server response was not ok');
+                                throw new Error(data.message || 'Failed to process order');
                             }
-                            return res.json();
+
+                            return data;
                         })
                         .then(data => {
                             if (data.status === 'success') {
@@ -695,7 +756,11 @@
                                 });
                                 this.clearCart();
                                 this.customerName = '';
+                                this.customerId = '';
+                                $('#select-customer').val(null).trigger('change');
                                 this.tableId = '';
+                                $('#select-table').val(null).trigger('change');
+                                this.orderType = 'dine_in';
                                 this.paymentMethod = 'cash';
                                 this.promoCode = '';
                                 this.discount = 0;
@@ -713,7 +778,7 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: 'Error processing order: ' + error.message
+                                text: error.message
                             });
                         });
                 },

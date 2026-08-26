@@ -20,18 +20,20 @@ class ProductDataTable extends DataTable
                 if ($row->image) {
                     return '<img src="'.asset('storage/'.$row->image).'" class="w-10 h-10 object-cover rounded-lg mx-auto" alt="'.e($row->name).'">';
                 }
+
                 return '<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 mx-auto"><i class="ri-image-line text-lg"></i></div>';
             })
             ->addColumn('category_name', function ($row) {
                 return $row->category->name ?? '-';
             })
             ->addColumn('price', function ($row) {
-                return 'Rp ' . number_format($row->price, 0, ',', '.');
+                return 'Rp '.number_format($row->price, 0, ',', '.');
             })
             ->addColumn('is_active', function ($row) {
                 if ($row->is_active) {
                     return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-emerald-100 text-emerald-800">Active</span>';
                 }
+
                 return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-slate-100 text-slate-600">Inactive</span>';
             })
             ->addColumn('action', function ($row) {

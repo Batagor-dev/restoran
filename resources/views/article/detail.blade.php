@@ -1,51 +1,55 @@
 @php
-    $sub_title = ($breadcrumb = Breadcrumbs::current()) ? $breadcrumb->title : 'Dashboard';
-    $breadcrumb_parent = Breadcrumbs::generate(Request::route()->getName(), $article_data)->where('title', '!=', $breadcrumb->title)->last();
+    $sub_title = ($breadcrumb = Breadcrumbs::current()) ? $breadcrumb->title : 'Article Detail';
+    $breadcrumbsData = Breadcrumbs::generate(Request::route()->getName(), $article_data);
 @endphp
 
-@extends('layouts.backend.main', ['title' => 'Dashboard | '.config('app.name'), 'sub_title' => $sub_title])
+@extends('layouts.backend.main')
 
-@section('container')
+@section('title', 'Article Detail')
+@section('sub_title', $sub_title)
 
-@if(session()->has('success'))
-    <script>
-        $(document).ready(function() {
-            swal("Succses!", "{{ session('success') }}", "success");
-        });
-    </script>
-@endif
+@section('breadcrumb')
+    <x-layout.admin.breadcrumb :breadcrumbs="$breadcrumbsData" />
+@endsection
 
-@php
-    $published_at = strtotime($article_data->published_at)
-@endphp
-    
-<div class="container-fluid">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-6">
-                {{ Breadcrumbs::render(Request::route()->getName(), $article_data) }}
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="blog-single">
-                <div class="blog-box blog-details"><img class="img-fluid w-100" src="{{ asset('storage/'.$article_data->image_path) }}" alt="blog-main">
-                    <div class="blog-details">
-                        <ul class="blog-social">
-                            <li>{{ \Carbon\Carbon::parse($article_data->published_at)->isoFormat('dddd, D MMMM Y') }}</li>
-                            <li><i class="icofont icofont-files"></i>{{ $article_data->category->name }}</li>
-                            <li><i class="icofont icofont-user"></i>{{ $article_data->author->name }}</li>
-                            <li><a class="btn btn-danger" href="{{ $breadcrumb_parent->url }}">Back</a></li>
-                        </ul>
-                        <h4>{{ $article_data->title }}</h4>
-                        <div class="single-blog-content-top">{!! $article_data->content !!}</div>
-                    </div>
+@section('content')
+<div class="space-y-8 pb-12">
+    <x-ui.card class="p-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+            <div>
+                <h5 class="text-lg font-satoshi-bold text-slate-900 mb-1">{{ $article_data->title }}</h5>
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mt-1">
+                    <span><i class="ri-calendar-line mr-1"></i>{{ \Carbon\Carbon::parse($article_data->published_at)->isoFormat('dddd, D MMMM Y') }}</span>
+                    <span><i class="ri-folder-line mr-1"></i>{{ $article_data->category->name ?? 'Uncategorized' }}</span>
+                    <span><i class="ri-user-line mr-1"></i>{{ $article_data->author->name ?? 'System' }}</span>
                 </div>
             </div>
+
+            <div class="flex items-center gap-2 self-start sm:self-auto">
+                @can('Article Update')
+                    <a href="{{ route('article.edit', $article_data->slug) }}"
+                       class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition text-sm font-satoshi-medium">
+                        <i class="ri-edit-line mr-1"></i> Edit
+                    </a>
+                @endcan
+                <a href="{{ $breadcrumb_parent->url ?? route('article.index') }}"
+                   class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition text-sm font-satoshi-medium">
+                    <i class="ri-arrow-left-line mr-1"></i> Back
+                </a>
+            </div>
         </div>
-    </div>
+
+        <!-- Cover Image -->
+        @if($article_data->image_path)
+            <img src="{{ asset('storage/'.$article_data->image_path) }}" alt="{{ $article_data->title }}"
+                 class="w-full max-h-[420px] object-cover rounded-xl border border-slate-100 mb-6">
+        @endif
+
+        <!-- Content -->
+        <div class="prose prose-sm max-w-none text-slate-700 font-satoshi-medium leading-relaxed">
+            {!! $article_data->content !!}
+        </div>
+    </x-ui.card>
 </div>
 @endsection

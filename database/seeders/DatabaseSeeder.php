@@ -4,13 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Article;
 use App\Models\ArticleCategory;
+use App\Models\Menu;
 use App\Models\Outlet;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Models\PermissionGroup;
-use App\Models\Menu;
 
 class DatabaseSeeder extends Seeder
 {

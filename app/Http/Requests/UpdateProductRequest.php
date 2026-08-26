@@ -13,10 +13,12 @@ class UpdateProductRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        if ($this->has('price') && $this->price !== null) {
-            $this->merge([
-                'price' => str_replace('.', '', $this->price),
-            ]);
+        foreach (['price', 'cost_price'] as $field) {
+            if ($this->has($field) && $this->$field !== null) {
+                $this->merge([
+                    $field => str_replace('.', '', $this->$field),
+                ]);
+            }
         }
     }
 
@@ -27,6 +29,7 @@ class UpdateProductRequest extends FormRequest
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'price' => 'required|numeric|min:0',
+            'cost_price' => 'nullable|numeric|min:0',
             'description' => 'nullable|string|max:1000',
             'is_active' => 'nullable|boolean',
         ];

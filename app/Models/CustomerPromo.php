@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Models\Traits\HasUuid;
+use App\Models\Traits\VisibleToCurrentOutlet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CustomerPromo extends Model
 {
-    use HasFactory, HasUuid, SoftDeletes;
+    use HasFactory, HasUuid, SoftDeletes, VisibleToCurrentOutlet;
 
     protected $guarded = ['id'];
 

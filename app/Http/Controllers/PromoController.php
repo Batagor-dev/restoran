@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\DataTables\PromoDataTable;
 use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\UpdatePromoRequest;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Promo;
 
 class PromoController extends Controller
@@ -22,6 +24,8 @@ class PromoController extends Controller
      */
     public function create()
     {
+        $this->data['products'] = $this->productOptions();
+        $this->data['categories'] = $this->categoryOptions();
         $this->data['action'] = route('promo.store');
 
         return view('promo.form', $this->data);
@@ -35,7 +39,8 @@ class PromoController extends Controller
         $data = $request->validated();
         $data['is_active'] = $request->has('is_active') ? true : false;
 
-        Promo::create($data);
+        $promo = Promo::create($data);
+        $this->syncRelations($promo, $request);
 
         return redirect()
             ->route('promo.index')
@@ -47,7 +52,13 @@ class PromoController extends Controller
      */
     public function edit(Promo $promo)
     {
+        $promo->load(['products', 'categories']);
+
         $this->data['promo_data'] = $promo;
+        $this->data['products'] = $this->productOptions();
+        $this->data['categories'] = $this->categoryOptions();
+        $this->data['selected_products'] = old('products', $promo->products->pluck('id')->all());
+        $this->data['selected_categories'] = old('categories', $promo->categories->pluck('id')->all());
         $this->data['action'] = route('promo.update', $promo->uuid);
 
         return view('promo.form', $this->data);
@@ -62,6 +73,7 @@ class PromoController extends Controller
         $data['is_active'] = $request->has('is_active') ? true : false;
 
         $promo->update($data);
+        $this->syncRelations($promo, $request);
 
         return redirect()
             ->route('promo.index')
@@ -78,5 +90,38 @@ class PromoController extends Controller
         return redirect()
             ->route('promo.index')
             ->with('success', 'Promo has been deleted successfully!');
+    }
+
+    private function syncRelations(Promo $promo, StorePromoRequest|UpdatePromoRequest $request): void
+    {
+        if ($promo->scope === 'product') {
+            $promo->products()->sync($request->input('products', []));
+        } else {
+            $promo->products()->sync([]);
+        }
+
+        if ($promo->scope === 'category_product') {
+            $promo->categories()->sync($request->input('categories', []));
+        } else {
+            $promo->categories()->sync([]);
+        }
+    }
+
+    private function productOptions(): array
+    {
+        return Product::where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Product $p) => ['value' => $p->id, 'label' => $p->name])
+            ->all();
+    }
+
+    private function categoryOptions(): array
+    {
+        return ProductCategory::where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(fn (ProductCategory $c) => ['value' => $c->id, 'label' => $c->name])
+            ->all();
     }
 }

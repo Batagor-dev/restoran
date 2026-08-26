@@ -24,13 +24,13 @@ class StockMovementDataTable extends DataTable
             })
             ->editColumn('movement_type', function ($row) {
                 $badge = [
-                    'in' => 'success',
-                    'out' => 'danger',
-                    'adjustment' => 'warning',
-                    'return' => 'info'
-                ][$row->movement_type] ?? 'secondary';
+                    'in' => 'bg-emerald-50 text-emerald-600',
+                    'out' => 'bg-rose-50 text-rose-600',
+                    'adjustment' => 'bg-amber-50 text-amber-600',
+                    'return' => 'bg-blue-50 text-blue-600',
+                ][$row->movement_type] ?? 'bg-slate-100 text-slate-500';
 
-                return '<span class="badge bg-' . $badge . '">' . ucfirst($row->movement_type) . '</span>';
+                return '<span class="badge '.$badge.'">'.ucfirst($row->movement_type).'</span>';
             })
             ->editColumn('quantity', function ($row) {
                 return number_format($row->quantity);
@@ -52,18 +52,18 @@ class StockMovementDataTable extends DataTable
 
                 if (auth()->user()->can('Stock Movement Delete')) {
                     $delete = '
-                        <form action="' . route('stock-movements.destroy', $row->uuid) . '"
+                        <form action="'.route('stock-movements.destroy', $row->uuid).'"
                               method="POST" style="display:inline-block;" class="delete-form m-0">
-                            ' . csrf_field() . method_field('DELETE') . '
+                            '.csrf_field().method_field('DELETE').'
                             <button type="button" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-600 hover:bg-slate-100 transition-colors delete-btn font-satoshi-medium"
-                                data-id="' . $row->uuid . '"
+                                data-id="'.$row->uuid.'"
                                 data-bs-toggle="tooltip" title="Delete">
                                 <i class="ri ri-delete-bin-line text-lg"></i>
                             </button>
                         </form>';
                 }
 
-                return '<div class="flex items-center space-x-2 justify-center">' . $delete . '</div>';
+                return '<div class="flex items-center space-x-2 justify-center">'.$delete.'</div>';
             })
             ->rawColumns(['movement_type', 'action']);
     }
@@ -73,7 +73,10 @@ class StockMovementDataTable extends DataTable
      */
     public function query(StockMovement $model)
     {
-        return $model->newQuery()->with(['productStock.product', 'productStock.outlet']);
+        // whereHas mewarisi global scope outlet dari ProductStock
+        return $model->newQuery()
+            ->whereHas('productStock')
+            ->with(['productStock.product', 'productStock.outlet']);
     }
 
     /**
@@ -90,8 +93,8 @@ class StockMovementDataTable extends DataTable
             ->addTableClass('min-w-full divide-y divide-slate-200 overflow-hidden bg-white text-sm font-satoshi-medium text-slate-700')
             ->parameters([
                 'dom' => '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 font-satoshi-medium"lf>'
-                    . '<"overflow-x-auto w-full"tr>'
-                    . '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
+                    .'<"overflow-x-auto w-full"tr>'
+                    .'<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 font-satoshi-medium text-slate-500 text-sm"ip>',
                 'language' => [
                     'search' => '<span class="text-slate-600 mr-2 font-satoshi-medium">Search:</span>',
                     'searchPlaceholder' => 'Search movements...',
@@ -136,6 +139,6 @@ class StockMovementDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'StockMovement_' . date('YmdHis');
+        return 'StockMovement_'.date('YmdHis');
     }
 }

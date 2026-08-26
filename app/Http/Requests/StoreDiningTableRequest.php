@@ -26,7 +26,7 @@ class StoreDiningTableRequest extends FormRequest
     public function rules()
     {
         $outletId = $this->outlet_id ?: auth()->user()->current_outlet_id;
-        if (!$outletId) {
+        if (! $outletId) {
             $firstOutlet = Outlet::where('status', true)->first() ?: Outlet::first();
             $outletId = $firstOutlet?->id;
         }

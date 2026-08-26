@@ -65,6 +65,18 @@
                             />
                         </div>
 
+                        <!-- Cost Price (HPP) -->
+                        <div>
+                            <x-ui.input 
+                                type="text"
+                                name="cost_price" 
+                                label="Cost Price / HPP (Rp)" 
+                                placeholder="Optional — used for profit report" 
+                                value="{{ old('cost_price', isset($product_data->cost_price) && $product_data->cost_price !== null ? number_format($product_data->cost_price, 0, ',', '.') : '') }}"
+                                class="currency-format"
+                            />
+                        </div>
+
                         <!-- Active Status -->
                         <div>
                             <x-ui.switch 

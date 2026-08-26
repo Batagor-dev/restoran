@@ -22,26 +22,30 @@ class PromoDataTable extends DataTable
                     'product' => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-purple-100 text-purple-800">Product</span>',
                     'category_product' => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-amber-100 text-amber-800">Category Product</span>',
                 ];
+
                 return $badges[$row->scope] ?? $row->scope;
             })
             ->addColumn('discount', function ($row) {
                 if ($row->type === 'percentage') {
-                    return number_format($row->discount_value, 0) . '%';
+                    return number_format($row->discount_value, 0).'%';
                 }
-                return 'Rp ' . number_format($row->discount_value, 0, ',', '.');
+
+                return 'Rp '.number_format($row->discount_value, 0, ',', '.');
             })
             ->addColumn('min_purchase', function ($row) {
-                return $row->minimum_purchase ? 'Rp ' . number_format($row->minimum_purchase, 0, ',', '.') : '-';
+                return $row->minimum_purchase ? 'Rp '.number_format($row->minimum_purchase, 0, ',', '.') : '-';
             })
             ->addColumn('validity', function ($row) {
                 $start = $row->start_date ? $row->start_date->format('d M Y H:i') : '-';
                 $end = $row->end_date ? $row->end_date->format('d M Y H:i') : '-';
-                return $start . ' - ' . $end;
+
+                return $start.' - '.$end;
             })
             ->addColumn('is_active', function ($row) {
                 if ($row->is_active) {
                     return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-emerald-100 text-emerald-800">Active</span>';
                 }
+
                 return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-satoshi-medium bg-slate-100 text-slate-600">Inactive</span>';
             })
             ->addColumn('action', function ($row) {

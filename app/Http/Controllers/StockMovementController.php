@@ -15,20 +15,20 @@ class StockMovementController extends Controller
     }
 
     public function create()
-{
-    // Ambil data product stock dengan format yang sesuai untuk select2
-    $stocks = ProductStock::with(['product', 'outlet'])->get()->map(function($stock) {
-        return [
-            'value' => $stock->id,
-            'label' => $stock->product->name . ' - ' . $stock->outlet->name . ' (' . $stock->quantity . ')'
-        ];
-    });
+    {
+        // Ambil data product stock dengan format yang sesuai untuk select2
+        $stocks = ProductStock::with(['product', 'outlet'])->get()->map(function ($stock) {
+            return [
+                'value' => $stock->id,
+                'label' => $stock->product->name.' - '.$stock->outlet->name.' ('.$stock->quantity.')',
+            ];
+        });
 
-    $this->data['stocks'] = $stocks;
-    $this->data['action'] = route('stock-movements.store');
+        $this->data['stocks'] = $stocks;
+        $this->data['action'] = route('stock-movements.store');
 
-    return view('stock-movements.form', $this->data);
-}
+        return view('stock-movements.form', $this->data);
+    }
 
     public function store(StoreStockMovementRequest $request)
     {
@@ -48,7 +48,7 @@ class StockMovementController extends Controller
             if ($stockBefore < $quantity) {
                 return redirect()
                     ->route('stock-movements.index')
-                    ->with('error', 'Insufficient stock! Available: ' . $stockBefore);
+                    ->with('error', 'Insufficient stock! Available: '.$stockBefore);
             }
             $stockAfter = $stockBefore - $quantity;
         } else {
@@ -58,6 +58,7 @@ class StockMovementController extends Controller
 
         // Create stock movement
         StockMovement::create([
+            'outlet_id' => $stock->outlet_id,
             'product_stock_id' => $data['product_stock_id'],
             'movement_type' => $movementType,
             'reference_type' => $data['reference_type'] ?? null,

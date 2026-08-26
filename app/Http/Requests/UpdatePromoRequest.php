@@ -52,6 +52,10 @@ class UpdatePromoRequest extends FormRequest
             'end_date' => 'required|date|after_or_equal:start_date',
             'usage_limit' => 'nullable|integer|min:1',
             'usage_per_customer' => 'nullable|integer|min:1',
+            'products' => 'required_if:scope,product|array|min:1',
+            'products.*' => 'integer|exists:products,id',
+            'categories' => 'required_if:scope,category_product|array|min:1',
+            'categories.*' => 'integer|exists:product_categories,id',
             'is_active' => 'nullable|boolean',
         ];
     }

@@ -31,10 +31,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Promo Name -->
                         <div class="md:col-span-2">
-                            <x-ui.input 
-                                name="name" 
-                                label="Promo Name" 
-                                placeholder="Enter promo name" 
+                            <x-ui.input
+                                name="name"
+                                label="Promo Name"
+                                placeholder="Enter promo name (also used as promo code)"
                                 value="{{ old('name', $promo_data->name ?? '') }}"
                                 required
                             />
@@ -42,31 +42,24 @@
 
                         <!-- Scope -->
                         <div>
-                            <x-ui.select2 
-                                name="scope" 
-                                label="Scope" 
-                                placeholder="Select scope..."
-                                :value="old('scope', $promo_data->scope ?? 'order')"
-                                :options="[
-                                    ['value' => 'order', 'label' => 'Order'],
-                                    ['value' => 'product', 'label' => 'Product'],
-                                    ['value' => 'category_product', 'label' => 'Category Product'],
-                                ]"
-                            />
+                            <label for="scope" class="mb-2 block text-base font-satoshi-medium text-slate-700">Scope</label>
+                            <select id="scope-select" name="scope" class="promo-select2 w-full">
+                                <option value="order" {{ old('scope', $promo_data->scope ?? 'order') === 'order' ? 'selected' : '' }}>Order</option>
+                                <option value="product" {{ old('scope', $promo_data->scope ?? 'order') === 'product' ? 'selected' : '' }}>Product</option>
+                                <option value="category_product" {{ old('scope', $promo_data->scope ?? 'order') === 'category_product' ? 'selected' : '' }}>Category Product</option>
+                            </select>
+                            @error('scope')
+                                <p class="mt-1.5 block text-sm font-medium text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Type -->
                         <div>
-                            <x-ui.select2 
-                                name="type" 
-                                label="Discount Type" 
-                                placeholder="Select discount type..."
-                                :value="old('type', $promo_data->type ?? 'percentage')"
-                                :options="[
-                                    ['value' => 'percentage', 'label' => 'Percentage (%)'],
-                                    ['value' => 'fixed', 'label' => 'Fixed Amount (Rp)'],
-                                ]"
-                            />
+                            <label for="type" class="mb-2 block text-base font-satoshi-medium text-slate-700">Discount Type</label>
+                            <select id="type" name="type" class="promo-select2 w-full">
+                                <option value="percentage" {{ old('type', $promo_data->type ?? 'percentage') === 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
+                                <option value="fixed" {{ old('type', $promo_data->type ?? 'percentage') === 'fixed' ? 'selected' : '' }}>Fixed Amount (Rp)</option>
+                            </select>
                         </div>
 
                         <!-- Discount Value -->
@@ -138,6 +131,38 @@
                             />
                         </div>
 
+                        <!-- Products (scope = product) -->
+                        <div class="md:col-span-2" id="products-wrapper" style="display: none;">
+                            <label class="mb-2 block text-base font-satoshi-medium text-slate-700">Eligible Products</label>
+                            <select id="promo-products" name="products[]" class="promo-select2 w-full" multiple>
+                                @foreach($products as $product)
+                                    <option value="{{ $product['value'] }}"
+                                        {{ in_array($product['value'], (array) ($selected_products ?? old('products', []))) ? 'selected' : '' }}>
+                                        {{ $product['label'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('products')
+                                <p class="mt-1.5 block text-sm font-medium text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Categories (scope = category_product) -->
+                        <div class="md:col-span-2" id="categories-wrapper" style="display: none;">
+                            <label class="mb-2 block text-base font-satoshi-medium text-slate-700">Eligible Product Categories</label>
+                            <select id="promo-categories" name="categories[]" class="promo-select2 w-full" multiple>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category['value'] }}"
+                                        {{ in_array($category['value'], (array) ($selected_categories ?? old('categories', []))) ? 'selected' : '' }}>
+                                        {{ $category['label'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('categories')
+                                <p class="mt-1.5 block text-sm font-medium text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Description -->
                         <div class="md:col-span-2">
                             <label for="description" class="block text-sm font-satoshi-medium text-slate-700 mb-2">Description</label>
@@ -180,6 +205,27 @@
 @endsection
 
 @push('scripts')
+    {{-- Select2 (pola sama dengan POS) + toggle berdasarkan scope --}}
+    <script>
+    $(document).ready(function () {
+        $('.promo-select2').select2({
+            width: '100%',
+            placeholder: 'Select...',
+            allowClear: false
+        });
+
+        function toggleScopeFields() {
+            var scope = $('#scope-select').val();
+
+            $('#products-wrapper').toggle(scope === 'product');
+            $('#categories-wrapper').toggle(scope === 'category_product');
+        }
+
+        $('#scope-select').on('change', toggleScopeFields);
+        toggleScopeFields();
+    });
+    </script>
+
     {{-- Live thousand dot currency formatting --}}
     <script>
     $(document).on('input', '.currency-format', function () {
@@ -191,17 +237,4 @@
         }
     });
     </script>
-
-    {{-- SweetAlert Notification --}}
-    @if(session('success'))
-        <script>
-            Swal.fire({ icon: 'success', title: 'Success', text: "{{ session('success') }}" });
-        </script>
-    @endif
-
-    @if(session('error'))
-        <script>
-            Swal.fire({ icon: 'error', title: 'Error', text: "{{ session('error') }}" });
-        </script>
-    @endif
 @endpush

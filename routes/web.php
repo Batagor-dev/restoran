@@ -1,29 +1,32 @@
 <?php
 
 use App\Http\Controllers\AcountController;
+use App\Http\Controllers\AdminPanelController;
 use App\Http\Controllers\ArticleCategoryController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerPromoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DiningTableController;
+use App\Http\Controllers\KitchenController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MenuGroupController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\DiningTableController;
 use App\Http\Controllers\PermissionGroupController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductCategoryController;
-use App\Http\Controllers\PromoController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductStockController;
+use App\Http\Controllers\PromoController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\CustomerPromoController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PosController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\KitchenController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,7 +41,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
 })->name('home');
 
 // Route untuk memicu login Google
@@ -49,6 +54,7 @@ Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCa
 
 Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/admin-panel', [AdminPanelController::class, 'index'])->name('adminpanel.index');
 
     Route::post('/switch-outlet', [OutletController::class, 'switchOutlet'])->name('outlet.switch');
     Route::resource('/outlet', OutletController::class)->except('show');
@@ -92,9 +98,9 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
         'tables' => 'table:uuid',
     ]])->except('show');
 
-    Route::resource('/product_categories', ProductCategoryController::class, ['parameters' => [
-        'product_categories' => 'productCategory:uuid',
-    ]])->except('show');
+    Route::resource('/customers', CustomerController::class, ['parameters' => [
+        'customers' => 'customer:uuid',
+    ]]);
 
     Route::resource('/products', ProductController::class, ['parameters' => [
         'products' => 'product:uuid',
@@ -129,6 +135,28 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
     Route::post('/pos/order', [PosController::class, 'processOrder'])->name('pos.order');
     Route::post('/pos/promo/remove', [PosController::class, 'removePromo'])->name('pos.promo.remove');
 
+    // Transaction Management Routes
+    Route::get('/transactions-report', [TransactionController::class, 'report'])->name('transactions.report');
+    Route::get('/transactions-export', [TransactionController::class, 'export'])->name('transactions.export');
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+
+    // Reports Routes
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export/{type}', [ReportController::class, 'export'])
+        ->whereIn('type', array_keys(ReportController::registry()))
+        ->name('reports.export');
+    Route::get('/reports/{type}', [ReportController::class, 'show'])
+        ->whereIn('type', array_keys(ReportController::registry()))
+        ->name('reports.show');
+    Route::get('/transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])
+        ->name('transactions.receipt');
+    Route::post('/transactions/{transaction}/refund', [TransactionController::class, 'refund'])
+        ->name('transactions.refund');
+    Route::post('/transactions/{transaction}/void', [TransactionController::class, 'void'])
+        ->name('transactions.void');
+    Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])
+        ->name('transactions.show');
+
     // Kitchen Routes
     Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
     Route::get('/kitchen/history', [KitchenController::class, 'history'])->name('kitchen.history');  // 👈 HARUS DI ATAS /{order}
@@ -137,7 +165,7 @@ Route::middleware(['auth', 'verified', 'set_default_outlet'])->group(function ()
     Route::post('/kitchen/{order}/status', [KitchenController::class, 'updateStatus'])->name('kitchen.status');
     Route::get('/kitchen/{order}', [KitchenController::class, 'show'])->name('kitchen.show');
     Route::get('/kitchen/{order}/print', [KitchenController::class, 'print'])->name('kitchen.print');
-    
+
     // Route::prefix('setting')->group(function () {
     //     Route::get('/',[App\Http\Controllers\SettingController::class, 'index'])->name('setting.index');
     //     Route::get('/create',[App\Http\Controllers\SettingController::class, 'create'])->name('setting.create');

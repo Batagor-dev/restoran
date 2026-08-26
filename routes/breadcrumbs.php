@@ -8,6 +8,12 @@ Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('dashboard'));
 });
 
+// Home > Admin Panel
+Breadcrumbs::for('adminpanel.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Admin Panel', route('adminpanel.index'));
+});
+
 // **************************** USER ***************************
 
 // Home > User
@@ -323,7 +329,6 @@ Breadcrumbs::for('promo.create', function (BreadcrumbTrail $trail) {
 
 // **************************** END PROMO ***************************
 
-
 // **************************** TABLES (MEJA) ***************************
 
 // Home > Tables
@@ -419,7 +424,7 @@ Breadcrumbs::for('orders.edit', function (BreadcrumbTrail $trail, $order) {
 // Home > Orders > Show
 Breadcrumbs::for('orders.show', function (BreadcrumbTrail $trail, $order) {
     $trail->parent('orders.index');
-    $trail->push('Order #' . $order->code_invoice, route('orders.show', $order));
+    $trail->push('Order #'.$order->code_invoice, route('orders.show', $order));
 });
 
 // **************************** END ORDER ***************************
@@ -446,6 +451,40 @@ Breadcrumbs::for('customers.edit', function (BreadcrumbTrail $trail, $customer) 
 
 // **************************** END CUSTOMER ***************************
 
+// **************************** TRANSACTION ***************************
+
+// Home > Transactions
+Breadcrumbs::for('transactions.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Transactions', route('transactions.index'));
+});
+
+// Home > Transactions > Detail
+Breadcrumbs::for('transactions.show', function (BreadcrumbTrail $trail, $transaction) {
+    $trail->parent('transactions.index');
+    $trail->push('#'.$transaction->code_invoice, route('transactions.show', $transaction));
+});
+
+// Home > Transactions > Revenue Report
+Breadcrumbs::for('transactions.report', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Revenue Report', route('transactions.report'));
+});
+
+// Home > Reports
+Breadcrumbs::for('reports.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Reports', route('reports.index'));
+});
+
+// Home > Reports > [Type]
+Breadcrumbs::for('reports.show', function (BreadcrumbTrail $trail, $type) {
+    $trail->parent('reports.index');
+    $trail->push(App\Http\Controllers\ReportController::registry()[$type]['label'] ?? ucfirst($type), route('reports.show', $type));
+});
+
+// **************************** END TRANSACTION ***************************
+
 // **************************** KITCHEN ***************************
 
 // Home > Kitchen
@@ -457,7 +496,7 @@ Breadcrumbs::for('kitchen.index', function (BreadcrumbTrail $trail) {
 // Home > Kitchen > Show
 Breadcrumbs::for('kitchen.show', function (BreadcrumbTrail $trail, $order) {
     $trail->parent('kitchen.index');
-    $trail->push('Order #' . $order->code_invoice, route('kitchen.show', $order));
+    $trail->push('Order #'.$order->code_invoice, route('kitchen.show', $order));
 });
 
 // **************************** END KITCHEN ***************************

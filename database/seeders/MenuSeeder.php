@@ -10,314 +10,285 @@ use Illuminate\Support\Str;
 
 class MenuSeeder extends Seeder
 {
+    /**
+     * Ambil / buat menu secara aman:
+     * - cari termasuk soft-deleted -> restore (JANGAN buat duplikat)
+     * - kunci pencarian: href untuk leaf, nama_menu+menu_group_id untuk parent
+     * - selalu relink permission_group_id berdasarkan NAMA grup permission
+     *   (tahan terhadap pergeseran id di database).
+     */
+    private function ensureMenu(array $find, array $data): Menu
+    {
+        $permissionGroup = ! empty($data['permission_group'])
+            ? PermissionGroup::firstOrCreate(['name' => $data['permission_group']])
+            : null;
+
+        $menu = Menu::withTrashed()
+            ->where(function ($q) use ($find) {
+                if (! empty($find['href'])) {
+                    $q->where('href', $find['href']);
+                } else {
+                    $q->where('nama_menu', $find['nama_menu'])
+                        ->where('menu_group_id', $find['menu_group_id'] ?? null)
+                        ->whereNull('href');
+                }
+            })
+            ->first();
+
+        if (! $menu) {
+            $menu = new Menu;
+            $menu->uuid = Str::uuid()->toString();
+        }
+
+        $menu->nama_menu = $data['nama_menu'];
+        $menu->menu_group_id = $data['menu_group_id'] ?? ($menu->menu_group_id ?? null);
+        $menu->menu_id = $data['menu_id'] ?? ($menu->menu_id ?? null);
+        $menu->href = $data['href'] ?? ($menu->href ?? null);
+        $menu->icon = $data['icon'] ?? ($menu->icon ?? null);
+        $menu->permission_group_id = $permissionGroup?->id ?? ($menu->permission_group_id ?? null);
+        $menu->status = $data['status'] ?? true;
+        $menu->sort = $data['sort'] ?? ($menu->sort ?? 0);
+
+        if ($menu->trashed()) {
+            $menu->restore();
+        }
+
+        $menu->save();
+
+        return $menu;
+    }
+
+    private function ensureGroup(string $name, string $permissionGroupName, int $sort): MenuGroup
+    {
+        $group = MenuGroup::firstOrCreate(
+            ['name' => $name],
+            [
+                'permission_group_id' => PermissionGroup::firstOrCreate(['name' => $permissionGroupName])->id,
+                'sort' => $sort,
+                'status' => 1,
+            ]
+        );
+
+        // Self-healing: pastikan relasi ke permission group valid
+        if (! $group->permission_group_id || ! PermissionGroup::find($group->permission_group_id)) {
+            $group->update([
+                'permission_group_id' => PermissionGroup::firstOrCreate(['name' => $permissionGroupName])->id,
+            ]);
+        }
+
+        return $group;
+    }
+
     public function run()
     {
         // ============================================================
-        // 1. BUAT / AMBIL MENU GROUP (OTOMATIS)
+        // 1. MENU GROUPS
         // ============================================================
-        $produkGroup = MenuGroup::firstOrCreate(
-            ['name' => 'Management Product'],
-            ['permission_group_id' => 13, 'sort' => 1, 'status' => 1]
-        );
-
-        $mejaGroup = MenuGroup::firstOrCreate(
-            ['name' => 'Management Table'],
-            ['permission_group_id' => 15, 'sort' => 2, 'status' => 1]
-        );
-
-        $kontenGroup = MenuGroup::firstOrCreate(
-            ['name' => 'Management Content'],
-            ['permission_group_id' => 10, 'sort' => 3, 'status' => 1]
-        );
-
-        $pengaturanGroup = MenuGroup::firstOrCreate(
-            ['name' => 'Setting'],
-            ['permission_group_id' => 8, 'sort' => 4, 'status' => 1]
-        );
-
-        $reportGroup = MenuGroup::firstOrCreate(
-            ['name' => 'Management Report'],
-            ['permission_group_id' => 18, 'sort' => 6, 'status' => 1]
-        );
+        $produkGroup = $this->ensureGroup('Management Product', 'Product', 1);
+        $mejaGroup = $this->ensureGroup('Management Table', 'Table', 2);
+        $kontenGroup = $this->ensureGroup('Management Content', 'Konten', 3);
+        $pengaturanGroup = $this->ensureGroup('Setting', 'Setting', 4);
+        $reportGroup = $this->ensureGroup('Management Report', 'Order', 6);
 
         // ============================================================
         // 2. MANAGEMENT PRODUCT
         // ============================================================
-        $produk = Menu::create([
-            'menu_group_id' => $produkGroup->id,
-            'nama_menu' => 'Produk',
-            'permission_group_id' => 13,
-            'icon' => 'ri-shopping-bag-3-line',
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $produk = $this->ensureMenu(
+            ['nama_menu' => 'Produk', 'menu_group_id' => $produkGroup->id],
+            ['nama_menu' => 'Produk', 'menu_group_id' => $produkGroup->id, 'icon' => 'ri-shopping-bag-3-line', 'status' => true, 'sort' => 1]
+        );
 
-        $promo = Menu::create([
-            'menu_group_id' => $produkGroup->id,
-            'nama_menu' => 'Promo',
-            'permission_group_id' => 14,
-            'icon' => 'ri-gift-line',
-            'status' => true,
-            'sort' => 2,
-        ]);
+        $promo = $this->ensureMenu(
+            ['nama_menu' => 'Promo', 'menu_group_id' => $produkGroup->id],
+            ['nama_menu' => 'Promo', 'menu_group_id' => $produkGroup->id, 'icon' => 'ri-gift-line', 'status' => true, 'sort' => 2]
+        );
 
-        // Stock Management (HANYA SATU, TIDAK DUPLIKAT)
-        $stockManagement = Menu::create([
-            'menu_group_id' => $produkGroup->id,
-            'nama_menu' => 'Stock Management',
-            'permission_group_id' => 16,
-            'icon' => 'ri-stack-line',
-            'status' => true,
-            'sort' => 3,
-        ]);
+        $stockManagement = $this->ensureMenu(
+            ['nama_menu' => 'Stock Management', 'menu_group_id' => $produkGroup->id],
+            ['nama_menu' => 'Stock Management', 'menu_group_id' => $produkGroup->id, 'icon' => 'ri-stack-line', 'status' => true, 'sort' => 3]
+        );
 
-        $customerPromo = Menu::create([
-            'menu_group_id' => $produkGroup->id,
-            'nama_menu' => 'Customer Promo',
-            'permission_group_id' => 26,
-            'icon' => 'ri-gift-line',
-            'status' => true,
-            'sort' => 4,
-        ]);
+        $customerPromo = $this->ensureMenu(
+            ['nama_menu' => 'Customer Promo', 'menu_group_id' => $produkGroup->id],
+            ['nama_menu' => 'Customer Promo', 'menu_group_id' => $produkGroup->id, 'icon' => 'ri-gift-line', 'status' => true, 'sort' => 4]
+        );
 
-        // Submenu Produk
-        Menu::create([
-            'menu_id' => $produk->id,
-            'nama_menu' => 'Kategori Produk',
-            'permission_group_id' => 12,
-            'href' => '/product_categories',
-            'status' => true,
-            'sort' => 1,
-        ]);
-
-        Menu::create([
-            'menu_id' => $produk->id,
-            'nama_menu' => 'Produk',
-            'permission_group_id' => 13,
-            'href' => '/products',
-            'status' => true,
-            'sort' => 2,
-        ]);
-
-        // Submenu Promo
-        Menu::create([
-            'menu_id' => $promo->id,
-            'nama_menu' => 'Promo',
-            'permission_group_id' => 14,
-            'href' => '/promo',
-            'status' => true,
-            'sort' => 1,
-        ]);
-
-        // Submenu Stock Management
-        Menu::create([
-            'menu_id' => $stockManagement->id,
-            'nama_menu' => 'Product Stocks',
-            'permission_group_id' => 16,
-            'href' => '/product-stocks',
-            'status' => true,
-            'sort' => 1,
-        ]);
-
-        Menu::create([
-            'menu_id' => $stockManagement->id,
-            'nama_menu' => 'Stock Movements',
-            'permission_group_id' => 17,
-            'href' => '/stock-movements',
-            'status' => true,
-            'sort' => 2,
-        ]);
-
-        // Submenu Customer Promo
-        Menu::create([
-            'menu_id' => $customerPromo->id,
-            'nama_menu' => 'Customer Promo',
-            'permission_group_id' => 26,
-            'href' => '/customer-promos',
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $this->ensureMenu(
+            ['href' => '/product_categories'],
+            ['nama_menu' => 'Kategori Produk', 'menu_id' => $produk->id, 'href' => '/product_categories', 'permission_group' => 'Product Category', 'status' => true, 'sort' => 1]
+        );
+        $this->ensureMenu(
+            ['href' => '/products'],
+            ['nama_menu' => 'Produk', 'menu_id' => $produk->id, 'href' => '/products', 'permission_group' => 'Product', 'status' => true, 'sort' => 2]
+        );
+        $this->ensureMenu(
+            ['href' => '/promo'],
+            ['nama_menu' => 'Promo', 'menu_id' => $promo->id, 'href' => '/promo', 'permission_group' => 'Promo', 'status' => true, 'sort' => 1]
+        );
+        $this->ensureMenu(
+            ['href' => '/product-stocks'],
+            ['nama_menu' => 'Product Stocks', 'menu_id' => $stockManagement->id, 'href' => '/product-stocks', 'permission_group' => 'Product Stock', 'status' => true, 'sort' => 1]
+        );
+        $this->ensureMenu(
+            ['href' => '/stock-movements'],
+            ['nama_menu' => 'Stock Movements', 'menu_id' => $stockManagement->id, 'href' => '/stock-movements', 'permission_group' => 'Stock Movement', 'status' => true, 'sort' => 2]
+        );
+        $this->ensureMenu(
+            ['href' => '/customer-promos'],
+            ['nama_menu' => 'Customer Promo', 'menu_id' => $customerPromo->id, 'href' => '/customer-promos', 'permission_group' => 'Customer Promo', 'status' => true, 'sort' => 1]
+        );
 
         // ============================================================
         // 3. MANAGEMENT TABLE
         // ============================================================
-        Menu::create([
-            'menu_group_id' => $mejaGroup->id,
-            'nama_menu' => 'Management Meja',
-            'permission_group_id' => 15,
-            'icon' => 'ri-layout-grid-line',
-            'href' => '/tables',
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $this->ensureMenu(
+            ['href' => '/tables'],
+            ['nama_menu' => 'Management Meja', 'menu_group_id' => $mejaGroup->id, 'href' => '/tables', 'icon' => 'ri-layout-grid-line', 'permission_group' => 'Table', 'status' => true, 'sort' => 1]
+        );
 
         // ============================================================
-        // 4. MANAGEMENT CONTENT (Artikel)
+        // 4. MANAGEMENT CONTENT
         // ============================================================
-        $artikel = Menu::create([
-            'menu_group_id' => $kontenGroup->id,
-            'nama_menu' => 'Artikel',
-            'permission_group_id' => 7,
-            'icon' => 'ri-article-line',
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $artikel = $this->ensureMenu(
+            ['nama_menu' => 'Artikel', 'menu_group_id' => $kontenGroup->id],
+            ['nama_menu' => 'Artikel', 'menu_group_id' => $kontenGroup->id, 'icon' => 'ri-article-line', 'status' => true, 'sort' => 1]
+        );
 
-        Menu::create([
-            'menu_id' => $artikel->id,
-            'nama_menu' => 'Artikel Kategori',
-            'permission_group_id' => 7,
-            'href' => '/article_categories',
-            'status' => true,
-            'sort' => 1,
-        ]);
-
-        Menu::create([
-            'menu_id' => $artikel->id,
-            'nama_menu' => 'Artikel',
-            'permission_group_id' => 7,
-            'href' => '/article',
-            'status' => true,
-            'sort' => 2,
-        ]);
+        $this->ensureMenu(
+            ['href' => '/article_categories'],
+            ['nama_menu' => 'Artikel Kategori', 'menu_id' => $artikel->id, 'href' => '/article_categories', 'permission_group' => 'Article Category', 'status' => true, 'sort' => 1]
+        );
+        $this->ensureMenu(
+            ['href' => '/article'],
+            ['nama_menu' => 'Artikel', 'menu_id' => $artikel->id, 'href' => '/article', 'permission_group' => 'Article', 'status' => true, 'sort' => 2]
+        );
 
         // ============================================================
         // 5. SETTING
         // ============================================================
-        $setting = Menu::create([
-            'menu_group_id' => $pengaturanGroup->id,
-            'nama_menu' => 'Setting',
-            'permission_group_id' => 8,
-            'icon' => 'ri-settings-3-line',
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $setting = $this->ensureMenu(
+            ['nama_menu' => 'Setting', 'menu_group_id' => $pengaturanGroup->id],
+            ['nama_menu' => 'Setting', 'menu_group_id' => $pengaturanGroup->id, 'icon' => 'ri-settings-3-line', 'status' => true, 'sort' => 1]
+        );
 
-        $userManagement = Menu::create([
-            'menu_id' => $setting->id,
-            'nama_menu' => 'User Management',
-            'permission_group_id' => 8,
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $userManagement = $this->ensureMenu(
+            ['nama_menu' => 'User Management', 'menu_id' => $setting->id],
+            ['nama_menu' => 'User Management', 'menu_id' => $setting->id, 'status' => true, 'sort' => 1]
+        );
 
-        // Level 3 dari User Management
-        Menu::create([
-            'menu_id' => $userManagement->id,
-            'nama_menu' => 'Users',
-            'permission_group_id' => 1,
-            'href' => '/user',
-            'status' => true,
-            'sort' => 1,
-        ]);
-
-        Menu::create([
-            'menu_id' => $userManagement->id,
-            'nama_menu' => 'Permission Group',
-            'permission_group_id' => 8,
-            'href' => '/permissiongroup',
-            'status' => true,
-            'sort' => 2,
-        ]);
-
-        Menu::create([
-            'menu_id' => $userManagement->id,
-            'nama_menu' => 'Permissions',
-            'permission_group_id' => 8,
-            'href' => '/permission',
-            'status' => true,
-            'sort' => 3,
-        ]);
-
-        Menu::create([
-            'menu_id' => $userManagement->id,
-            'nama_menu' => 'Roles',
-            'permission_group_id' => 8,
-            'href' => '/role',
-            'status' => true,
-            'sort' => 4,
-        ]);
-
-        Menu::create([
-            'menu_id' => $userManagement->id,
-            'nama_menu' => 'Outlets',
-            'permission_group_id' => 9,
-            'href' => '/outlet',
-            'status' => true,
-            'sort' => 5,
-        ]);
-
-        // Submenu Web Setting (langsung di bawah Setting)
-        Menu::create([
-            'menu_id' => $setting->id,
-            'nama_menu' => 'Web Setting',
-            'permission_group_id' => 8,
-            'href' => '/setting',
-            'status' => true,
-            'sort' => 2,
-        ]);
-
-        Menu::create([
-            'menu_id' => $setting->id,
-            'nama_menu' => 'Menu Management',
-            'permission_group_id' => 8,
-            'href' => '/menu',
-            'status' => true,
-            'sort' => 3,
-        ]);
-
-        Menu::create([
-            'menu_id' => $setting->id,
-            'nama_menu' => 'Menu Group',
-            'permission_group_id' => 8,
-            'href' => '/menugroup',
-            'status' => true,
-            'sort' => 4,
-        ]);
+        $this->ensureMenu(
+            ['href' => '/user'],
+            ['nama_menu' => 'Users', 'menu_id' => $userManagement->id, 'href' => '/user', 'permission_group' => 'User', 'status' => true, 'sort' => 1]
+        );
+        $this->ensureMenu(
+            ['href' => '/permissiongroup'],
+            ['nama_menu' => 'Permission Group', 'menu_id' => $userManagement->id, 'href' => '/permissiongroup', 'permission_group' => 'Setting', 'status' => true, 'sort' => 2]
+        );
+        $this->ensureMenu(
+            ['href' => '/permission'],
+            ['nama_menu' => 'Permissions', 'menu_id' => $userManagement->id, 'href' => '/permission', 'permission_group' => 'Setting', 'status' => true, 'sort' => 3]
+        );
+        $this->ensureMenu(
+            ['href' => '/role'],
+            ['nama_menu' => 'Roles', 'menu_id' => $userManagement->id, 'href' => '/role', 'permission_group' => 'Setting', 'status' => true, 'sort' => 4]
+        );
+        $this->ensureMenu(
+            ['href' => '/outlet'],
+            ['nama_menu' => 'Outlets', 'menu_id' => $userManagement->id, 'href' => '/outlet', 'permission_group' => 'Outlet', 'status' => true, 'sort' => 5]
+        );
+        $this->ensureMenu(
+            ['href' => '/setting'],
+            ['nama_menu' => 'Web Setting', 'menu_id' => $setting->id, 'href' => '/setting', 'permission_group' => 'Setting', 'status' => true, 'sort' => 2]
+        );
+        $this->ensureMenu(
+            ['href' => '/menu'],
+            ['nama_menu' => 'Menu Management', 'menu_id' => $setting->id, 'href' => '/menu', 'permission_group' => 'Setting', 'status' => true, 'sort' => 3]
+        );
+        $this->ensureMenu(
+            ['href' => '/menugroup'],
+            ['nama_menu' => 'Menu Group', 'menu_id' => $setting->id, 'href' => '/menugroup', 'permission_group' => 'Setting', 'status' => true, 'sort' => 4]
+        );
 
         // ============================================================
-        // 6. ORDERS (LANGSUNG KE HALAMAN - TANPA DROPDOWN)
+        // 6. REPORT GROUP
         // ============================================================
-        Menu::create([
-            'uuid' => Str::uuid(),
-            'menu_group_id' => $reportGroup->id,
-            'menu_id' => null,
-            'nama_menu' => 'Orders',
-            'icon' => 'ri-shopping-cart-line',
-            'permission_group_id' => 18,
-            'href' => '/orders',
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $this->ensureMenu(
+            ['href' => '/orders'],
+            ['nama_menu' => 'Orders', 'menu_group_id' => $reportGroup->id, 'href' => '/orders', 'icon' => 'ri-shopping-cart-line', 'permission_group' => 'Order', 'status' => true, 'sort' => 1]
+        );
+        $this->ensureMenu(
+            ['href' => '/transactions'],
+            ['nama_menu' => 'Transactions', 'menu_group_id' => $reportGroup->id, 'href' => '/transactions', 'icon' => 'ri-receipt-line', 'permission_group' => 'Transaction', 'status' => true, 'sort' => 2]
+        );
+        $this->ensureMenu(
+            ['href' => '/reports'],
+            ['nama_menu' => 'Reports', 'menu_group_id' => $reportGroup->id, 'href' => '/reports', 'icon' => 'ri-bar-chart-grouped-line', 'permission_group' => 'Report', 'status' => true, 'sort' => 3]
+        );
 
         // ============================================================
-        // 7. POS (LANGSUNG KE HALAMAN)
+        // 7. STANDALONE
         // ============================================================
-        Menu::create([
-            'uuid' => Str::uuid(),
-            'menu_group_id' => null,
-            'menu_id' => null,
-            'nama_menu' => 'POS',
-            'icon' => 'ri-shopping-cart-2-line',
-            'permission_group_id' => 20,
-            'href' => '/pos',
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $this->ensureMenu(
+            ['href' => '/pos'],
+            ['nama_menu' => 'POS', 'href' => '/pos', 'icon' => 'ri-shopping-cart-2-line', 'permission_group' => 'POS', 'status' => true, 'sort' => 1]
+        );
+        $this->ensureMenu(
+            ['href' => '/kitchen'],
+            ['nama_menu' => 'Kitchen', 'href' => '/kitchen', 'icon' => 'ri-restaurant-2-line', 'permission_group' => 'Kitchen', 'status' => true, 'sort' => 1]
+        );
 
         // ============================================================
-        // 8. KITCHEN (LANGSUNG KE HALAMAN)
+        // 8. MENU TAMBAHAN LAINNYA (IDEMPOTENT)
         // ============================================================
-        Menu::create([
-            'uuid' => Str::uuid(),
-            'menu_group_id' => null,
-            'menu_id' => null,
-            'nama_menu' => 'Kitchen',
-            'icon' => 'ri-restaurant-2-line',
-            'permission_group_id' => 22,
-            'href' => '/kitchen',
-            'status' => true,
-            'sort' => 1,
-        ]);
+        $this->seedCustomerMenu($produkGroup);
+        $this->seedAdminPanelMenu($pengaturanGroup);
+
+        // Bersihkan duplikasi historis: sisakan satu baris aktif per identitas
+        $this->removeDuplicates();
+    }
+
+    private function seedCustomerMenu(MenuGroup $produkGroup): void
+    {
+        $this->ensureMenu(
+            ['href' => '/customers'],
+            ['nama_menu' => 'Customers', 'menu_group_id' => $produkGroup->id, 'href' => '/customers', 'icon' => 'ri-user-smile-line', 'permission_group' => 'Customer', 'status' => true, 'sort' => 5]
+        );
+    }
+
+    private function seedAdminPanelMenu(MenuGroup $pengaturanGroup): void
+    {
+        $this->ensureMenu(
+            ['href' => '/admin-panel'],
+            ['nama_menu' => 'Admin Panel', 'menu_group_id' => $pengaturanGroup->id, 'href' => '/admin-panel', 'icon' => 'ri-dashboard-3-line', 'permission_group' => 'Setting', 'status' => true, 'sort' => 0]
+        );
+    }
+
+    /**
+     * Hapus duplikasi historis akibat seeder lama tanpa guard:
+     * sisakan SATU baris aktif per identitas (href untuk leaf,
+     * nama_menu+menu_group_id untuk parent). Sisanya force-delete.
+     */
+    private function removeDuplicates(): void
+    {
+        $identities = [];
+
+        foreach (Menu::withTrashed()->orderBy('id')->get() as $menu) {
+            $key = ! empty($menu->href)
+                ? 'h:'.$menu->href
+                : 'n:'.$menu->nama_menu.'|g:'.$menu->menu_group_id.'|p:'.$menu->menu_id;
+
+            if (! isset($identities[$key])) {
+                $identities[$key] = $menu;
+
+                continue;
+            }
+
+            $keeper = $identities[$key];
+
+            // Repoint anak-anak ke baris yang dipertahankan
+            Menu::where('menu_id', $menu->id)->update(['menu_id' => $keeper->id]);
+
+            $menu->forceDelete();
+        }
     }
 }
