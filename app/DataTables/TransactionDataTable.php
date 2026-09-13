@@ -127,8 +127,10 @@ class TransactionDataTable extends DataTable
         if (request()->filled('search') && request('search')['value'] ?? false) {
             $keyword = '%'.request('search')['value'].'%';
             $query->where(function ($q) use ($keyword) {
-                $q->where('orders.code_invoice', 'ILIKE', $keyword)
-                    ->orWhere('orders.customer_name', 'ILIKE', $keyword);
+                $driver = DB::connection()->getDriverName();
+                $like = $driver === 'pgsql' ? 'ILIKE' : 'LIKE';
+                $q->where('orders.code_invoice', $like, $keyword)
+                    ->orWhere('orders.customer_name', $like, $keyword);
             });
         }
 

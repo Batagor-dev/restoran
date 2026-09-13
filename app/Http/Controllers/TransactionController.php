@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\TransactionDataTable;
+use App\Http\Requests\RefundTransactionRequest;
+use App\Http\Requests\VoidTransactionRequest;
 use App\Models\Order;
 use App\Models\Outlet;
 use App\Models\User;
@@ -22,19 +24,16 @@ class TransactionController extends Controller
     {
         abort_unless(auth()->user()->can('Transaction Access'), 403);
 
-        $cashiers = User::whereHas('orders')
+        $this->data['cashiers'] = User::whereHas('orders')
             ->orderBy('name')
             ->get(['id', 'name']);
 
         // Outlet selector hanya untuk Super Admin/Owner (karyawan terkunci global scope)
-        $outlets = auth()->user()->hasRole(['Super Admin', 'Owner'])
+        $this->data['outlets'] = auth()->user()->hasRole(['Super Admin', 'Owner'])
             ? Outlet::where('status', true)->orderBy('name')->get(['id', 'name'])
             : collect();
 
-        return $dataTable->render('transactions.index', [
-            'cashiers' => $cashiers,
-            'outlets' => $outlets,
-        ]);
+        return $dataTable->render('transactions.index', $this->data);
     }
 
     /**
@@ -89,12 +88,10 @@ class TransactionController extends Controller
         }
 
         // format=pdf (print view)
-        $transactions = $query->orderBy('orders.created_at')->limit(1000)->get();
+        $this->data['transactions'] = $query->orderBy('orders.created_at')->limit(1000)->get();
+        $this->data['generatedAt'] = now();
 
-        return view('transactions.export-pdf', [
-            'transactions' => $transactions,
-            'generatedAt' => now(),
-        ]);
+        return view('transactions.export-pdf', $this->data);
     }
 
     /**
@@ -140,7 +137,9 @@ class TransactionController extends Controller
             'refundedBy',
         ]);
 
-        return view('transactions.show', ['transaction' => $transaction]);
+        $this->data['transaction'] = $transaction;
+
+        return view('transactions.show', $this->data);
     }
 
     /**
@@ -152,19 +151,19 @@ class TransactionController extends Controller
 
         $transaction->load(['items', 'outlet', 'cashier', 'table', 'promo', 'customer']);
 
-        return view('transactions.receipt', ['transaction' => $transaction]);
+        $this->data['transaction'] = $transaction;
+
+        return view('transactions.receipt', $this->data);
     }
 
     /**
      * Refund transaksi (kembalikan dana + stok).
      */
-    public function refund(Request $request, Order $transaction)
+    public function refund(RefundTransactionRequest $request, Order $transaction)
     {
         abort_unless(auth()->user()->can('Transaction Refund'), 403);
 
-        $validated = $request->validate([
-            'reason' => 'required|string|min:3|max:500',
-        ]);
+        $validated = $request->validated();
 
         try {
             $this->transactions->refund($transaction, $validated['reason']);
@@ -182,13 +181,11 @@ class TransactionController extends Controller
     /**
      * Void transaksi (pembatalan + kembalikan stok).
      */
-    public function void(Request $request, Order $transaction)
+    public function void(VoidTransactionRequest $request, Order $transaction)
     {
         abort_unless(auth()->user()->can('Transaction Void'), 403);
 
-        $validated = $request->validate([
-            'reason' => 'required|string|min:3|max:500',
-        ]);
+        $validated = $request->validated();
 
         try {
             $this->transactions->void($transaction, $validated['reason']);
@@ -265,17 +262,17 @@ class TransactionController extends Controller
             ->groupBy('payment_method')
             ->get();
 
-        return view('transactions.report', [
-            'summary' => $summary,
-            'daily' => $daily,
-            'byPayment' => $byPayment,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'cashiers' => User::whereHas('orders')->orderBy('name')->get(['id', 'name']),
-            'filters' => [
-                'cashier_id' => $request->cashier_id,
-                'payment_method' => $request->payment_method,
-            ],
-        ]);
+        $this->data['summary'] = $summary;
+        $this->data['daily'] = $daily;
+        $this->data['byPayment'] = $byPayment;
+        $this->data['startDate'] = $startDate;
+        $this->data['endDate'] = $endDate;
+        $this->data['cashiers'] = User::whereHas('orders')->orderBy('name')->get(['id', 'name']);
+        $this->data['filters'] = [
+            'cashier_id' => $request->cashier_id,
+            'payment_method' => $request->payment_method,
+        ];
+
+        return view('transactions.report', $this->data);
     }
 }

@@ -48,9 +48,9 @@ class ReportController extends Controller
     {
         $this->authorizeAccess();
 
-        return view('reports.index', [
-            'registry' => static::registry(),
-        ]);
+        $this->data['registry'] = static::registry();
+
+        return view('reports.index', $this->data);
     }
 
     /**
@@ -66,16 +66,16 @@ class ReportController extends Controller
         [$start, $end] = $this->resolveRange($request);
         $data = $this->build($type, $start, $end);
 
-        return view('reports.show', [
-            'type' => $type,
-            'meta' => $registry[$type],
-            'startDate' => $start,
-            'endDate' => $end,
-            'threshold' => (int) $request->query('threshold', 5),
-            'summary' => $data['summary'],
-            'columns' => $data['columns'],
-            'rows' => $data['rows'],
-        ]);
+        $this->data['type'] = $type;
+        $this->data['meta'] = $registry[$type];
+        $this->data['startDate'] = $start;
+        $this->data['endDate'] = $end;
+        $this->data['threshold'] = (int) $request->query('threshold', 5);
+        $this->data['summary'] = $data['summary'];
+        $this->data['columns'] = $data['columns'];
+        $this->data['rows'] = $data['rows'];
+
+        return view('reports.show', $this->data);
     }
 
     /**
