@@ -33,34 +33,44 @@ class DashboardController extends Controller
          * lewat global scope BelongsToOutlet pada Order)
          * ==================================================
          */
-        $todayQuery = Order::whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()]);
+        $todayStats = Order::whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])
+            ->selectRaw("
+                COUNT(*) as total_orders,
+                SUM(CASE WHEN status_order IN ('pending', 'processing', 'completed') THEN grand_total ELSE 0 END) as revenue_today,
+                SUM(CASE WHEN status_order = 'completed' THEN 1 ELSE 0 END) as completed_today
+            ")
+            ->first();
 
-        $this->data['revenue_today'] = (clone $todayQuery)
-            ->whereIn('status_order', ['pending', 'processing', 'completed'])
-            ->sum('grand_total');
-
-        $this->data['orders_today'] = (clone $todayQuery)->count();
-
+        $this->data['revenue_today'] = (float) ($todayStats->revenue_today ?? 0);
+        $this->data['orders_today'] = (int) ($todayStats->total_orders ?? 0);
+        $this->data['completed_today'] = (int) ($todayStats->completed_today ?? 0);
         $this->data['kitchen_pending'] = Order::whereIn('status_order', ['pending', 'processing'])->count();
 
-        $this->data['completed_today'] = (clone $todayQuery)->where('status_order', 'completed')->count();
+        // Tren 7 hari terakhir dalam 1 query agregat
+        $startDate = now()->subDays(6)->startOfDay();
+        $endDate = now()->endOfDay();
 
-        // Tren 7 hari terakhir untuk grafik
-        $this->data['sales_chart'] = collect(range(6, 0))->map(function ($daysAgo) {
+        $sevenDaysData = Order::whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw("
+                DATE(created_at) as order_date,
+                COUNT(*) as total_orders,
+                SUM(CASE WHEN status_order != 'cancelled' THEN grand_total ELSE 0 END) as total_revenue
+            ")
+            ->groupByRaw('DATE(created_at)')
+            ->get()
+            ->keyBy(function ($item) {
+                return \Carbon\Carbon::parse($item->order_date)->format('Y-m-d');
+            });
+
+        $this->data['sales_chart'] = collect(range(6, 0))->map(function ($daysAgo) use ($sevenDaysData) {
             $day = now()->subDays($daysAgo);
+            $key = $day->format('Y-m-d');
+            $record = $sevenDaysData->get($key);
 
             return [
                 'label' => $day->format('d M'),
-                'revenue' => (float) Order::whereBetween('created_at', [
-                    $day->copy()->startOfDay(),
-                    $day->copy()->endOfDay(),
-                ])
-                    ->where('status_order', '!=', 'cancelled')
-                    ->sum('grand_total'),
-                'orders' => Order::whereBetween('created_at', [
-                    $day->copy()->startOfDay(),
-                    $day->copy()->endOfDay(),
-                ])->count(),
+                'revenue' => $record ? (float) $record->total_revenue : 0.0,
+                'orders' => $record ? (int) $record->total_orders : 0,
             ];
         });
 

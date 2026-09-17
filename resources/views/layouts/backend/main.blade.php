@@ -6,12 +6,15 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>{{ settings()['title'] ?? config('app.name') }}</title>
-    <meta name="author" content="{{ settings()['author'] ?? '' }}">
-    <meta name="description" content="{{ settings()['description'] ?? '' }}">
+    @php
+        $settings = $appSettings ?? settings();
+    @endphp
+    <title>{{ $settings['title'] ?? config('app.name') }}</title>
+    <meta name="author" content="{{ $settings['author'] ?? '' }}">
+    <meta name="description" content="{{ $settings['description'] ?? '' }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png"
-      href="{{ settings()['favicon'] ? asset('storage/' . settings()['favicon']) : asset('images/no-image.png') }}">
+      href="{{ !empty($settings['favicon']) ? asset('storage/' . $settings['favicon']) : asset('images/no-image.png') }}">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
 

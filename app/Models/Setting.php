@@ -19,6 +19,16 @@ class Setting extends Model
 
     protected $fillable = ['key', 'value', 'serialize'];
 
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('app_settings');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('app_settings');
+        });
+    }
+
     /* ---------------- writer ---------------- */
     public static function setValue(array $rows): void
     {
@@ -37,6 +47,7 @@ class Setting extends Model
         }
 
         static::upsert($payload, ['key'], ['value', 'serialize', 'updated_at']);
+        \Illuminate\Support\Facades\Cache::forget('app_settings');
     }
 
     /* ---------------- reader ---------------- */

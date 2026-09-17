@@ -15,32 +15,19 @@
   <div class="flex items-center gap-4">
     <!-- Outlet Selector -->
     @auth
-        @php
-            $user = Auth::user();
-            $userOutlets = [];
-            
-            if ($user->hasRole(['Super Admin', 'Owner'])) {
-                $userOutlets = \App\Models\Outlet::where('status', true)->get();
-            } else {
-                $userOutlets = $user->outlets;
-            }
-
-            $selectedValue = $user->current_outlet_id ?? 'all';
-        @endphp
-        
-        @if(count($userOutlets) > 0 || $user->hasRole(['Super Admin', 'Owner']))
+        @if(count($userOutlets ?? []) > 0 || ($isSuperOrOwner ?? false))
             <form action="{{ route('outlet.switch') }}" method="POST" id="outlet-switch-form" class="m-0 flex items-center">
                 @csrf
                 <div class="relative min-w-[200px]" x-data @change="document.getElementById('outlet-switch-form').submit()">
                     <x-ui.select2
                         name="outlet_id"
                         placeholder="Select Outlet"
-                        :value="$selectedValue"
+                        :value="$selectedValue ?? 'all'"
                     >
-                        @if($user->hasRole(['Super Admin', 'Owner']))
+                        @if($isSuperOrOwner ?? false)
                             <option value="all">All Outlets</option>
                         @endif
-                        @foreach($userOutlets as $outlet)
+                        @foreach($userOutlets ?? [] as $outlet)
                             <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
                         @endforeach
                     </x-ui.select2>
@@ -94,7 +81,7 @@
                 </h3>
 
                 <p class="mt-0.5 text-xs font-satoshi-medium text-slate-500 truncate">
-                    {{ Auth::user()->getRoleNames()->first() ?? 'User' }}
+                    {{ $userRoleName ?? (Auth::user()?->getRoleNames()->first() ?? 'User') }}
                 </p>
             </div>
         </div>
