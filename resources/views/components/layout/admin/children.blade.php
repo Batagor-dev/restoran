@@ -41,7 +41,7 @@
     @else
         <li class="w-full">
             <a 
-                href="{{ $menu->href ?? '#' }}" 
+                href="{{ !empty($menu->href) ? url($menu->href) : 'javascript:void(0)' }}" 
                 class="group/menu flex items-center gap-3 px-3 py-2.5 rounded-xl text-base font-satoshi-medium transition-all duration-200 min-w-0 {{ $isActive ? 'bg-slate-900 text-white shadow-md shadow-slate-900/10' : 'text-slate-600 hover:bg-slate-50/70 hover:text-slate-900' }}"
             >
                 @if($menu->icon)

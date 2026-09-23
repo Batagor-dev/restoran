@@ -3,68 +3,75 @@
 namespace Database\Seeders;
 
 use App\Models\MenuGroup;
-use App\Models\PermissionGroup;
 use Illuminate\Database\Seeder;
 
 class MenuGroupSeeder extends Seeder
 {
     public function run()
     {
-        $productGroup = PermissionGroup::where('name', 'Product')->first();
-        $tableGroup = PermissionGroup::where('name', 'Table')->first();
-        $contentGroup = PermissionGroup::where('name', 'Konten')->first();
-        $settingGroup = PermissionGroup::where('name', 'Setting')->first();
-        $reportGroup = PermissionGroup::where('name', 'Report')->first()
-            ?? PermissionGroup::where('name', 'Order')->first();
-
-        // Management Product
         MenuGroup::updateOrCreate(
-            ['name' => 'Management Product'],
+            ['name' => 'Operasional'],
             [
-                'permission_group_id' => $productGroup?->id ?? 13,
+                'permission_group_id' => null,
                 'sort' => 1,
                 'status' => 1,
             ]
         );
 
-        // Management Table
         MenuGroup::updateOrCreate(
-            ['name' => 'Management Table'],
+            ['name' => 'Produk & Inventaris'],
             [
-                'permission_group_id' => $tableGroup?->id ?? 15,
+                'permission_group_id' => 13,
                 'sort' => 2,
                 'status' => 1,
             ]
         );
 
-        // Management Content
         MenuGroup::updateOrCreate(
-            ['name' => 'Management Content'],
+            ['name' => 'Laporan & Transaksi'],
             [
-                'permission_group_id' => $contentGroup?->id ?? 10,
+                'permission_group_id' => 25,
                 'sort' => 3,
                 'status' => 1,
             ]
         );
 
-        // Setting
         MenuGroup::updateOrCreate(
-            ['name' => 'Setting'],
+            ['name' => 'Pelanggan & Promosi'],
             [
-                'permission_group_id' => $settingGroup?->id ?? 8,
+                'permission_group_id' => 22,
                 'sort' => 4,
                 'status' => 1,
             ]
         );
 
-        // Management Report
         MenuGroup::updateOrCreate(
-            ['name' => 'Management Report'],
+            ['name' => 'Konten & Publikasi'],
             [
-                'permission_group_id' => $reportGroup?->id ?? 25,
+                'permission_group_id' => 7,
+                'sort' => 5,
+                'status' => 1,
+            ]
+        );
+
+        MenuGroup::updateOrCreate(
+            ['name' => 'Pengaturan Sistem'],
+            [
+                'permission_group_id' => 8,
                 'sort' => 6,
                 'status' => 1,
             ]
         );
+
+        // Hapus grup lama yang sudah tidak terpakai agar database bersih
+        $activeGroups = [
+            'Operasional',
+            'Produk & Inventaris',
+            'Laporan & Transaksi',
+            'Pelanggan & Promosi',
+            'Konten & Publikasi',
+            'Pengaturan Sistem',
+        ];
+        MenuGroup::whereNotIn('name', $activeGroups)->delete();
     }
 }

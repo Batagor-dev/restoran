@@ -18,7 +18,7 @@
         @if(count($userOutlets ?? []) > 0 || ($isSuperOrOwner ?? false))
             <form action="{{ route('outlet.switch') }}" method="POST" id="outlet-switch-form" class="m-0 flex items-center">
                 @csrf
-                <div class="relative min-w-[200px]" x-data @change="document.getElementById('outlet-switch-form').submit()">
+                <div class="relative min-w-[200px]" x-data @select2-change="document.getElementById('outlet-switch-form').submit()">
                     <x-ui.select2
                         name="outlet_id"
                         placeholder="Select Outlet"
